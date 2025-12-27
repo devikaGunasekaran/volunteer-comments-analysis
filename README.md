@@ -1,81 +1,181 @@
-# Volunteer Comments Analysis - Backend Restructured
+# Volunteer Comments Analysis - Full Stack Application
+
+## Architecture
+
+This is a **full-stack application** with:
+- **Backend**: Flask (Python) - RESTful API
+- **Frontend**: React (JavaScript) - Single Page Application
+- **Database**: MySQL
+- **AI Services**: Google Gemini, Groq
+- **Storage**: AWS S3
 
 ## Project Structure
 
 ```
 volunteer-comments-analysis/
-├── backend/                      # NEW: Modular backend
+├── backend/                      # Flask Backend (API)
 │   ├── __init__.py
 │   ├── app.py                   # Main Flask app with blueprints
 │   ├── config.py                # Centralized configuration
-│   ├── routes/                  # Route blueprints
+│   ├── routes/                  # API route handlers
 │   │   ├── __init__.py
-│   │   ├── auth.py             # Authentication routes
-│   │   ├── volunteer.py        # PV volunteer routes
-│   │   ├── admin.py            # Admin routes
+│   │   ├── auth.py             # Authentication endpoints
+│   │   ├── volunteer.py        # PV volunteer endpoints
+│   │   ├── admin.py            # Admin endpoints
 │   │   ├── analytics.py        # Analytics API
 │   │   └── scholarship.py      # Scholarship management
-│   ├── services/                # Business logic services
+│   ├── services/                # Business logic
 │   │   ├── __init__.py
 │   │   ├── ai_service.py       # AI processing (Gemini/Groq)
 │   │   ├── pv_graph.py         # LangGraph workflow
-│   │   ├── pv_process.py       # PV processing wrapper
+│   │   ├── pv_process.py       # PV processing
 │   │   ├── rag_service.py      # RAG knowledge base
 │   │   └── s3_service.py       # AWS S3 operations
-│   ├── models/                  # Data models
+│   ├── models/                  # Data layer
 │   │   ├── __init__.py
-│   │   └── database.py         # DB connection & helpers
-│   └── utils/                   # Utilities
+│   │   └── database.py         # Database utilities
+│   └── utils/                   # Helper functions
 │       └── __init__.py
-├── templates/                   # HTML templates (unchanged)
-├── static/                      # Static files (unchanged)
-├── uploads/                     # Upload directory
-├── venv/                        # Virtual environment
-├── app.py                       # Main entry point (NEW)
-├── app_old.py                   # Backup of old monolithic app
-├── requirements.txt
-├── .env
+│
+├── frontend/                     # React Frontend
+│   ├── public/                  # Static files
+│   │   ├── index.html
+│   │   ├── favicon.ico
+│   │   └── manifest.json
+│   ├── src/                     # React source code
+│   │   ├── components/          # Reusable components (to be created)
+│   │   │   ├── common/         # Shared components
+│   │   │   ├── auth/           # Auth components
+│   │   │   ├── volunteer/      # PV volunteer components
+│   │   │   └── admin/          # Admin components
+│   │   ├── pages/               # Page components (to be created)
+│   │   │   ├── auth/           # Login page
+│   │   │   ├── volunteer/      # PV pages
+│   │   │   └── admin/          # Admin pages
+│   │   ├── services/            # API calls (to be created)
+│   │   │   ├── api.js          # Axios setup
+│   │   │   ├── authService.js
+│   │   │   ├── volunteerService.js
+│   │   │   └── adminService.js
+│   │   ├── hooks/               # Custom React hooks (to be created)
+│   │   ├── context/             # React Context (to be created)
+│   │   ├── App.js               # Main app component
+│   │   ├── App.css
+│   │   ├── index.js             # Entry point
+│   │   └── index.css
+│   ├── package.json             # Frontend dependencies
+│   ├── package-lock.json
+│   └── .gitignore
+│
+├── templates/                    # OLD: HTML templates (legacy)
+├── static/                       # OLD: Static files (legacy)
+├── uploads/                      # Temporary uploads
+├── venv/                         # Python virtual environment
+├── app.py                        # Main entry point
+├── requirements.txt              # Python dependencies
+├── .env                          # Environment variables
+├── .gitignore
 └── README.md
 ```
 
 ## Quick Start
 
-### 1. Activate Virtual Environment
+### Backend Setup (Flask API)
 
-**PowerShell:**
+**1. Create Python Virtual Environment**
 ```powershell
+# Windows
+py -3.11 -m venv venv
 .\venv\Scripts\Activate.ps1
-```
 
-**CMD:**
-```cmd
-.\venv\Scripts\activate.bat
-```
-
-**Git Bash/Linux/Mac:**
-```bash
+# Linux/Mac
+python3.11 -m venv venv
 source venv/bin/activate
 ```
 
-### 2. Install Dependencies
-
+**2. Install Python Dependencies**
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Run the Application
+**3. Configure Environment Variables**
 
-**Option 1: Using run script**
-```powershell
-.\run.ps1
+Create a `.env` file:
+```env
+DB_HOST=localhost
+DB_USER=your_mysql_user
+DB_PASSWORD=your_mysql_password
+DB_NAME=volunteer_comments_db
+
+GEMINI_API_KEY=your_gemini_key
+GROQ_API_KEY=your_groq_key
+
+RAG_ENABLED=true
 ```
 
-**Option 2: Direct command**
+**4. Run Backend Server**
 ```bash
 python app.py
 ```
+Backend runs on `http://localhost:5000`
 
-The application will start on `http://localhost:5000`
+---
+
+### Frontend Setup (React)
+
+**1. Install Node.js Dependencies**
+```bash
+cd frontend
+npm install
+```
+
+**2. Run React Development Server**
+```bash
+npm start
+```
+Frontend runs on `http://localhost:3000`
+
+---
+
+### Development Workflow
+
+**Terminal 1 - Backend:**
+```bash
+.\venv\Scripts\Activate.ps1  # Activate Python venv
+python app.py                 # Run Flask API
+```
+
+**Terminal 2 - Frontend:**
+```bash
+cd frontend
+npm start                     # Run React app
+```
+
+## Technology Stack
+
+### Backend
+- **Framework**: Flask 3.0.0
+- **Language**: Python 3.11
+- **Database**: MySQL 8.0
+- **ORM**: mysql-connector-python
+- **AI/ML**: 
+  - Google Gemini API (text/image analysis)
+  - Groq API (audio transcription)
+  - LangGraph (workflow orchestration)
+  - ChromaDB (vector database for RAG)
+  - Sentence Transformers (embeddings)
+- **Storage**: AWS S3 (boto3)
+- **Environment**: python-dotenv
+
+### Frontend
+- **Framework**: React 18
+- **Language**: JavaScript (ES6+)
+- **Build Tool**: Create React App
+- **HTTP Client**: Axios (to be installed)
+- **Routing**: React Router (to be installed)
+- **UI Library**: Material-UI or Ant Design (optional)
+
+---
 
 ## What Changed?
 

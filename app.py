@@ -3,6 +3,7 @@ Main Flask Application
 Initializes the Flask app and registers all blueprints
 """
 from flask import Flask
+from flask_cors import CORS
 import os
 from backend.config import Config
 from backend.routes.auth import auth_bp
@@ -18,6 +19,15 @@ app = Flask(__name__,
 
 # Configure app
 app.secret_key = Config.SECRET_KEY
+
+# Enable CORS for React frontend
+CORS(app, resources={
+    r"/api/*": {
+        "origins": ["http://localhost:3000"],
+        "methods": ["GET", "POST", "PUT", "DELETE"],
+        "allow_headers": ["Content-Type"]
+    }
+})
 
 # Ensure upload folder exists
 os.makedirs(Config.UPLOAD_FOLDER, exist_ok=True)

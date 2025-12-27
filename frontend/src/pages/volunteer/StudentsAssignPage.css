@@ -1,0 +1,339 @@
+/* Version 2.0 - Fixed Header Alignment */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background: #f0f2f5;
+    margin: 0;
+}
+
+.students-assign-page {
+    min-height: 100vh;
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Header with Logout on Right */
+.header-with-logout {
+    background: white;
+    padding: 20px 32px;
+    position: relative;
+    border-bottom: 2px solid #E2E8F0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    animation: slideDown 0.4s ease-out;
+}
+
+.logout-btn-right {
+    position: absolute;
+    top: 16px;
+    right: 24px;
+    width: auto;
+    min-width: 0;
+    background: #FF6F00;
+    border: none;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 8px 18px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    z-index: 101;
+    /* Ensure on top */
+}
+
+.logout-btn-right:hover {
+    background: #FF9800;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(255, 111, 0, 0.2);
+}
+
+.logout-btn-right:active {
+    transform: translateY(0);
+}
+
+.header-center-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 12px;
+}
+
+.header-logo-center {
+    height: 48px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    transition: transform 0.3s ease;
+    animation: fadeIn 0.6s ease-out;
+}
+
+.header-logo-center:hover {
+    transform: scale(1.05);
+}
+
+.header-title-center {
+    font-weight: 700;
+    font-size: 20px;
+    color: #2D3748;
+    letter-spacing: -0.5px;
+    animation: fadeIn 0.6s ease-out 0.1s both;
+}
+
+/* Page Title */
+.page-title {
+    padding: 24px 32px 16px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #1A202C;
+    animation: slideIn 0.5s ease-out 0.1s both;
+}
+
+/* Table Wrapper */
+.table-wrapper {
+    max-width: 1200px;
+    margin: 0 auto 24px;
+    padding: 0 24px;
+    animation: scaleIn 0.5s ease-out 0.2s both;
+}
+
+.table-wrapper>table,
+.table-wrapper>.empty {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.3s ease;
+}
+
+.table-wrapper>table:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+thead {
+    background: linear-gradient(135deg, #FFF5E6 0%, #FFE8CC 100%);
+}
+
+th {
+    padding: 16px;
+    text-align: left;
+    font-weight: 700;
+    color: #2D3748;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #FF9800;
+}
+
+th:first-child {
+    border-top-left-radius: 12px;
+}
+
+th:last-child {
+    border-top-right-radius: 12px;
+}
+
+tbody tr {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: slideIn 0.4s ease-out both;
+    border-bottom: 1px solid #F7FAFC;
+}
+
+tbody tr:nth-child(1) {
+    animation-delay: 0.3s;
+}
+
+tbody tr:nth-child(2) {
+    animation-delay: 0.35s;
+}
+
+tbody tr:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+tbody tr:nth-child(4) {
+    animation-delay: 0.45s;
+}
+
+tbody tr:nth-child(5) {
+    animation-delay: 0.5s;
+}
+
+tbody tr:hover {
+    background: linear-gradient(90deg, #FFF9F0 0%, #FFFFFF 100%);
+    transform: translateX(4px);
+    box-shadow: -4px 0 0 #FF9800;
+}
+
+td {
+    padding: 16px;
+    font-size: 15px;
+    color: #4A5568;
+}
+
+.student-id-link {
+    color: #FF6F00;
+    font-weight: 700;
+    text-decoration: none;
+    position: relative;
+    transition: all 0.3s ease;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.student-id-link::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #FF9800;
+    transition: width 0.3s ease;
+}
+
+.student-id-link:hover {
+    background: #FFF5E6;
+    color: #FF9800;
+}
+
+.student-id-link:hover::before {
+    width: 100%;
+}
+
+/* Empty State */
+.empty {
+    padding: 60px 30px;
+    text-align: center;
+    color: #718096;
+    font-size: 16px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.empty.error {
+    color: #E53E3E;
+    background: #FFF5F5;
+    border-radius: 12px;
+    padding: 40px;
+    border: 2px dashed #FC8181;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Loading State */
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    font-size: 18px;
+    color: #718096;
+}
+
+.loading::after {
+    content: '';
+    width: 40px;
+    height: 40px;
+    margin-left: 16px;
+    border: 4px solid #E2E8F0;
+    border-top-color: #FF9800;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header-with-logout {
+        padding: 16px;
+    }
+
+    .logout-btn-right {
+        top: 16px;
+        right: 16px;
+        padding: 6px 16px;
+        font-size: 13px;
+    }
+
+    .header-title-center {
+        font-size: 18px;
+    }
+
+    .page-title {
+        font-size: 20px;
+        padding: 20px 16px 12px;
+    }
+
+    .table-wrapper {
+        padding: 0 16px;
+        overflow-x: auto;
+    }
+
+    table {
+        min-width: 600px;
+    }
+
+    tbody tr:hover {
+        transform: none;
+    }
+}

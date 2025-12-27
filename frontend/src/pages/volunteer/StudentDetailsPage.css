@@ -1,0 +1,258 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial;
+    background: #f0f2f5;
+    margin: 0;
+}
+
+.student-details-page {
+    min-height: 100vh;
+}
+
+/* ================= HEADER (VERTICAL CENTERED) ================= */
+
+.header-vertical {
+    background: #ffffff;
+    padding: 22px 20px;
+    border-bottom: 1px solid #eee;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+}
+
+.logout-btn-right {
+    position: absolute;
+    top: 16px;
+    right: 24px;
+    width: auto;
+    min-width: 0;
+    background: #FF6F00;
+    border: none;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 8px 18px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    z-index: 101;
+}
+
+.logout-btn-right:hover {
+    background: #FF9800;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(255, 111, 0, 0.2);
+}
+
+/* Logo centered */
+.header-logo-center {
+    height: 48px;
+    display: block;
+    margin: 0 auto 6px auto;
+}
+
+/* Title below logo */
+.header-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #222;
+}
+
+
+.page {
+    max-width: 900px;
+    margin: 18px auto;
+    padding: 0 16px;
+}
+
+.app-id-card {
+    background: #fff;
+    padding: 18px;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+    margin-bottom: 16px;
+}
+
+.accordion-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px;
+    background: #fff;
+    border-radius: 8px;
+    border-left: 6px solid #ff9800;
+    cursor: pointer;
+    margin-bottom: 8px;
+    transition: background 0.2s;
+}
+
+.accordion-header:hover {
+    background: #f9f9f9;
+}
+
+.accordion-content {
+    background: #fafafa;
+    padding: 12px;
+    border-radius: 0 0 8px 8px;
+    margin-bottom: 8px;
+}
+
+.field-label {
+    font-size: 13px;
+    color: #666;
+    margin-top: 8px;
+}
+
+.field-value {
+    font-weight: 700;
+    color: #222;
+    margin-top: 4px;
+}
+
+.status-box {
+    background: #fff3cd;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+.go-pv-btn {
+    display: inline-block;
+    background: #ff9800;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 700;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    float: right;
+    transition: background 0.2s;
+}
+
+.go-pv-btn:hover {
+    background: #f57c00;
+}
+
+/* Image Gallery */
+.gallery-grid {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.gallery-img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    transition: transform 0.2s;
+}
+
+.gallery-img:hover {
+    transform: scale(1.05);
+}
+
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-size: 18px;
+    color: #666;
+}
+
+/* Marks Table Styling */
+.marks-table-container {
+    background: white;
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+.marks-title {
+    margin: 0 0 12px 0;
+    color: #FF9800;
+    font-size: 16px;
+    border-bottom: 2px solid #FFF3E0;
+    padding-bottom: 8px;
+}
+
+.marks-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.marks-table th {
+    text-align: left;
+    padding: 10px;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #718096;
+    border-bottom: 1px solid #E2E8F0;
+    background: #F7FAFC;
+    border-radius: 4px;
+}
+
+.marks-table td {
+    padding: 10px;
+    font-size: 14px;
+    border-bottom: 1px solid #f0f0f0;
+    color: #2D3748;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+.pass-badge {
+    background: #C6F6D5;
+    color: #22543D;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.total-row td {
+    background: #FFFAF0;
+    color: #C05621;
+    border-top: 2px solid #FFEDD5;
+    font-size: 15px;
+}
+
+.cutoff-row td {
+    background: #EBF8FF;
+    color: #2C5282;
+}
+
+.cutoff-value {
+    font-family: monospace;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+/* Row Animations */
+.animated-row {
+    opacity: 0;
+    transform: translateY(10px);
+    animation: slideUpFade 0.4s ease-out forwards;
+}
+
+@keyframes slideUpFade {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.mt-4 {
+    margin-top: 24px;
+}

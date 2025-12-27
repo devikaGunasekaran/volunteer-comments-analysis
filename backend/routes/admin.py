@@ -266,18 +266,164 @@ def api_admin_pending_students():
     return jsonify({'students': rows})
 
 
-@admin_bp.route("/final_status_update/<student_id>", methods=["POST"])
+@admin_bp.route("/api/student/<student_id>")
+def api_admin_student_details(student_id):
+    """API endpoint to get full student details for React Admin View"""
+    if 'role' not in session or session.get('role') != 'admin':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True, buffered=True)
+
+        # Fetch student row
+        cursor.execute("SELECT * FROM student WHERE studentId = %s", (student_id,))
+        student = cursor.fetchone()
+
+        # Fetch physical verification row
+        cursor.execute("SELECT * FROM PhysicalVerification WHERE studentId = %s ORDER BY verificationDate DESC LIMIT 1", (student_id,))
+        pv = cursor.fetchone()
+        
+        # Fetch tele verification row
+        cursor.execute("SELECT * FROM TeleVerification WHERE studentId = %s ORDER BY verificationDate DESC LIMIT 1", (student_id,))
+        tv = cursor.fetchone()
+
+        # Fetch audio S3 key and generate presigned URL
+        audio_url = None
+        try:
+            cursor.execute("SELECT audio_s3_key FROM PhysicalVerification WHERE studentId = %s AND audio_s3_key IS NOT NULL LIMIT 1", (student_id,))
+            audio_row = cursor.fetchone()
+            if audio_row and audio_row['audio_s3_key']:
+                audio_url = generate_presigned_url(audio_row['audio_s3_key'], 3600)
+        except Exception:
+            pass
+
+        # Fetch images & analysis
+        cursor.execute("""
+            SELECT 
+                fi.imageUrl, 
+                ia.conditionResult, 
+                ia.issuesFound,
+                ia.qualityStatus
+            FROM FinalImages fi
+            LEFT JOIN ImageAnalysis ia ON fi.analysisId = ia.analysisId
+            WHERE fi.studentId = %s
+        """, (student_id,))
+        
+        image_rows = cursor.fetchall()
+        
+        # Fetch 10th marks
+        cursor.execute("SELECT * FROM marks_10th WHERE studentId = %s", (student_id,))
+        marks10_row = cursor.fetchone()
+        marks10 = None
+        if marks10_row:
+            marks10 = {
+                'tamil': marks10_row.get('tamil'),
+                'english': marks10_row.get('english'),
+                'maths': marks10_row.get('maths'),
+                'science': marks10_row.get('science'),
+                'social': marks10_row.get('social'),
+                'total': marks10_row.get('total')
+            }
+        
+        # Fetch 12th marks
+        cursor.execute("SELECT * FROM marks_12th WHERE studentId = %s", (student_id,))
+        marks12_row = cursor.fetchone()
+        marks12 = None
+        if marks12_row:
+            marks12 = {
+                'tamil': marks12_row.get('tamil'),
+                'english': marks12_row.get('english'),
+                'maths': marks12_row.get('maths'),
+                'physics': marks12_row.get('physics'),
+                'chemistry': marks12_row.get('chemistry'),
+                'total': marks12_row.get('total'),
+                'cutoff': marks12_row.get('cutoff')
+            }
+        
+        # Collective analysis
+        cursor.execute("""
+            SELECT issuesFound 
+            FROM ImageAnalysis 
+            WHERE analysisId = (
+                SELECT analysisId FROM FinalImages 
+                WHERE studentId = %s AND analysisId IS NOT NULL 
+                LIMIT 1
+            )
+            OR studentId = %s
+            ORDER BY analysisId DESC LIMIT 1
+        """, (student_id, student_id))
+        analysis_row = cursor.fetchone()
+        
+        collective_analysis = []
+        if analysis_row and analysis_row['issuesFound']:
+            try:
+                if isinstance(analysis_row['issuesFound'], str):
+                    collective_analysis = json.loads(analysis_row['issuesFound'])
+                else:
+                    collective_analysis = analysis_row['issuesFound']
+            except:
+                collective_analysis = []
+        
+        images_data = []
+        for row in image_rows:
+            if row['imageUrl']:
+                key = row['imageUrl'].split('.com/')[-1]
+                url = generate_presigned_url(key, 3600)
+                
+                issues = []
+                if row['issuesFound']:
+                    try:
+                        if isinstance(row['issuesFound'], str):
+                            issues = json.loads(row['issuesFound'])
+                        else:
+                            issues = row['issuesFound']
+                    except:
+                        issues = []
+                
+                images_data.append({
+                    'url': url,
+                    'condition': row['conditionResult'],
+                    'issues': issues,
+                    'quality': row['qualityStatus']
+                })
+
+        cursor.close()
+        conn.close()
+
+        if not student:
+            return jsonify({'error': 'Student not found'}), 404
+
+        return jsonify({
+            'student': student,
+            'pv': pv,
+            'tv': tv,
+            'audio_url': audio_url,
+            'images': images_data,
+            'collective_analysis': collective_analysis,
+            'marks10': marks10,
+            'marks12': marks12
+        })
+
+    except Exception as e:
+        print("Error in api_admin_student_details:", e)
+        return jsonify({'error': str(e)}), 500
 def final_status_update(student_id):
     """Update final admin decision"""
     if 'role' not in session or session.get('role') != 'admin':
         flash("Unauthorized access!", "danger")
         return redirect(url_for('auth.login'))
     
-    admin_status = request.form.get("admin_status")
+    if request.is_json:
+        admin_status = request.json.get("admin_status")
+    else:
+        admin_status = request.form.get("admin_status")
 
     print("Received admin status:", admin_status)
 
     if not admin_status:
+        if request.is_json:
+            return jsonify({'success': False, 'error': 'No status provided'}), 400
         flash("Please select a final decision!", "danger")
         return redirect(url_for("admin.admin_decision", student_id=student_id))
 
@@ -348,10 +494,14 @@ def final_status_update(student_id):
         conn.close()
 
         flash("Final decision saved successfully!", "success")
+        if request.is_json:
+            return jsonify({'success': True, 'status': admin_status})
         return redirect(url_for("admin.admin_assign"))
 
     except Exception as e:
         print("Error in final_status_update:", e)
+        if request.is_json:
+            return jsonify({'success': False, 'error': str(e)}), 500
         flash("Error saving decision!", "danger")
         return redirect(url_for("admin.admin_decision", student_id=student_id))
 

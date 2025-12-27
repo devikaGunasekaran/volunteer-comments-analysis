@@ -21,13 +21,12 @@ app = Flask(__name__,
 app.secret_key = Config.SECRET_KEY
 
 # Enable CORS for React frontend
-CORS(app, resources={
-    r"/api/*": {
-        "origins": ["http://localhost:3000"],
-        "methods": ["GET", "POST", "PUT", "DELETE"],
-        "allow_headers": ["Content-Type"]
-    }
-})
+CORS(app, 
+     origins=["http://localhost:3000"],
+     supports_credentials=True,
+     allow_headers=["Content-Type", "Authorization"],
+     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+)
 
 # Ensure upload folder exists
 os.makedirs(Config.UPLOAD_FOLDER, exist_ok=True)

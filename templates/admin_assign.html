@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Admin – Verified Students</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #f5f5f5;
+            margin: 0;
+        }
+
+        header {
+            background: white;
+            padding: 15px 20px;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #fafafa;
+        }
+
+        /* Accordion */
+        .panel {
+            display: none;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            margin-bottom: 15px;
+        }
+
+        .label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
+
+        .value {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .status-box {
+            padding: 6px 10px;
+            border-radius: 6px;
+            color: white;
+            font-weight: bold;
+            width: 120px;
+            text-align: center;
+        }
+
+        .select {
+            background: green;
+        }
+
+        .reject {
+            background: red;
+        }
+
+        .hold {
+            background: #c97f00;
+        }
+
+        .clickable-id {
+            color: #0066cc;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        /* Hamburger Menu */
+        .menu-container {
+            position: relative;
+        }
+
+        .hamburger {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: #333;
+            margin: 4px 0;
+            border-radius: 2px;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 45px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            min-width: 220px;
+            z-index: 1000;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 12px 20px;
+            color: #333;
+            text-decoration: none;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .dropdown-item:hover {
+            background: #f5f5f5;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item.logout {
+            color: #f44336;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <img src="{{ url_for('static', filename='logo_icon.jpg') }}" height="45">
+        <h2>Admin Panel – Verified Students</h2>
+        <div class="menu-container">
+            <button class="hamburger" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="dropdown-menu" id="dropdownMenu">
+                <a href="/admin/analytics" class="dropdown-item">📊 Analytics Dashboard</a>
+                <a href="/admin/approved-students" class="dropdown-item">✅ Approved Students</a>
+                <a href="/logout" class="dropdown-item logout">🚪 Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <h3>Students Who Completed PV</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Student ID</th>
+                    <th>Name</th>
+                    <th>District</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for s in students %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+
+                    <!-- STUDENT ID NOW OPENS admin_view.html -->
+                    <td>
+                        <a href="{{ url_for('admin.admin_decision', student_id=s.studentId) }}"
+                            style="color:#0066cc; text-decoration:underline; cursor:pointer;">
+                            {{ s.studentId }}
+                        </a>
+                    </td>
+
+                    <td>{{ s.name }}</td>
+                    <td>{{ s.district }}</td>
+
+                    <td>
+                        <span class="status-box 
+            {% if s.status == 'SELECT' %}select{% endif %}
+            {% if s.status == 'REJECT' %}reject{% endif %}
+            {% if s.status == 'ON HOLD' %}hold{% endif %}
+        ">
+                            {{ s.status }}
+                        </span>
+                    </td>
+                </tr>
+                <!-- ACCORDION PANEL FOR DETAILS -->
+                <tr>
+                    <td colspan="5">
+                        <div id="panel{{ loop.index }}" class="panel">
+
+                            <span class="label">Elements Observed:</span>
+                            <div class="value">{{ s.whatYouSaw }}</div>
+
+                            <span class="label">Volunteer Comment:</span>
+                            <div class="value">{{ s.comment }}</div>
+
+                            <span class="label">Property Type:</span>
+                            <div class="value">{{ s.propertyType }}</div>
+
+                            <span class="label">Sentiment Score (Text):</span>
+                            <div class="value">{{ s.sentiment_text }}</div>
+
+                            <span class="label">AI Summary:</span>
+                            <div class="value">{{ s.elementsSummary }}</div>
+
+                            <span class="label">Voice Comments (Transcript):</span>
+                            <div class="value">{{ s.voice_comments }}</div>
+
+                            <span class="label">Final Status:</span>
+                            <div class="value">{{ s.status }}</div>
+
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <script>
+        async function loadPendingStudentsAdmin() {
+            try {
+                const res = await fetch('/api/admin/pending-students');
+                const data = await res.json();
+                if (data.error) {
+                    console.error(data.error);
+                    return;
+                }
+                // Example: assume <div id="admin-pending-list"></div> exists
+                const container = document.getElementById('admin-pending-list');
+                if (!container) return;
+                container.innerHTML = '';
+                data.students.forEach(s => {
+                    const row = document.createElement('div');
+                    row.className = 'admin-row';
+                    row.innerHTML = `
+        <a href="/admin/decision/${s.studentId}">${s.studentId} - ${s.name}</a>
+        <span>${s.district}</span>
+        <span style="margin-left:10px">${s.pv_status || ''}</span>
+      `;
+                    container.appendChild(row);
+                });
+            } catch (err) {
+                console.error('Failed to load admin pending students', err);
+            }
+        }
+
+        loadPendingStudentsAdmin();
+        setInterval(loadPendingStudentsAdmin, 6000); // every 6s
+        function togglePanel(id) {
+            var p = document.getElementById(id);
+            p.style.display = (p.style.display === "block") ? "none" : "block";
+        }
+        // Add this JavaScript code to admin_assign.html before the closing tag
+        // (around line 285, after the togglePanel function)
+
+        // Hamburger menu toggle
+        function toggleMenu() {
+            document.getElementById('dropdownMenu').classList.toggle('show');
+        }
+
+        // Close menu when clicking outside
+        window.onclick = function (event) {
+            if (!event.target.matches('.hamburger') && !event.target.matches('.hamburger span')) {
+                var menu = document.getElementById('dropdownMenu');
+                if (menu && menu.classList.contains('show')) {
+                    menu.classList.remove('show');
+                }
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>

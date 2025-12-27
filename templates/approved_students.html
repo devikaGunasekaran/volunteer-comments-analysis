@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Approved Students - Scholarship Management</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      background: #f0f2f5;
+      color: #333;
+    }
+
+    .header {
+      background: white;
+      padding: 15px 0;
+      text-align: center;
+      border-bottom: 2px solid #4CAF50;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo-img {
+      height: 50px;
+      margin-bottom: 8px;
+    }
+
+    .header-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #4CAF50;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .nav-back {
+      display: inline-block;
+      padding: 10px 20px;
+      background: #2196F3;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+
+    .nav-back:hover {
+      background: #1976D2;
+    }
+
+    .stats {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .stats h3 {
+      color: #4CAF50;
+      margin-bottom: 10px;
+    }
+
+    table {
+      width: 100%;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    thead {
+      background: #4CAF50;
+      color: white;
+    }
+
+    th,
+    td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    th {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    tbody tr:hover {
+      background: #f9f9f9;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge-success {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .badge-warning {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: 0.2s;
+    }
+
+    .btn-primary {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #45a049;
+    }
+
+    .btn-secondary {
+      background: #ff9800;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #f57c00;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+    }
+
+    .empty-state h3 {
+      margin-bottom: 10px;
+      color: #999;
+    }
+
+    .btn-success {
+      background: #28a745;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #218838;
+    }
+
+    .btn-danger {
+      background: #dc3545;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #c82333;
+    }
+
+    .badge-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .badge-selected {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .badge-rejected {
+      background: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <img src="/static/logo_icon.jpg" class="logo-img" alt="Logo">
+    <div class="header-title">🎓 Interview & Final Selection - NGO Review</div>
+  </div>
+
+  <div class="container">
+    <a href="/admin/assign" class="nav-back">← Back to Admin Dashboard</a>
+
+    <div class="stats">
+      <h3>📊 Total Approved Students: <span id="totalCount">{{ students|length }}</span></h3>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="stats" style="margin-bottom: 20px;">
+      <h3 style="margin-bottom: 15px;">🔍 Filter Students</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+        <input type="text" id="filterName" placeholder="Search by Name"
+          style="padding: 10px; border: 1px solid #ddd; border-radius: 6px;" onkeyup="filterTable()">
+
+        <input type="text" id="filterId" placeholder="Search by Student ID"
+          style="padding: 10px; border: 1px solid #ddd; border-radius: 6px;" onkeyup="filterTable()">
+
+        <select id="filterStream" onchange="filterTable()"
+          style="padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+          <option value="">All Streams</option>
+          <option value="Engineering">Engineering</option>
+          <option value="Nursing">Nursing</option>
+          <option value="Arts">Arts</option>
+        </select>
+
+        <select id="filterBatch" onchange="filterTable()"
+          style="padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+          <option value="">All Batches</option>
+          <option value="2024-2025">2024-2025</option>
+          <option value="2025-2026">2025-2026</option>
+          <option value="2026-2027">2026-2027</option>
+          <option value="2027-2028">2027-2028</option>
+        </select>
+
+        <input type="text" id="filterCollege" placeholder="Search by College"
+          style="padding: 10px; border: 1px solid #ddd; border-radius: 6px;" onkeyup="filterTable()">
+
+        <input type="text" id="filterBranch" placeholder="Search by Branch"
+          style="padding: 10px; border: 1px solid #ddd; border-radius: 6px;" onkeyup="filterTable()">
+
+        <select id="filterTeleStatus" onchange="filterTable()"
+          style="padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+          <option value="">All Televerification Status</option>
+          <option value="Selected">Selected</option>
+          <option value="Rejected">Rejected</option>
+          <option value="Pending">Pending</option>
+        </select>
+
+        <button onclick="clearFilters()"
+          style="padding: 10px; background: #f44336; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+          Clear Filters
+        </button>
+      </div>
+    </div>
+
+    {% if students %}
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Student ID</th>
+          <th>Name</th>
+          <th>District</th>
+          <th>Stream</th>
+          <th>Batch</th>
+          <th>College</th>
+          <th>Branch</th>
+          <th>Tele Status</th>
+          <th>Virtual Interview</th>
+          <th>Physical Interview</th>
+          <th>Selection Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for student in students %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td><strong>{{ student.studentId }}</strong></td>
+          <td>{{ student.name }}</td>
+          <td>{{ student.district }}</td>
+          <td>{{ student.stream or '-' }}</td>
+          <td>{{ student.batch or '-' }}</td>
+          <td>{{ student.college or '-' }}</td>
+          <td>{{ student.branch or '-' }}</td>
+          <td>
+            {% if student.televerification_status == 'Selected' %}
+            <span class="badge badge-selected">✓ Selected</span>
+            {% elif student.televerification_status == 'Rejected' %}
+            <span class="badge badge-rejected">✗ Rejected</span>
+            {% elif student.televerification_status == 'Pending' %}
+            <span class="badge badge-pending">⏳ Pending</span>
+            {% else %}
+            <span class="badge" style="background: #e0e0e0; color: #666;">— N/A</span>
+            {% endif %}
+          </td>
+          <!-- Virtual Interview Status -->
+          <td>
+            {% if student.virtual_interview_status == 'PASSED' %}
+            <span class="badge badge-selected">✓ Passed</span>
+            {% elif student.virtual_interview_status == 'FAILED' %}
+            <span class="badge badge-rejected">✗ Failed</span>
+            {% else %}
+            <span class="badge badge-pending">⏳ Pending</span>
+            {% endif %}
+          </td>
+
+          <!-- Physical Interview Status -->
+          <td>
+            {% if student.physical_interview_status == 'PASSED' %}
+            <span class="badge badge-selected">✓ Passed</span>
+            {% elif student.physical_interview_status == 'FAILED' %}
+            <span class="badge badge-rejected">✗ Failed</span>
+            {% elif student.virtual_interview_status == 'PASSED' %}
+            <span class="badge badge-pending">⏳ Pending</span>
+            {% else %}
+            <span class="badge" style="background: #e0e0e0; color: #666;">— Not Started</span>
+            {% endif %}
+          </td>
+
+          <!-- Selection Status (Based on Physical Interview) -->
+          <td>
+            {% if student.physical_interview_status == 'PASSED' %}
+            <span class="badge badge-selected">✅ SELECTED</span>
+            {% elif student.physical_interview_status == 'FAILED' or student.virtual_interview_status == 'FAILED' %}
+            <span class="badge badge-rejected">❌ NOT SELECTED</span>
+            {% else %}
+            <span class="badge" style="background: #e0e0e0; color: #666;">⏳ In Progress</span>
+            {% endif %}
+          </td>
+
+          <!-- Action Buttons -->
+          <td>
+            {% if student.physical_interview_status == 'PASSED' %}
+            <!-- SELECTED - Show scholarship details and decline option -->
+            <a href="/admin/scholarship/{{ student.studentId }}" class="btn btn-secondary">📋 Scholarship Details</a>
+            <button onclick="declineSeat('{{ student.studentId }}', '{{ student.name }}')" class="btn btn-danger"
+              style="margin-left: 5px; background: #f44336;">
+              Decline Seat
+            </button>
+
+            {% elif student.physical_interview_status == 'FAILED' or student.virtual_interview_status == 'FAILED' %}
+            <!-- Failed - No actions -->
+            <span style="color: #999;">Not Selected</span>
+
+            {% elif student.virtual_interview_status == 'PENDING' or student.virtual_interview_status is none %}
+            <!-- Stage 1: Virtual Interview Pending -->
+            <button onclick="virtualPass('{{ student.studentId }}', '{{ student.name }}')" class="btn btn-success">
+              ✓ Pass Virtual
+            </button>
+            <button onclick="virtualFail('{{ student.studentId }}', '{{ student.name }}')" class="btn btn-danger"
+              style="margin-left: 5px;">
+              ✗ Fail Virtual
+            </button>
+            <button onclick="declineSeat('{{ student.studentId }}', '{{ student.name }}')" class="btn btn-danger"
+              style="margin-left: 5px; background: #f44336;">
+              Decline Seat
+            </button>
+
+            {% elif student.virtual_interview_status == 'PASSED' and (student.physical_interview_status == 'PENDING' or
+            student.physical_interview_status is none) %}
+            <!-- Stage 2: Physical Interview Pending -->
+            <button onclick="physicalPass('{{ student.studentId }}', '{{ student.name }}')" class="btn btn-success">
+              ✓ Pass Physical (SELECT)
+            </button>
+            <button onclick="physicalFail('{{ student.studentId }}', '{{ student.name }}')" class="btn btn-danger"
+              style="margin-left: 5px;">
+              ✗ Fail Physical
+            </button>
+            <button onclick="declineSeat('{{ student.studentId }}', '{{ student.name }}')" class="btn btn-danger"
+              style="margin-left: 5px; background: #f44336;">
+              Decline Seat
+            </button>
+
+            {% else %}
+            <span style="color: #999;">—</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      <h3>No Approved Students Yet</h3>
+      <p>Students will appear here once they are approved by admin.</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <script>
+    function filterTable() {
+      // Get filter values
+      const nameFilter = document.getElementById('filterName').value.toLowerCase();
+      const idFilter = document.getElementById('filterId').value.toLowerCase();
+      const streamFilter = document.getElementById('filterStream').value;
+      const batchFilter = document.getElementById('filterBatch').value;
+      const collegeFilter = document.getElementById('filterCollege').value.toLowerCase();
+      const branchFilter = document.getElementById('filterBranch').value.toLowerCase();
+      const teleStatusFilter = document.getElementById('filterTeleStatus').value;
+
+      // Get table rows
+      const table = document.querySelector('tbody');
+      if (!table) return;
+
+      const rows = table.getElementsByTagName('tr');
+      let visibleCount = 0;
+
+      // Loop through all table rows
+      for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        const cells = row.getElementsByTagName('td');
+
+        if (cells.length > 0) {
+          // Column indices: 0=#, 1=ID, 2=Name, 3=District, 4=Stream, 5=Batch, 6=College, 7=Branch, 
+          // 8=Tele Status, 9=Virtual Interview, 10=Physical Interview, 11=Selection Status, 12=Actions
+          const studentId = cells[1].textContent.toLowerCase();
+          const name = cells[2].textContent.toLowerCase();
+          const stream = cells[4].textContent.trim();
+          const batch = cells[5].textContent.trim();
+          const college = cells[6].textContent.toLowerCase().trim();
+          const branch = cells[7].textContent.toLowerCase().trim();
+          const teleStatus = cells[8].textContent.trim();
+
+          // Apply filters
+          let show = true;
+
+          if (nameFilter && !name.includes(nameFilter)) show = false;
+          if (idFilter && !studentId.includes(idFilter)) show = false;
+          if (streamFilter && stream !== streamFilter) show = false;
+          if (batchFilter && batch !== batchFilter) show = false;
+          if (collegeFilter && !college.includes(collegeFilter)) show = false;
+          if (branchFilter && !branch.includes(branchFilter)) show = false;
+          if (teleStatusFilter && !teleStatus.includes(teleStatusFilter)) show = false;
+
+          // Show/hide row
+          if (show) {
+            row.style.display = '';
+            visibleCount++;
+          } else {
+            row.style.display = 'none';
+          }
+        }
+      }
+
+      // Update count
+      document.getElementById('totalCount').textContent = visibleCount;
+    }
+
+    function clearFilters() {
+      document.getElementById('filterName').value = '';
+      document.getElementById('filterId').value = '';
+      document.getElementById('filterStream').value = '';
+      document.getElementById('filterBatch').value = '';
+      document.getElementById('filterCollege').value = '';
+      document.getElementById('filterBranch').value = '';
+      document.getElementById('filterTeleStatus').value = '';
+      filterTable();
+    }
+
+    // Decline seat function
+    async function declineSeat(studentId, studentName) {
+      if (!confirm(`Are you sure ${studentName} wants to decline the scholarship seat?\n\nThis will change their status from APPROVED to DECLINED.`)) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`/admin/decline-seat/${studentId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          alert(`${studentName} has been removed from approved students list.`);
+          location.reload(); // Reload to update the list
+        } else {
+          alert('Error: ' + (data.error || 'Failed to decline seat'));
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to decline seat. Please try again.');
+      }
+    }
+
+    // ========== STAGE 1: VIRTUAL INTERVIEW ==========
+
+    async function virtualPass(studentId, studentName) {
+      const remarks = prompt(`Virtual Interview - PASS\n\nStudent: ${studentName}\n\nPlease enter remarks from the virtual interview:`);
+
+      if (remarks === null) return;
+
+      if (!confirm(`Confirm that ${studentName} PASSED the virtual interview?\n\nThey will proceed to physical interview stage.`)) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`/admin/interview-decision/${studentId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            stage: 'virtual',
+            decision: 'PASSED',
+            remarks: remarks
+          })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          alert(`✓ ${studentName} passed virtual interview!\n\nNext: Physical Interview`);
+          location.reload();
+        } else {
+          alert('Error: ' + (data.error || 'Failed to update'));
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to update. Please try again.');
+      }
+    }
+
+    async function virtualFail(studentId, studentName) {
+      const remarks = prompt(`Virtual Interview - FAIL\n\nStudent: ${studentName}\n\nPlease enter reason for failure:`);
+
+      if (remarks === null) return;
+
+      if (!remarks.trim()) {
+        alert('Please provide a reason for failure.');
+        return;
+      }
+
+      if (!confirm(`Confirm that ${studentName} FAILED the virtual interview?\n\nReason: ${remarks}\n\nThis will end their application process.`)) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`/admin/interview-decision/${studentId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            stage: 'virtual',
+            decision: 'FAILED',
+            remarks: remarks
+          })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          alert(`${studentName} failed virtual interview.`);
+          location.reload();
+        } else {
+          alert('Error: ' + (data.error || 'Failed to update'));
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to update. Please try again.');
+      }
+    }
+
+    // ========== STAGE 2: PHYSICAL INTERVIEW (FINAL SELECTION) ==========
+
+    async function physicalPass(studentId, studentName) {
+      const remarks = prompt(`Physical Interview - PASS (AUTOMATIC SELECTION)\n\nStudent: ${studentName}\n\nPlease enter remarks from the physical interview:\n\nNote: Passing this interview automatically SELECTS the student for scholarship.`);
+
+      if (remarks === null) return;
+
+      if (!confirm(`Confirm that ${studentName} PASSED the physical interview?\n\n⚠️ This will AUTOMATICALLY SELECT them for the scholarship!\n\nThey can add scholarship details or decline the seat afterwards.`)) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`/admin/interview-decision/${studentId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            stage: 'physical',
+            decision: 'PASSED',
+            remarks: remarks
+          })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          alert(`🎉 ${studentName} passed physical interview!\n\n✅ AUTOMATICALLY SELECTED FOR SCHOLARSHIP\n\nYou can now add scholarship details or they can decline the seat.`);
+          location.reload();
+        } else {
+          alert('Error: ' + (data.error || 'Failed to update'));
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to update. Please try again.');
+      }
+    }
+
+    async function physicalFail(studentId, studentName) {
+      const remarks = prompt(`Physical Interview - FAIL\n\nStudent: ${studentName}\n\nPlease enter reason for failure:`);
+
+      if (remarks === null) return;
+
+      if (!remarks.trim()) {
+        alert('Please provide a reason for failure.');
+        return;
+      }
+
+      if (!confirm(`Confirm that ${studentName} FAILED the physical interview?\n\nReason: ${remarks}\n\nThis will end their application process.`)) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`/admin/interview-decision/${studentId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            stage: 'physical',
+            decision: 'FAILED',
+            remarks: remarks
+          })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          alert(`${studentName} failed physical interview.`);
+          location.reload();
+        } else {
+          alert('Error: ' + (data.error || 'Failed to update'));
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to update. Please try again.');
+      }
+    }
+  </script>
+</body>
+
+</html>

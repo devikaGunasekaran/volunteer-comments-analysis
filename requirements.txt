@@ -1,0 +1,25 @@
+# Web Framework
+Flask==3.0.0
+Werkzeug==3.0.1
+
+# Database
+mysql-connector-python==8.2.0
+python-dotenv==1.0.0
+
+# AI/ML
+google-generativeai>=0.8.0
+requests==2.31.0
+
+# AWS
+boto3==1.34.0
+
+# LangGraph for workflow orchestration
+langgraph==0.0.20
+langchain-core==0.1.10
+
+# NumPy (pinned for ChromaDB compatibility)
+numpy==1.26.4
+
+# RAG Dependencies
+chromadb==0.4.22
+sentence-transformers==2.2.2

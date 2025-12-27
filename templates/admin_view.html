@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin – Student Verification Review</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      background: #f0f2f5;
+      color: #333;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .section-box {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 18px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+      border-left: 6px solid #ff9800;
+    }
+
+    .title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    .label {
+      font-weight: 600;
+      font-size: 14px;
+      margin-top: 10px;
+      color: #555;
+    }
+
+    .value {
+      font-size: 15px;
+      font-weight: 600;
+      color: #222;
+      margin-bottom: 10px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    .green {
+      background: #4caf50;
+      color: white;
+    }
+
+    .red {
+      background: #f44336;
+      color: white;
+    }
+
+    .orange {
+      background: #ff9800;
+      color: white;
+    }
+
+    .summary-box {
+      background: #fff9e6;
+      padding: 15px;
+      border-radius: 8px;
+      border: 2px solid #ffc107;
+      margin-top: 10px;
+      white-space: pre-line;
+    }
+
+    .final-decision {
+      background: white;
+      border: 2px solid #333;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .final-title {
+      font-size: 18px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-top: 10px;
+      font-size: 15px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 15px;
+      font-size: 15px;
+      background: #ff9800;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 18px;
+      transition: 0.2s;
+    }
+
+    .submit-btn:hover {
+      background: #f57c00;
+    }
+
+    /* --- NEW ANALYSIS CARD STYLES --- */
+    .analysis-card {
+      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .analysis-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(180deg, #ffa726 0%, #ff9800 100%);
+    }
+
+    .analysis-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #f57c00;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .analysis-content {
+      font-size: 15px;
+      color: #444;
+      line-height: 1.6;
+    }
+
+    .bullet-point {
+      margin-bottom: 8px;
+      padding-left: 14px;
+      position: relative;
+    }
+
+    .bullet-point::before {
+      content: "•";
+      color: #ff9800;
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+    }
+
+    /* Header styles */
+    .header {
+      background: white;
+      padding: 15px 0;
+      text-align: center;
+      border-bottom: 2px solid #ff9800;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo-img {
+      height: 50px;
+      margin-bottom: 8px;
+    }
+
+    .header-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #ff9800;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <img src="/static/logo_icon.jpg" class="logo-img" alt="Logo">
+    <div class="header-title">Admin – Student Verification Review</div>
+  </div>
+
+  <div class="container">
+    <!-- STUDENT DETAILS -->
+    <div class="section-box">
+      <div class="title">Student Details</div>
+      <div class="label">Student ID:</div>
+      <div class="value">{{ student.studentId }}</div>
+
+      <div class="label">Name:</div>
+      <div class="value">{{ student.name }}</div>
+
+      <div class="label">District:</div>
+      <div class="value">{{ student.district }}</div>
+
+      <div class="label">Gender:</div>
+      <div class="value">{{ student.gender }}</div>
+
+      <div class="label">DOB:</div>
+      <div class="value">{{ student.dob }}</div>
+
+      <div class="label">Phone:</div>
+      <div class="value">{{ student.phone }}</div>
+
+      <div class="label">Address:</div>
+      <div class="value">{{ student.address }}</div>
+
+      <div class="label">Annual Income:</div>
+      <div class="value">{{ student.income }}</div>
+    </div>
+
+    <!-- PV RESULTS -->
+    <div class="section-box">
+      <div class="title">Volunteer – Physical Verification Report</div>
+      <!-- DEFINE percent BEFORE USE -->
+      {% set percent = pv.sentiment_text | float %}
+      {% set percent = percent | round(0) %}
+
+      <div class="label">Volunteer ID:</div>
+      <div class="value">{{ pv.volunteerId }}</div>
+
+      <div class="label">Translated Volunteer Comment:</div>
+      <div class="summary-box">{{ pv.comment }}</div>
+
+      <div class="label">TV Comments (Voice Transcription):</div>
+      <div class="summary-box">{{ tv.comments }}</div>
+
+      <!-- AUDIO PLAYER SECTION -->
+      {% if audio_url %}
+      <div class="label" style="margin-top: 20px;">🎤 PV Volunteer Audio Recording:</div>
+      <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin-top: 10px; border: 1px solid #ddd;">
+        <audio controls style="width: 100%; max-width: 500px;">
+          <source src="{{ audio_url }}" type="audio/wav">
+          <source src="{{ audio_url }}" type="audio/mpeg">
+          Your browser does not support the audio element.
+        </audio>
+        <div style="margin-top: 8px; font-size: 12px; color: #666;">
+          📁 Audio file uploaded by volunteer during physical verification
+        </div>
+      </div>
+      {% else %}
+      <div class="label" style="margin-top: 20px;">🎤 PV Volunteer Audio Recording:</div>
+      <div
+        style="background: #f9f9f9; padding: 12px; border-radius: 6px; margin-top: 10px; color: #999; font-style: italic; border: 1px dashed #ddd;">
+        No audio recording available
+      </div>
+      {% endif %}
+
+      <div class="label">Sentiment Result:</div>
+      <span class="badge 
+            {% if percent >= 70 %}green
+            {% elif percent >= 40 %}orange
+            {% else %}red
+            {% endif %}">
+        {{ pv.sentiment }}
+      </span>
+      <br><br>
+
+      <div class="label">Sentiment Confidence Score:</div>
+      <span class="badge 
+            {% if percent >= 70 %}green
+            {% elif percent >= 40 %}orange
+            {% else %}red
+            {% endif %}">
+        {{ percent }}%
+      </span>
+      <br><br>
+
+      <div class="label">Volunteer Final Status:</div>
+      <span class="badge 
+            {% if pv.status == 'SELECT' %}green
+            {% elif pv.status == 'REJECT' %}red
+            {% else %}orange
+            {% endif %}">
+        {{ pv.status }}
+      </span>
+    </div>
+
+    <!-- HOUSE IMAGES -->
+    <div class="section-box">
+      <div class="title">House Images</div>
+      {% if images %}
+      <div style="display:flex; flex-wrap:wrap; gap:20px;">
+        {% for img in images %}
+        <div style="width:300px; border:1px solid #ddd; padding:10px; border-radius:8px; background:#fafafa;">
+          <a href="{{ img.url }}" target="_blank">
+            <img src="{{ img.url }}"
+              style="width:100%; height:180px; object-fit:cover; border-radius:6px; border:1px solid #ccc;">
+          </a>
+          <!-- Condition Badge -->
+          <div style="margin-top:5px; font-weight:bold; font-size:12px; color:#555;">
+            Condition:
+            <span
+              style="color: {% if img.condition == 'POOR' %}red{% elif img.condition == 'GOOD' %}green{% else %}orange{% endif %};">
+              {{ img.condition or 'Analyzed' }}
+            </span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p style="color:#777; font-style:italic;">No house images uploaded yet.</p>
+      {% endif %}
+
+      <!-- MOVED ANALYSIS SECTION -->
+      <div id="analysis-container" style="display:none;" class="analysis-card">
+        <div class="analysis-title">✨ AI House Analysis</div>
+        <div id="analysis-content" class="analysis-content">
+          <!-- Bullet points triggered by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMIN DECISION -->
+    <div class="final-decision">
+      <div class="final-title">Admin Final Decision</div>
+      <form action="/admin/final_status_update/{{ student.studentId }}" method="POST">
+        <div class="label">Select Final Decision:</div>
+        <select name="admin_status" required>
+          <option value="">-- Select Status --</option>
+          <option value="APPROVED">APPROVED</option>
+          <option value="REJECTED">REJECTED</option>
+        </select>
+        <button class="submit-btn" type="submit">Update Decision</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      try {
+        // collective_analysis is passed as a Python list/dict, dumping to JSON
+        let analysisData = {{ collective_analysis | tojson | safe
+      }};
+
+    console.log("Analysis Data Received:", analysisData);
+
+    if (analysisData && analysisData.length > 0) {
+      // Show container
+      const container = document.getElementById("analysis-container");
+      if (container) container.style.display = "block";
+
+      let points = [];
+      // Handle if it's already an array or needs parsing
+      if (Array.isArray(analysisData)) {
+        points = analysisData;
+      } else if (typeof analysisData === 'string') {
+        // Try parsing JSON first, else split text
+        try {
+          points = JSON.parse(analysisData);
+        } catch (e) {
+          points = analysisData.split(';').map(s => s.trim());
+        }
+      }
+
+      // Format points with bullet styling
+      const html = points.map(p => `<div class="bullet-point">${p}</div>`).join('');
+      const contentDiv = document.getElementById("analysis-content");
+      if (contentDiv) contentDiv.innerHTML = html;
+    } else {
+      console.log("No analysis data found.");
+    }
+      } catch (err) {
+      console.error("Error loading analysis:", err);
+    }
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Maatram Volunteers - Login</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background-color: #f5f5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .login-container {
+      display: flex;
+      width: 950px;
+      height: 540px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .left {
+      flex: 1.2;
+      background: url("{{ url_for('static', filename='background_img.jpg') }}") center center / cover no-repeat;
+    }
+
+    .right {
+      flex: 1;
+      padding: 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .right img {
+      width: 130px;
+      margin: 0 auto 20px;
+      display: block;
+    }
+
+    h2 {
+      color: #222;
+      margin-bottom: 25px;
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+
+    input:focus {
+      border-color: #f9b300;
+      outline: none;
+      box-shadow: 0 0 6px rgba(249,179,0,0.3);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(90deg, #f9b300, #ff9800);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background: #ff9800;
+      transform: translateY(-2px);
+    }
+
+    .footer-text {
+      margin-top: 20px;
+      font-size: 13px;
+      color: #888;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="login-container">
+
+    <div class="left"></div>
+
+    <div class="right">
+      <img src="{{ url_for('static', filename='logo_icon.jpg') }}" alt="Maatram Logo">
+
+      <h2>“Welcome, Maatram Volunteers!”</h2>
+
+      <!-- FIXED: backend expects username + password -->
+      <form action="/" method="POST">
+        <input type="text" name="volunteerId" placeholder="Enter User ID" required>
+<input type="password" name="password" placeholder="Enter Password" required>
+        <button type="submit">Login</button>
+      </form>
+
+      <div class="footer-text">
+        © 2025 Maatram Foundation
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

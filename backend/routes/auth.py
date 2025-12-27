@@ -2,7 +2,7 @@
 Authentication Routes
 Handles login, logout, and session management
 """
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
 from backend.models.database import get_db_connection
 
 auth_bp = Blueprint('auth', __name__)
@@ -40,6 +40,60 @@ def login():
                 flash("Invalid credentials!", "danger")
                 return redirect(url_for('auth.login'))
     return render_template("login_page.html")
+
+
+@auth_bp.route("/api/login", methods=["POST"])
+def api_login():
+    """API login endpoint for React frontend"""
+    data = request.json
+    volunteerId = data.get("volunteerId")
+    password = data.get("password")
+
+    if not volunteerId or not password:
+        return jsonify({
+            "success": False,
+            "message": "Volunteer ID and password are required"
+        }), 400
+
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({
+            "success": False,
+            "message": "Database connection failed"
+        }), 500
+
+    try:
+        cursor = conn.cursor(dictionary=True)
+        query = "SELECT * FROM Volunteer WHERE volunteerId=%s AND password=%s"
+        cursor.execute(query, (volunteerId, password))
+        volunteer = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+        if volunteer:
+            # Store in session for compatibility
+            session['volunteerId'] = volunteer['volunteerId']
+            session['role'] = volunteer['role']
+            
+            return jsonify({
+                "success": True,
+                "user": {
+                    "volunteerId": volunteer['volunteerId'],
+                    "role": volunteer['role'],
+                    "name": volunteer.get('name', '')
+                },
+                "token": "simple_token_" + volunteer['volunteerId']  # TODO: Implement JWT
+            })
+        else:
+            return jsonify({
+                "success": False,
+                "message": "Invalid credentials!"
+            }), 401
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": f"Error: {str(e)}"
+        }), 500
 
 
 @auth_bp.route("/logout")

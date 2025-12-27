@@ -46,3 +46,11 @@ chroma_db/
 
 # Logs
 *.log
+
+# React frontend
+frontend/node_modules/
+frontend/build/
+
+# React frontend
+frontend/node_modules/
+frontend/build/

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import authService from '../../services/authService';
 import './LoginPage.css';
 import logo from '../../assets/logo_icon.jpg';
 
@@ -16,35 +17,25 @@ const LoginPage = () => {
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:5000/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ volunteerId, password }),
-            });
+            const result = await authService.login(volunteerId, password);
 
-            const data = await response.json();
-
-            if (response.ok && data.success) {
-                // Store user data in localStorage
-                localStorage.setItem('user', JSON.stringify(data.user));
-                localStorage.setItem('token', data.token);
+            if (result.success) {
+                const { user } = result.data;
 
                 // Redirect based on role
-                if (data.user.role === 'pv') {
+                if (user.role === 'pv') {
                     navigate('/students-assign');
-                } else if (data.user.role === 'admin') {
+                } else if (user.role === 'admin') {
                     navigate('/admin/assign');
                 } else {
                     navigate('/dashboard');
                 }
             } else {
-                setError(data.message || 'Invalid credentials!');
+                setError(result.error);
             }
         } catch (err) {
             console.error('Login error:', err);
-            setError('Connection error. Please try again.');
+            setError('An unexpected error occurred. Please try again.');
         } finally {
             setLoading(false);
         }

@@ -1,7 +1,7 @@
 body {
   margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background-color: #f5f5f5;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  background: #f5f5f5;
 }
 
 .login-page {
@@ -10,6 +10,7 @@ body {
   justify-content: center;
   min-height: 100vh;
   padding: 20px;
+  animation: fadeIn 0.6s ease-out;
 }
 
 .login-container {
@@ -17,15 +18,18 @@ body {
   width: 950px;
   max-width: 100%;
   height: 540px;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   overflow: hidden;
+  animation: scaleIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .left {
   flex: 1.2;
   background: url('../../assets/background_img.jpg') center center / cover no-repeat;
+  position: relative;
   min-width: 0;
 }
 
@@ -37,60 +41,93 @@ body {
   justify-content: center;
   text-align: center;
   min-width: 300px;
+  animation: slideIn 0.6s ease-out 0.2s both;
 }
 
 .logo {
   width: 130px;
   margin: 0 auto 20px;
   display: block;
+  animation: fadeIn 0.8s ease-out 0.4s both;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
 }
 
 h2 {
-  color: #222;
+  color: #2D3748;
   margin-bottom: 25px;
   font-size: 22px;
   font-weight: 600;
+  animation: fadeIn 0.8s ease-out 0.5s both;
 }
 
 input {
   width: 100%;
-  padding: 12px;
+  padding: 14px 16px;
   margin: 10px 0;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+  border-radius: 12px;
+  border: 2px solid #E2E8F0;
   font-size: 14px;
-  transition: 0.3s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-sizing: border-box;
+  background: #F7FAFC;
 }
 
 input:focus {
-  border-color: #f9b300;
+  border-color: #FF9800;
   outline: none;
-  box-shadow: 0 0 6px rgba(249, 179, 0, 0.3);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.1);
+  transform: translateY(-2px);
 }
 
 input:disabled {
-  background-color: #f5f5f5;
+  background-color: #EDF2F7;
   cursor: not-allowed;
+  opacity: 0.6;
 }
 
 button {
   width: 100%;
-  padding: 12px;
-  background: linear-gradient(90deg, #f9b300, #ff9800);
+  padding: 14px;
+  background: linear-gradient(135deg, #FF9800 0%, #FF6F00 100%);
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   color: white;
   font-weight: 600;
   font-size: 15px;
   cursor: pointer;
   margin-top: 15px;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+}
+
+button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+button:hover:not(:disabled)::before {
+  width: 300px;
+  height: 300px;
 }
 
 button:hover:not(:disabled) {
-  background: #ff9800;
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.4);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(-1px);
 }
 
 button:disabled {
@@ -100,19 +137,58 @@ button:disabled {
 }
 
 .error-message {
-  background-color: #fee;
-  color: #c33;
-  padding: 10px;
-  border-radius: 6px;
+  background: linear-gradient(135deg, #FEE 0%, #FDD 100%);
+  color: #C53030;
+  padding: 12px;
+  border-radius: 10px;
   margin: 10px 0;
   font-size: 14px;
-  border: 1px solid #fcc;
+  border: 1px solid #FC8181;
+  animation: slideIn 0.3s ease-out;
 }
 
 .footer-text {
   margin-top: 20px;
   font-size: 13px;
-  color: #888;
+  color: #718096;
+  animation: fadeIn 1s ease-out 0.8s both;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* Responsive Design */

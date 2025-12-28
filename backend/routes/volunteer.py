@@ -587,16 +587,19 @@ def run_pv_ai_pipeline(data, student_id, volunteer_id, recommendation):
             add_student_case(
                 student_id=student_id,
                 district=student_district,
-                decision=decision,
+                decision=decision,  # AI sentiment decision
                 score=score,
                 comments=english_comment,
                 summary=summary_text,
                 voice_comments=voice_text,
                 house_analysis=json.dumps(house_points) if house_points else "",
                 verification_date=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                embedding=result.get('query_embedding')
+                embedding=result.get('query_embedding'),
+                ai_decision=decision,  # PhysicalVerification.sentiment - AI sentiment decision
+                admin_decision="",  # Not yet decided by admin (Student.status will be set later)
+                admin_remarks=""  # No admin remarks yet
             )
-            print("✅ Added case to RAG knowledge base")
+            print(f"✅ Added case to RAG knowledge base (AI Decision: {decision})")
         except Exception as rag_error:
             print(f"⚠️ Failed to update RAG: {rag_error}")
 

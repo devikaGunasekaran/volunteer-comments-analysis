@@ -13,6 +13,7 @@ const AdminViewPage = () => {
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState(null);
     const [decision, setDecision] = useState('');
+    const [remarks, setRemarks] = useState('');
     const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
@@ -38,7 +39,7 @@ const AdminViewPage = () => {
 
         setSubmitting(true);
         try {
-            const result = await adminService.submitFinalDecision(studentId, decision);
+            const result = await adminService.submitFinalDecision(studentId, decision, remarks);
             if (result.success) {
                 alert('Decision saved successfully!');
                 navigate('/admin/dashboard');
@@ -319,6 +320,14 @@ const AdminViewPage = () => {
                         <option value="APPROVED">APPROVED</option>
                         <option value="REJECTED">REJECTED</option>
                     </select>
+                    <br />
+                    <textarea
+                        className="decision-remarks"
+                        placeholder="Add remarks (optional)..."
+                        value={remarks}
+                        onChange={(e) => setRemarks(e.target.value)}
+                        rows="4"
+                    />
                     <br />
                     <button
                         className="decision-btn"

@@ -110,7 +110,10 @@ def add_student_case(
     voice_comments: str = "",
     house_analysis: str = "",
     verification_date: str = "",
-    embedding: Optional[List[float]] = None  # NEW: Accept pre-generated embedding
+    embedding: Optional[List[float]] = None,
+    ai_decision: str = "",  # NEW: AI/Volunteer recommendation (SELECT/REJECT/ON HOLD)
+    admin_decision: str = "",  # NEW: Admin final decision (APPROVED/REJECTED)
+    admin_remarks: str = ""  # NEW: Admin remarks stored separately
 ):
     """
     Add a verified student case to the RAG knowledge base.
@@ -118,13 +121,17 @@ def add_student_case(
     Args:
         student_id: Unique student identifier
         district: Student's district
-        decision: SELECT / DO NOT SELECT / ON HOLD
+        decision: Final decision (for backward compatibility, usually admin_decision)
         score: Sentiment score (0-100)
         comments: Volunteer's text comments
         summary: AI-generated summary
         voice_comments: Transcribed voice comments
         house_analysis: House condition analysis
         verification_date: Date of verification
+        embedding: Optional pre-generated embedding
+        ai_decision: AI/Volunteer recommendation (SELECT/REJECT/ON HOLD)
+        admin_decision: Admin final decision (APPROVED/REJECTED)
+        admin_remarks: Admin's remarks/observations
     """
     if not RAG_ENABLED:
         return
@@ -137,13 +144,15 @@ def add_student_case(
         # Combine all text for embedding
         combined_text = f"""
         District: {district}
-        Decision: {decision}
+        AI Decision: {ai_decision}
+        Admin Decision: {admin_decision}
         Score: {score}
         
         Comments: {comments}
         Voice: {voice_comments}
         Summary: {summary}
         House Analysis: {house_analysis}
+        Admin Remarks: {admin_remarks}
         """.strip()
         
         # Use provided embedding or generate new one
@@ -156,13 +165,16 @@ def add_student_case(
             case_embedding = generate_embedding(combined_text)
             print("🔄 Generated new embedding")
         
-        # Prepare metadata
+        # Prepare metadata with separate decision fields
         metadata = {
             "student_id": student_id,
             "district": district,
-            "decision": decision,
+            "decision": decision,  # Final decision (for backward compatibility)
+            "ai_decision": ai_decision,  # AI/Volunteer recommendation
+            "admin_decision": admin_decision,  # Admin final decision
             "score": float(score),
             "verification_date": verification_date or "",
+            "has_admin_remarks": bool(admin_remarks),  # Flag for filtering
         }
         
         # Add to ChromaDB
@@ -173,7 +185,7 @@ def add_student_case(
             metadatas=[metadata]
         )
         
-        print(f"✅ Added student case to RAG: {student_id} ({decision})")
+        print(f"✅ Added student case to RAG: {student_id} (AI: {ai_decision}, Admin: {admin_decision})")
         
     except Exception as e:
         print(f"❌ Failed to add student case to RAG: {e}")

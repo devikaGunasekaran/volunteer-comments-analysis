@@ -412,6 +412,28 @@
     margin-bottom: 20px;
 }
 
+.decision-remarks {
+    width: 100%;
+    max-width: 600px;
+    padding: 12px;
+    border-radius: 8px;
+    border: 2px solid #E2E8F0;
+    font-size: 15px;
+    font-family: inherit;
+    resize: vertical;
+    margin-bottom: 20px;
+    transition: border-color 0.2s;
+}
+
+.decision-remarks:focus {
+    outline: none;
+    border-color: #FF9800;
+}
+
+.decision-remarks::placeholder {
+    color: #A0AEC0;
+}
+
 .decision-btn {
     background: #DD6B20;
     /* Darker orange */

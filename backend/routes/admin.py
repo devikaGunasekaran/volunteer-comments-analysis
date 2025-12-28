@@ -416,10 +416,13 @@ def final_status_update(student_id):
     
     if request.is_json:
         admin_status = request.json.get("admin_status")
+        admin_remarks = request.json.get("admin_remarks", "")
     else:
         admin_status = request.form.get("admin_status")
+        admin_remarks = request.form.get("admin_remarks", "")
 
     print("Received admin status:", admin_status)
+    print("Received admin remarks:", admin_remarks)
 
     if not admin_status:
         if request.is_json:
@@ -437,9 +440,10 @@ def final_status_update(student_id):
         cursor.execute("""
             UPDATE student 
             SET status = %s,
-                selected = %s
+                selected = %s,
+                admin_remarks = %s
             WHERE studentId = %s
-        """, (admin_status, selected_flag, student_id))
+        """, (admin_status, selected_flag, admin_remarks, student_id))
 
         conn.commit()
         
@@ -473,19 +477,23 @@ def final_status_update(student_id):
             cursor2.close()
             
             if pv_row:
+                # Don't combine - pass separately to RAG
                 add_student_case(
                     student_id=student_id,
                     district=district,
-                    decision=admin_status,
+                    decision=admin_status,  # Final decision
                     score=float(pv_row.get('sentiment_text', 0) or 0),
                     comments=pv_row.get('comment', ''),
                     summary=pv_row.get('elementsSummary', ''),
                     voice_comments=pv_row.get('voice_comments', ''),
                     house_analysis=analysis_row.get('issuesFound', '') if analysis_row else '',
                     verification_date=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                    embedding=None
+                    embedding=None,
+                    ai_decision=pv_row.get('sentiment', ''),  # PhysicalVerification.sentiment - AI decision
+                    admin_decision=admin_status,  # Student.status - Admin final decision (APPROVED/REJECTED)
+                    admin_remarks=admin_remarks  # Admin remarks stored separately
                 )
-                print(f"✅ Added case to RAG with ADMIN decision: {admin_status}")
+                print(f"✅ Added case to RAG - AI: {pv_row.get('sentiment', '')}, Admin: {admin_status}, Remarks: {'Yes' if admin_remarks else 'No'}")
             
         except Exception as rag_error:
             print(f"⚠️ Failed to update RAG: {rag_error}")

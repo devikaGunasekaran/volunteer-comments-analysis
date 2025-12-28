@@ -12,8 +12,11 @@ const adminService = {
     },
 
     // Submit final decision
-    async submitFinalDecision(studentId, status) {
-        return api.post(`/admin/final_status_update/${studentId}`, { admin_status: status });
+    async submitFinalDecision(studentId, status, remarks = '') {
+        return api.post(`/admin/final_status_update/${studentId}`, {
+            admin_status: status,
+            admin_remarks: remarks
+        });
     }
 };
 

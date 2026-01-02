@@ -27,6 +27,10 @@ const LoginPage = () => {
                     navigate('/students-assign');
                 } else if (user.role === 'admin') {
                     navigate('/admin/assign');
+                } else if (user.role === 'tv_admin') {
+                    navigate('/admin/tv-dashboard');
+                } else if (user.role === 'tv') {
+                    navigate('/tv-volunteer');
                 } else {
                     navigate('/dashboard');
                 }

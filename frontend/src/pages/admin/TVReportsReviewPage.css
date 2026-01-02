@@ -1,0 +1,130 @@
+/* TV Reports Review Table View */
+.admin-assign-page {
+    background-color: #f8fafc;
+    min-height: 100vh;
+}
+
+.assigned-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.page-title {
+    color: #1a202c;
+    font-size: 1.875rem;
+    font-weight: 800;
+    margin-bottom: 2rem;
+    position: relative;
+    padding-left: 1rem;
+    border-left: 5px solid #FF6F00;
+}
+
+/* Table Card Wrapper */
+.table-wrapper {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    padding: 1rem;
+}
+
+.custom-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 1rem;
+}
+
+.custom-table thead {
+    background: linear-gradient(135deg, #FFF5E6 0%, #FFE8CC 100%);
+}
+
+.custom-table th {
+    padding: 1.25rem 1rem;
+    text-align: left;
+    font-weight: 700;
+    color: #2d3748;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid #FF9800;
+}
+
+.custom-table tbody tr {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.custom-table tbody tr:hover {
+    background-color: #fffaf0;
+    transform: scale(1.002);
+}
+
+.custom-table td {
+    padding: 1.25rem 1rem;
+    color: #4a5568;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #edf2f7;
+}
+
+.id-link {
+    color: #FF6F00;
+    font-weight: 700;
+    text-decoration: none;
+    padding: 4px 10px;
+    background: #fff5eb;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.id-link:hover {
+    background: #FF6F00;
+    color: white;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.verified {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.status-badge.rejected {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.status-badge.pending {
+    background-color: #fef9c3;
+    color: #854d0e;
+}
+
+.no-data {
+    text-align: center;
+    padding: 3rem;
+    color: #718096;
+    font-style: italic;
+    background: #f7fafc;
+    border-radius: 12px;
+    margin: 2rem 0;
+}
+
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+    font-size: 1.2rem;
+    color: #FF6F00;
+    font-weight: 600;
+}

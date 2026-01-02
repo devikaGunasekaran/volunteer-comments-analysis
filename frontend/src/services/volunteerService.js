@@ -1,3 +1,5 @@
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 // Volunteer Service
 const volunteerService = {
     /**
@@ -6,7 +8,7 @@ const volunteerService = {
      */
     async getAssignedStudents() {
         try {
-            const response = await fetch('http://localhost:5000/api/assigned-students', {
+            const response = await fetch(`${API_BASE_URL}/api/assigned-students`, {
                 credentials: 'include',
             });
 
@@ -29,7 +31,7 @@ const volunteerService = {
      */
     async getStudentDetails(studentId) {
         try {
-            const response = await fetch(`http://localhost:5000/api/student/${studentId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/student/${studentId}`, {
                 credentials: 'include',
             });
 
@@ -52,7 +54,7 @@ const volunteerService = {
      */
     async getStudentImages(studentId) {
         try {
-            const response = await fetch(`http://localhost:5000/get-images/${studentId}`, {
+            const response = await fetch(`${API_BASE_URL}/get-images/${studentId}`, {
                 credentials: 'include',
             });
 
@@ -71,7 +73,7 @@ const volunteerService = {
     async batchQualityCheck(formData) {
         try {
             // Note: formData must contain 'studentId' and 'images'
-            const response = await fetch('http://localhost:5000/api/batch-quality-check', {
+            const response = await fetch(`${API_BASE_URL}/api/batch-quality-check`, {
                 method: 'POST',
                 credentials: 'include',
                 body: formData,
@@ -89,7 +91,7 @@ const volunteerService = {
 
     async finalUploadBatch(formData) {
         try {
-            const response = await fetch('http://localhost:5000/api/final-upload-batch', {
+            const response = await fetch(`${API_BASE_URL}/api/final-upload-batch`, {
                 method: 'POST',
                 credentials: 'include',
                 body: formData,
@@ -107,7 +109,7 @@ const volunteerService = {
 
     async submitPV(data) {
         try {
-            const response = await fetch('http://localhost:5000/api/submit-pv', {
+            const response = await fetch(`${API_BASE_URL}/api/submit-pv`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {

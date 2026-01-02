@@ -91,7 +91,7 @@ const AdminAssignPage = () => {
                                             <td>{index + 1}</td>
                                             <td>
                                                 <Link
-                                                    to={`/admin/decision/${s.studentId}`}
+                                                    to={`/admin/view/${s.studentId}`}
                                                     className="clickable-id"
                                                     onClick={(e) => e.stopPropagation()}
                                                 >
@@ -119,7 +119,7 @@ const AdminAssignPage = () => {
                                                                 <div className="detail-value">{s.sentiment_text}%</div>
                                                             </div>
                                                             <div className="detail-item" style={{ display: 'flex', alignItems: 'end' }}>
-                                                                <Link to={`/admin/decision/${s.studentId}`} className="submit-btn" style={{ padding: '8px 16px', fontSize: '13px', width: 'auto' }}>
+                                                                <Link to={`/admin/view/${s.studentId}`} className="submit-btn" style={{ padding: '8px 16px', fontSize: '13px', width: 'auto' }}>
                                                                     View Full Details & Decide →
                                                                 </Link>
                                                             </div>

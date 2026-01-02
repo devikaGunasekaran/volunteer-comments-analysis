@@ -48,8 +48,9 @@ body {
 
 .header-title-center {
     font-weight: 700;
-    font-size: 20px;
-    color: #2D3748;
+    font-size: 1.5rem;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
     letter-spacing: -0.5px;
     animation: fadeIn 0.6s ease-out 0.1s both;
 }

@@ -92,7 +92,7 @@ def api_assigned_students():
 @volunteer_bp.route("/api/student/<student_id>")
 def api_student_details(student_id):
     """Get full student details"""
-    if 'volunteerId' not in session or session.get('role') != 'pv':
+    if 'volunteerId' not in session or session.get('role') not in ['pv', 'tv']:
         return jsonify({'error': 'Unauthorized'}), 401
 
     conn = get_db_connection()
@@ -396,6 +396,8 @@ def image_count(studentId):
 @volunteer_bp.route("/get-images/<studentId>")
 def get_images(studentId):
     """Get presigned URLs for student images"""
+    if 'volunteerId' not in session or session.get('role') not in ['pv', 'tv']:
+        return jsonify({'error': 'Unauthorized'}), 401
     conn = get_db_connection()
     cursor = conn.cursor()
 

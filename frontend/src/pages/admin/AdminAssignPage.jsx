@@ -54,15 +54,31 @@ const AdminAssignPage = () => {
 
     return (
         <div className="admin-assign-page">
-            <header className="header-with-logout">
-                <button onClick={handleLogout} className="logout-btn-right">Logout</button>
-                <div className="header-center-content">
-                    <img src={logo} alt="Logo" className="header-logo-center" />
-                    <div className="header-title-center">Admin Panel - Verified Students</div>
+            <header className="header">
+                <div><img src={logo} alt="Logo" className="logo-img" /></div>
+                <div className="header-title">Admin Panel - Verified Students</div>
+                <div>
+                    <button onClick={handleLogout} className="logout-link">LOGOUT</button>
                 </div>
             </header>
 
             <div className="assigned-container">
+                {/* Navigation Buttons */}
+                <div className="nav-buttons-container">
+                    <button
+                        onClick={() => navigate('/admin/assign-pv')}
+                        className="nav-btn assign-pv-btn"
+                    >
+                        📋 Assign PV Volunteers
+                    </button>
+                    <button
+                        onClick={() => navigate('/admin/pv-students')}
+                        className="nav-btn completed-pv-btn"
+                    >
+                        ✅ View Completed PV
+                    </button>
+                </div>
+
                 <h2 className="page-title">Students Pending Review ({students.length})</h2>
 
                 <div className="table-wrapper">

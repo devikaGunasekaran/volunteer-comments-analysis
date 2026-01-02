@@ -34,14 +34,12 @@ const StudentsAssignPage = () => {
 
     return (
         <div className="students-assign-page">
-            <header className="header-with-logout">
+            <header className="header-vertical">
                 <button onClick={handleLogout} className="logout-btn-right">
-                    Logout
+                    LOGOUT
                 </button>
-                <div className="header-center-content">
-                    <img src={logo} alt="Logo" className="header-logo-center" />
-                    <div className="header-title-center">PV - Assigned Students</div>
-                </div>
+                <img src={logo} alt="Logo" className="header-logo-center" />
+                <div className="header-title">PV - Assigned Students</div>
             </header>
 
             <div className="page-title">Assigned Students</div>

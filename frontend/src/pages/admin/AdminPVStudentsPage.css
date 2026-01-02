@@ -1,16 +1,17 @@
-/* Version 2.0 - Fixed Header Alignment */
+/* Admin PV Students Page - Matching StudentsAssignPage Design Exactly */
+
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
     background: #f0f2f5;
     margin: 0;
 }
 
-.students-assign-page {
+.admin-pv-students-page {
     min-height: 100vh;
     animation: fadeIn 0.5s ease-out;
 }
 
-/* Header with Logout on Right */
+/* Header with Logout on Right - Matching StudentsAssignPage */
 .header-with-logout {
     background: white;
     padding: 22px 20px;
@@ -42,7 +43,6 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     z-index: 101;
-    /* Ensure on top */
 }
 
 .logout-btn-right:hover {
@@ -66,6 +66,7 @@ body {
 
 .header-logo-center {
     height: 48px;
+    max-width: 150px;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
     transition: transform 0.3s ease;
     animation: fadeIn 0.6s ease-out;
@@ -114,17 +115,17 @@ body {
 }
 
 /* Table Styling */
-table {
+.custom-table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
 }
 
-thead {
+.custom-table thead {
     background: linear-gradient(135deg, #FFF5E6 0%, #FFE8CC 100%);
 }
 
-th {
+.custom-table thead th {
     padding: 16px;
     text-align: left;
     font-weight: 700;
@@ -135,53 +136,53 @@ th {
     border-bottom: 2px solid #FF9800;
 }
 
-th:first-child {
+.custom-table th:first-child {
     border-top-left-radius: 12px;
 }
 
-th:last-child {
+.custom-table th:last-child {
     border-top-right-radius: 12px;
 }
 
-tbody tr {
+.custom-table tbody tr {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     animation: slideIn 0.4s ease-out both;
     border-bottom: 1px solid #F7FAFC;
 }
 
-tbody tr:nth-child(1) {
+.custom-table tbody tr:nth-child(1) {
     animation-delay: 0.3s;
 }
 
-tbody tr:nth-child(2) {
+.custom-table tbody tr:nth-child(2) {
     animation-delay: 0.35s;
 }
 
-tbody tr:nth-child(3) {
+.custom-table tbody tr:nth-child(3) {
     animation-delay: 0.4s;
 }
 
-tbody tr:nth-child(4) {
+.custom-table tbody tr:nth-child(4) {
     animation-delay: 0.45s;
 }
 
-tbody tr:nth-child(5) {
+.custom-table tbody tr:nth-child(5) {
     animation-delay: 0.5s;
 }
 
-tbody tr:hover {
+.custom-table tbody tr:hover {
     background: linear-gradient(90deg, #FFF9F0 0%, #FFFFFF 100%);
     transform: translateX(4px);
     box-shadow: -4px 0 0 #FF9800;
 }
 
-td {
+.custom-table tbody td {
     padding: 16px;
     font-size: 15px;
     color: #4A5568;
 }
 
-.student-id-link {
+.clickable-id {
     color: #FF6F00;
     font-weight: 700;
     text-decoration: none;
@@ -191,7 +192,7 @@ td {
     border-radius: 6px;
 }
 
-.student-id-link::before {
+.clickable-id::before {
     content: '';
     position: absolute;
     bottom: 0;
@@ -202,30 +203,110 @@ td {
     transition: width 0.3s ease;
 }
 
-.student-id-link:hover {
+.clickable-id:hover {
     background: #FFF5E6;
     color: #FF9800;
 }
 
-.student-id-link:hover::before {
+.clickable-id:hover::before {
     width: 100%;
 }
 
-/* Empty State */
-.empty {
-    padding: 60px 30px;
-    text-align: center;
-    color: #718096;
-    font-size: 16px;
-    animation: fadeIn 0.5s ease-out;
+.status-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
 }
 
-.empty.error {
-    color: #E53E3E;
-    background: #FFF5F5;
-    border-radius: 12px;
-    padding: 40px;
-    border: 2px dashed #FC8181;
+.status-select {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-reject {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.status-hold {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-default {
+    background: #e2e3e5;
+    color: #383d41;
+}
+
+.accordion-row {
+    animation: fadeIn 0.3s ease-out !important;
+    background: #FAFAFA !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.accordion-row:hover {
+    transform: none !important;
+    background: #FAFAFA !important;
+}
+
+.accordion-content {
+    background: #F7FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 10px 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.accordion-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.detail-item {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #FF6F00;
+}
+
+.detail-label {
+    font-size: 12px;
+    color: #6c757d;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+.detail-value {
+    font-size: 15px;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.submit-btn {
+    background: #FF6F00;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.submit-btn:hover {
+    background: #FF9800;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 111, 0, 0.4);
 }
 
 /* Animations */
@@ -275,33 +356,6 @@ td {
     }
 }
 
-/* Loading State */
-.loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 400px;
-    font-size: 18px;
-    color: #718096;
-}
-
-.loading::after {
-    content: '';
-    width: 40px;
-    height: 40px;
-    margin-left: 16px;
-    border: 4px solid #E2E8F0;
-    border-top-color: #FF9800;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
     .header-with-logout {
@@ -329,11 +383,11 @@ td {
         overflow-x: auto;
     }
 
-    table {
+    .custom-table {
         min-width: 600px;
     }
 
-    tbody tr:hover {
+    .custom-table tbody tr:hover {
         transform: none;
     }
 }

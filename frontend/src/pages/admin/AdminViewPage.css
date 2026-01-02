@@ -10,7 +10,7 @@
 /* Header - Matching StudentsAssignPage */
 .header-with-logout {
     background: white;
-    padding: 20px 32px;
+    padding: 22px 20px;
     position: relative;
     border-bottom: 2px solid #E2E8F0;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -31,6 +31,7 @@
 
 .header-logo-center {
     height: 48px;
+    max-width: 150px;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
     transition: transform 0.3s ease;
     animation: fadeIn 0.6s ease-out;
@@ -42,7 +43,7 @@
 
 .header-title-center {
     font-weight: 700;
-    font-size: 20px;
+    font-size: 18px;
     color: #2D3748;
     letter-spacing: -0.5px;
     animation: fadeIn 0.6s ease-out 0.1s both;
@@ -502,3 +503,4 @@ audio {
         transform: scale(1);
     }
 }
+

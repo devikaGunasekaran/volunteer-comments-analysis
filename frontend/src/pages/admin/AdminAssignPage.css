@@ -1,4 +1,4 @@
-/* Admin Assign Page - Styled to match StudentsAssignPage options */
+/* Admin Assign Page - Matching StudentsAssignPage Design Exactly */
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
@@ -14,7 +14,7 @@ body {
 /* Header with Logout on Right - Matching StudentsAssignPage */
 .header-with-logout {
     background: white;
-    padding: 20px 32px;
+    padding: 22px 20px;
     position: relative;
     border-bottom: 2px solid #E2E8F0;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -22,36 +22,6 @@ body {
     top: 0;
     z-index: 100;
     animation: slideDown 0.4s ease-out;
-    /* Removed display: flex and height: auto to match reference */
-}
-
-.header-center-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    gap: 12px;
-    /* Removed absolute positioning */
-}
-
-.header-logo-center {
-    height: 48px;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-    transition: transform 0.3s ease;
-    animation: fadeIn 0.6s ease-out;
-}
-
-.header-logo-center:hover {
-    transform: scale(1.05);
-}
-
-.header-title-center {
-    font-weight: 700;
-    font-size: 20px;
-    color: #2D3748;
-    letter-spacing: -0.5px;
-    animation: fadeIn 0.6s ease-out 0.1s both;
 }
 
 .logout-btn-right {
@@ -81,6 +51,84 @@ body {
     box-shadow: 0 2px 4px rgba(255, 111, 0, 0.2);
 }
 
+.logout-btn-right:active {
+    transform: translateY(0);
+}
+
+.header-center-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 12px;
+}
+
+.header-logo-center {
+    height: 48px;
+    max-width: 150px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    transition: transform 0.3s ease;
+    animation: fadeIn 0.6s ease-out;
+}
+
+.header-logo-center:hover {
+    transform: scale(1.05);
+}
+
+.header-title-center {
+    font-weight: 700;
+    font-size: 18px;
+    color: #2D3748;
+    letter-spacing: -0.5px;
+    animation: fadeIn 0.6s ease-out 0.1s both;
+}
+
+/* Navigation Buttons Container */
+.nav-buttons-container {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    padding: 16px 32px 0;
+    animation: fadeIn 0.6s ease-out 0.2s both;
+}
+
+.nav-btn {
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.assign-pv-btn {
+    background: #FF6F00;
+    color: white;
+}
+
+.assign-pv-btn:hover {
+    background: #FF9800;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 111, 0, 0.3);
+}
+
+.completed-pv-btn {
+    background: #FF6F00;
+    color: white;
+}
+
+.completed-pv-btn:hover {
+    background: #FF9800;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 111, 0, 0.3);
+}
+
 /* Page Title */
 .page-title {
     padding: 24px 32px 16px;
@@ -88,9 +136,6 @@ body {
     font-weight: 700;
     color: #1A202C;
     animation: slideIn 0.5s ease-out 0.1s both;
-    text-align: center;
-    /* Center title like assign page usually does? Assign page description didn't specify, but safer to follow general flow or left align if container is max-width */
-    margin: 0;
 }
 
 /* Table Wrapper */
@@ -101,27 +146,24 @@ body {
     animation: scaleIn 0.5s ease-out 0.2s both;
 }
 
-.table-wrapper {
-    background: transparent;
-    /* Wrapper transparent, table handles bg */
-    box-shadow: none;
-    border: none;
+.table-wrapper>table,
+.table-wrapper>.empty {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.3s ease;
 }
 
-/* Using .custom-table to match JSX class */
+.table-wrapper>table:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* Table Styling */
 .custom-table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-    transition: box-shadow 0.3s ease;
-}
-
-.custom-table:hover {
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
 
 .custom-table thead {
@@ -139,14 +181,20 @@ body {
     border-bottom: 2px solid #FF9800;
 }
 
+.custom-table th:first-child {
+    border-top-left-radius: 12px;
+}
+
+.custom-table th:last-child {
+    border-top-right-radius: 12px;
+}
+
 .custom-table tbody tr {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     animation: slideIn 0.4s ease-out both;
     border-bottom: 1px solid #F7FAFC;
-    cursor: pointer;
 }
 
-/* Staggered Animation Delays */
 .custom-table tbody tr:nth-child(1) {
     animation-delay: 0.3s;
 }
@@ -177,8 +225,6 @@ body {
     padding: 16px;
     font-size: 15px;
     color: #4A5568;
-    border-bottom: 1px solid #EDF2F7;
-    vertical-align: middle;
 }
 
 .clickable-id {
@@ -233,27 +279,71 @@ body {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
-.accordion-toggle-btn {
-    background: none;
+.accordion-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.detail-item {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #FF6F00;
+}
+
+.detail-label {
+    font-size: 12px;
+    color: #6c757d;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+.detail-value {
+    font-size: 15px;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.submit-btn {
+    background: #FF6F00;
+    color: white;
     border: none;
-    color: #718096;
-    font-size: 14px;
+    padding: 12px 24px;
+    border-radius: 6px;
     cursor: pointer;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: all 0.2s;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
 }
 
-.accordion-toggle-btn:hover {
-    background: #EDF2F7;
-    color: #4A5568;
+.submit-btn:hover {
+    background: #FF9800;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 111, 0, 0.4);
 }
 
-/* Keyframes */
+/* Empty State */
+.empty {
+    padding: 60px 30px;
+    text-align: center;
+    color: #718096;
+    font-size: 16px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.empty.error {
+    color: #E53E3E;
+    background: #FFF5F5;
+    border-radius: 12px;
+    padding: 40px;
+    border: 2px dashed #FC8181;
+}
+
+/* Animations */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -299,3 +389,45 @@ body {
         transform: scale(1);
     }
 }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header-with-logout {
+        padding: 16px;
+    }
+
+    .logout-btn-right {
+        top: 16px;
+        right: 16px;
+        padding: 8px 18px;
+        font-size: 13px;
+    }
+
+    .header-title-center {
+        font-size: 18px;
+    }
+
+    .nav-buttons-container {
+        flex-direction: column;
+        padding: 16px;
+    }
+
+    .page-title {
+        font-size: 20px;
+        padding: 20px 16px 12px;
+    }
+
+    .table-wrapper {
+        padding: 0 16px;
+        overflow-x: auto;
+    }
+
+    .custom-table {
+        min-width: 600px;
+    }
+
+    .custom-table tbody tr:hover {
+        transform: none;
+    }
+}
+

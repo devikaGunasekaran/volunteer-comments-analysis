@@ -23,7 +23,11 @@ const LoginPage = () => {
                 const { user } = result.data;
 
                 // Redirect based on role
-                if (user.role === 'pv') {
+                if (user.role === 'superadmin') {
+                    navigate('/superadmin/dashboard');
+                } else if (user.role === 'vi') {
+                    navigate('/vi/dashboard');
+                } else if (user.role === 'pv') {
                     navigate('/students-assign');
                 } else if (user.role === 'admin') {
                     navigate('/admin/assign');

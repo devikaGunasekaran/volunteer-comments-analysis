@@ -408,6 +408,9 @@ def api_admin_student_details(student_id):
     except Exception as e:
         print("Error in api_admin_student_details:", e)
         return jsonify({'error': str(e)}), 500
+
+
+@admin_bp.route("/final_status_update/<student_id>", methods=["POST"])
 def final_status_update(student_id):
     """Update final admin decision"""
     if 'role' not in session or session.get('role') != 'admin':
@@ -555,3 +558,166 @@ def interview_decision(student_id):
     except Exception as e:
         print(f"Error in interview_decision: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
+
+
+# =====================================================
+# PHYSICAL VERIFICATION WORKFLOW ENDPOINTS
+# =====================================================
+
+@admin_bp.route("/api/tv-selected-students")
+def api_tv_selected_students():
+    """Get students from TeleVerification with status='SELECTED' ready for PV assignment"""
+    if 'role' not in session or session.get('role') != 'admin':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        rows = fetchall_dict("""
+            SELECT 
+                s.studentId,
+                s.name,
+                s.district,
+                s.phone,
+                s.email,
+                s.gender,
+                tv.status as tv_status,
+                tv.verificationDate as tv_date,
+                tv.comments as tv_comments,
+                pv.volunteerId as assigned_volunteer_id,
+                v.email as volunteer_email,
+                v.volunteerId as volunteer_name
+            FROM Student s
+            INNER JOIN TeleVerification tv ON s.studentId = tv.studentId
+            LEFT JOIN PhysicalVerification pv ON s.studentId = pv.studentId
+            LEFT JOIN Volunteer v ON pv.volunteerId = v.volunteerId
+            WHERE tv.status = 'SELECTED'
+            ORDER BY tv.verificationDate DESC
+        """)
+        return jsonify({'students': rows})
+    except Exception as e:
+        print(f"Error in api_tv_selected_students: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@admin_bp.route("/api/volunteers")
+def api_volunteers():
+    """Get all volunteers from Volunteer table"""
+    if 'role' not in session or session.get('role') != 'admin':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        rows = fetchall_dict("""
+            SELECT 
+                volunteerId,
+                email,
+                role
+            FROM Volunteer
+            WHERE role = 'pv'
+            ORDER BY volunteerId
+        """)
+        return jsonify({'volunteers': rows})
+    except Exception as e:
+        print(f"Error in api_volunteers: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@admin_bp.route("/api/assign-pv-volunteer", methods=["POST"])
+def api_assign_pv_volunteer():
+    """Assign a volunteer to a student for physical verification"""
+    if 'role' not in session or session.get('role') != 'admin':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        data = request.json
+        student_id = data.get('studentId')
+        volunteer_id = data.get('volunteerId')
+        volunteer_email = data.get('volunteerEmail')
+        
+        if not student_id:
+            return jsonify({'error': 'studentId is required'}), 400
+        
+        # If email provided, lookup volunteerId
+        if volunteer_email and not volunteer_id:
+            volunteer_row = fetchone_dict(
+                "SELECT volunteerId FROM Volunteer WHERE email = %s",
+                (volunteer_email,)
+            )
+            if not volunteer_row:
+                return jsonify({'error': 'Volunteer not found with that email'}), 404
+            volunteer_id = volunteer_row['volunteerId']
+        
+        if not volunteer_id:
+            return jsonify({'error': 'volunteerId or volunteerEmail is required'}), 400
+        
+        conn = get_db_connection()
+        if not conn:
+            return jsonify({'error': 'Database connection failed'}), 500
+        
+        cursor = conn.cursor()
+        
+        # Check if assignment already exists
+        cursor.execute("""
+            SELECT * FROM PhysicalVerification 
+            WHERE studentId = %s
+        """, (student_id,))
+        existing = cursor.fetchone()
+        
+        if existing:
+            # Update existing assignment
+            cursor.execute("""
+                UPDATE PhysicalVerification
+                SET volunteerId = %s,
+                    status = NULL,
+                    verificationDate = NULL
+                WHERE studentId = %s
+            """, (volunteer_id, student_id))
+            message = 'Volunteer reassigned successfully'
+        else:
+            # Create new assignment
+            cursor.execute("""
+                INSERT INTO PhysicalVerification (studentId, volunteerId, status)
+                VALUES (%s, %s, NULL)
+            """, (student_id, volunteer_id))
+            message = 'Volunteer assigned successfully'
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        return jsonify({'success': True, 'message': message})
+        
+    except Exception as e:
+        print(f"Error in api_assign_pv_volunteer: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@admin_bp.route("/api/completed-pv-students")
+def api_completed_pv_students():
+    """Get students with completed physical verification"""
+    if 'role' not in session or session.get('role') != 'admin':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        rows = fetchall_dict("""
+            SELECT 
+                s.studentId,
+                s.name,
+                s.district,
+                s.phone,
+                s.status as student_status,
+                pv.status as pv_status,
+                pv.sentiment,
+                pv.sentiment_text,
+                pv.verificationDate,
+                v.volunteerId,
+                v.email as volunteer_email
+            FROM Student s
+            INNER JOIN PhysicalVerification pv ON s.studentId = pv.studentId
+            LEFT JOIN Volunteer v ON pv.volunteerId = v.volunteerId
+            WHERE pv.status IS NOT NULL 
+                AND pv.status != 'PROCESSING'
+            ORDER BY pv.verificationDate DESC
+        """)
+        return jsonify({'students': rows})
+    except Exception as e:
+        print(f"Error in api_completed_pv_students: {e}")
+        return jsonify({'error': str(e)}), 500

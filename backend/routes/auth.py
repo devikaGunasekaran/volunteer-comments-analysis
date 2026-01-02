@@ -30,7 +30,9 @@ def login():
                 flash("Login successful!", "success")
                 
                 # Redirect based on role
-                if volunteer['role'] == 'pv':
+                if volunteer['role'] == 'superadmin':
+                    return redirect(url_for('superadmin.superadmin_dashboard'))
+                elif volunteer['role'] == 'pv':
                     return redirect(url_for('volunteer.students_assign'))
                 elif volunteer['role'] == 'admin':
                     return redirect(url_for('admin.admin_assign'))
@@ -82,6 +84,7 @@ def api_login():
                     "role": volunteer['role'],
                     "name": volunteer.get('name', '')
                 },
+                "role": volunteer['role'],  # Add role to response for frontend routing
                 "token": "simple_token_" + volunteer['volunteerId']  # TODO: Implement JWT
             })
         else:

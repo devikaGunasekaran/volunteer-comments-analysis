@@ -17,7 +17,34 @@ const adminService = {
             admin_status: status,
             admin_remarks: remarks
         });
+    },
+
+    // Physical Verification Workflow APIs
+
+    // Get students from TeleVerification with status='SELECTED'
+    async getTVSelectedStudents() {
+        return api.get('/admin/api/tv-selected-students');
+    },
+
+    // Get all volunteers
+    async getVolunteers() {
+        return api.get('/admin/api/volunteers');
+    },
+
+    // Assign volunteer to student for PV
+    async assignPVVolunteer(studentId, volunteerId, volunteerEmail = null) {
+        return api.post('/admin/api/assign-pv-volunteer', {
+            studentId,
+            volunteerId,
+            volunteerEmail
+        });
+    },
+
+    // Get students with completed PV
+    async getCompletedPVStudents() {
+        return api.get('/admin/api/completed-pv-students');
     }
 };
 
 export default adminService;
+

@@ -1,33 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import adminService from '../../services/adminService';
+import viVolunteerService from '../../services/viVolunteerService';
 import authService from '../../services/authService';
 import logo from '../../assets/logo_icon.jpg';
-import './AdminViewPage.css';
+import './VIInterviewFormPage.css';
 
-const AdminViewPage = () => {
+const VIInterviewFormPage = () => {
     const { studentId } = useParams();
     const navigate = useNavigate();
 
-    // State
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState(null);
-    const [decision, setDecision] = useState('');
+    const [recommendation, setRecommendation] = useState('');
     const [remarks, setRemarks] = useState('');
     const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
-        loadData();
+        loadStudentDetails();
     }, [studentId]);
 
-    const loadData = async () => {
+    const loadStudentDetails = async () => {
         try {
-            const response = await adminService.getStudentDetails(studentId);
+            const response = await viVolunteerService.getStudentDetails(studentId);
             setData(response);
         } catch (error) {
             console.error('Error loading student details:', error);
             alert('Failed to load student details');
-            navigate('/admin/dashboard');
+            navigate('/vi/dashboard');
         } finally {
             setLoading(false);
         }
@@ -35,16 +34,28 @@ const AdminViewPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!decision) return alert('Please select a decision');
+
+        if (!recommendation) {
+            return alert('Please select a recommendation');
+        }
+
+        if (!remarks || remarks.trim().length < 50) {
+            return alert('Remarks must be at least 50 characters');
+        }
 
         setSubmitting(true);
         try {
-            const result = await adminService.submitFinalDecision(studentId, decision, remarks);
+            const result = await viVolunteerService.submitInterview(
+                studentId,
+                recommendation,
+                remarks
+            );
+
             if (result.success) {
-                alert('Decision saved successfully!');
-                navigate('/admin/dashboard');
+                alert('Interview submitted successfully!');
+                navigate('/vi/dashboard');
             } else {
-                alert('Error submitting decision: ' + result.error);
+                alert('Error submitting interview: ' + result.error);
             }
         } catch (error) {
             console.error(error);
@@ -54,35 +65,28 @@ const AdminViewPage = () => {
         }
     };
 
-    if (loading) return <div className="loading">Loading details...</div>;
+    const handleLogout = () => {
+        authService.logout();
+        navigate('/login');
+    };
+
+    if (loading) return <div className="loading">Loading student details...</div>;
     if (!data) return <div className="error">Student not found</div>;
 
     const { student, pv, tv, audio_url, images, collective_analysis, marks10, marks12 } = data;
     const sentimentScore = parseFloat(pv?.sentiment_text || 0);
 
-    // Debug logging
-    console.log('Admin View Data:', data);
-    console.log('Marks10:', marks10);
-    console.log('Marks12:', marks12);
-
     return (
-        <div className="admin-view-page">
+        <div className="vi-interview-form-page">
             <header className="header-vertical">
-                <button
-                    onClick={() => {
-                        authService.logout();
-                        navigate('/login');
-                    }}
-                    className="logout-btn-right"
-                >
+                <button onClick={handleLogout} className="logout-btn-right">
                     LOGOUT
                 </button>
                 <img src={logo} alt="Logo" className="header-logo-center" />
-                <div className="header-title">Admin - Student Verification Review</div>
+                <div className="header-title">Virtual Interview - Student Review</div>
             </header>
 
             <div className="view-container">
-
                 {/* 1. Student Details */}
                 <div className="section-box">
                     <div className="section-title">Student Details</div>
@@ -114,12 +118,12 @@ const AdminViewPage = () => {
                     </div>
                 </div>
 
-                {/* 2. Student Marks - Only show if data exists */}
+                {/* 2. Academic Performance */}
                 {(marks10 || marks12) && (
                     <div className="section-box">
                         <div className="section-title">Academic Performance</div>
 
-                        {/* 10th Marks Table */}
+                        {/* 10th Marks */}
                         {marks10 && (
                             <div className="marks-table-container">
                                 <h4 className="marks-title">10th Standard</h4>
@@ -132,14 +136,14 @@ const AdminViewPage = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {['tamil', 'english', 'maths', 'science', 'social'].map((subject, index) => (
-                                            <tr key={subject} style={{ animationDelay: `${index * 0.1}s` }} className="animated-row">
+                                        {['tamil', 'english', 'maths', 'science', 'social'].map((subject) => (
+                                            <tr key={subject}>
                                                 <td style={{ textTransform: 'capitalize' }}>{subject}</td>
                                                 <td className="font-bold">{marks10?.[subject] || '-'}</td>
                                                 <td><span className="pass-badge">Pass</span></td>
                                             </tr>
                                         ))}
-                                        <tr className="total-row animated-row" style={{ animationDelay: '0.6s' }}>
+                                        <tr className="total-row">
                                             <td><strong>Total</strong></td>
                                             <td colSpan="2"><strong>{marks10?.total || '-'} / 500</strong></td>
                                         </tr>
@@ -148,7 +152,7 @@ const AdminViewPage = () => {
                             </div>
                         )}
 
-                        {/* 12th Marks Table */}
+                        {/* 12th Marks */}
                         {marks12 && (
                             <div className="marks-table-container" style={{ marginTop: marks10 ? '24px' : '0' }}>
                                 <h4 className="marks-title">12th Standard</h4>
@@ -161,18 +165,18 @@ const AdminViewPage = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {['tamil', 'english', 'maths', 'physics', 'chemistry'].map((subject, index) => (
-                                            <tr key={subject} style={{ animationDelay: `${index * 0.1}s` }} className="animated-row">
+                                        {['tamil', 'english', 'maths', 'physics', 'chemistry'].map((subject) => (
+                                            <tr key={subject}>
                                                 <td style={{ textTransform: 'capitalize' }}>{subject}</td>
                                                 <td className="font-bold">{marks12?.[subject] || '-'}</td>
                                                 <td><span className="pass-badge">Pass</span></td>
                                             </tr>
                                         ))}
-                                        <tr className="total-row animated-row" style={{ animationDelay: '0.6s' }}>
+                                        <tr className="total-row">
                                             <td><strong>Total</strong></td>
                                             <td colSpan="2"><strong>{marks12?.total || '-'} / 600</strong></td>
                                         </tr>
-                                        <tr className="cutoff-row animated-row" style={{ animationDelay: '0.7s' }}>
+                                        <tr className="cutoff-row">
                                             <td><strong>Cutoff</strong></td>
                                             <td colSpan="2" className="cutoff-value">{marks12?.cutoff || '-'}</td>
                                         </tr>
@@ -183,9 +187,9 @@ const AdminViewPage = () => {
                     </div>
                 )}
 
-                {/* 3. Volunteer Comment - Separate Section */}
+                {/* 3. Volunteer Comment */}
                 <div className="section-box">
-                    <div className="section-title">Volunteer Comment</div>
+                    <div className="section-title">PV Volunteer Comment</div>
                     <div className="input-style-box">{pv?.comment || 'No comment available.'}</div>
                 </div>
 
@@ -193,7 +197,7 @@ const AdminViewPage = () => {
                 <div className="section-box">
                     <div className="section-title">Physical Verification Report</div>
 
-                    {/* Audio Player First */}
+                    {/* Audio Player */}
                     <div className="info-item">
                         <div className="info-label">🎤 PV Volunteer Audio Recording</div>
                         {audio_url ? (
@@ -207,19 +211,17 @@ const AdminViewPage = () => {
                         )}
                     </div>
 
-                    {/* AI Summary as Bullet Points */}
+                    {/* AI Summary */}
                     <div className="info-item" style={{ marginTop: '20px' }}>
                         <div className="info-label">AI Summary</div>
                         <div className="ai-summary-points">
                             {pv?.elementsSummary ? (
                                 (() => {
-                                    // Clean the summary text
                                     let cleanedSummary = pv.elementsSummary
-                                        .replace(/TEXT\/AUDIO SUMMARY:\s*/gi, '') // Remove prefix
-                                        .replace(/^\s*;\s*/, '') // Remove leading semicolon
+                                        .replace(/TEXT\/AUDIO SUMMARY:\s*/gi, '')
+                                        .replace(/^\s*;\s*/, '')
                                         .trim();
 
-                                    // Split into sentences and filter
                                     const points = cleanedSummary
                                         .split(/[.!?]+/)
                                         .map(s => s.trim())
@@ -257,7 +259,7 @@ const AdminViewPage = () => {
                             </span>
                         </div>
                         <div className="info-item">
-                            <div className="info-label">Volunteer Recommendation</div>
+                            <div className="info-label">PV Volunteer Recommendation</div>
                             <span className={`badge ${pv?.status === 'SELECT' ? 'green' :
                                 pv?.status === 'REJECT' ? 'red' : 'orange'
                                 }`}>
@@ -267,7 +269,7 @@ const AdminViewPage = () => {
                     </div>
                 </div>
 
-                {/* House Images */}
+                {/* 5. House Images */}
                 <div className="section-box">
                     <div className="section-title">House Images & Analysis</div>
 
@@ -306,39 +308,81 @@ const AdminViewPage = () => {
                     )}
                 </div>
 
-                {/* Admin Decision */}
+                {/* 6. VI Interview Decision */}
                 <div className="decision-box">
-                    <div className="decision-title">Admin Final Decision</div>
-                    <select
-                        className="decision-select"
-                        value={decision}
-                        onChange={(e) => setDecision(e.target.value)}
-                    >
-                        <option value="">-- Select Status --</option>
-                        <option value="APPROVED">APPROVED</option>
-                        <option value="REJECTED">REJECTED</option>
-                    </select>
-                    <br />
-                    <textarea
-                        className="decision-remarks"
-                        placeholder="Add remarks (optional)..."
-                        value={remarks}
-                        onChange={(e) => setRemarks(e.target.value)}
-                        rows="4"
-                    />
-                    <br />
-                    <button
-                        className="decision-btn"
-                        onClick={handleSubmit}
-                        disabled={!decision || submitting}
-                    >
-                        {submitting ? 'Saving...' : 'Update Decision'}
-                    </button>
-                </div>
+                    <div className="decision-title">Virtual Interview Decision</div>
 
+                    <div className="recommendation-section">
+                        <label className="recommendation-label">Final Recommendation *</label>
+                        <div className="radio-group">
+                            <label className="radio-option select-option">
+                                <input
+                                    type="radio"
+                                    name="recommendation"
+                                    value="SELECT"
+                                    checked={recommendation === 'SELECT'}
+                                    onChange={(e) => setRecommendation(e.target.value)}
+                                />
+                                <span className="radio-text">✅ SELECT</span>
+                            </label>
+                            <label className="radio-option reject-option">
+                                <input
+                                    type="radio"
+                                    name="recommendation"
+                                    value="REJECT"
+                                    checked={recommendation === 'REJECT'}
+                                    onChange={(e) => setRecommendation(e.target.value)}
+                                />
+                                <span className="radio-text">❌ REJECT</span>
+                            </label>
+                            <label className="radio-option hold-option">
+                                <input
+                                    type="radio"
+                                    name="recommendation"
+                                    value="ON HOLD"
+                                    checked={recommendation === 'ON HOLD'}
+                                    onChange={(e) => setRecommendation(e.target.value)}
+                                />
+                                <span className="radio-text">⏸️ ON HOLD</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div className="remarks-section">
+                        <label className="remarks-label">
+                            Detailed Remarks * (minimum 50 characters)
+                        </label>
+                        <textarea
+                            className="decision-remarks"
+                            placeholder="Explain why you are selecting/rejecting/holding this student. Include observations from the interview, student's communication skills, technical knowledge, motivation, and any other relevant factors..."
+                            value={remarks}
+                            onChange={(e) => setRemarks(e.target.value)}
+                            rows="6"
+                        />
+                        <div className="char-count">
+                            {remarks.length} / 50 characters minimum
+                        </div>
+                    </div>
+
+                    <div className="button-group">
+                        <button
+                            className="back-btn"
+                            onClick={() => navigate('/vi/dashboard')}
+                        >
+                            ← Back to Dashboard
+                        </button>
+                        <button
+                            className="submit-btn"
+                            onClick={handleSubmit}
+                            disabled={!recommendation || remarks.trim().length < 50 || submitting}
+                        >
+                            {submitting ? 'Submitting...' : 'Submit Interview'}
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     );
 };
 
-export default AdminViewPage;
+export default VIInterviewFormPage;

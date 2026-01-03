@@ -8,6 +8,10 @@ import './AdminAssignPVPage.css';
 const AdminAssignPVPage = () => {
     const [students, setStudents] = useState([]);
     const [volunteers, setVolunteers] = useState([]);
+<<<<<<< HEAD
+=======
+    const [statistics, setStatistics] = useState({ total_tv_selected: 0, total_assigned: 0, completed: 0, pending: 0 });
+>>>>>>> Tarun
     const [loading, setLoading] = useState(true);
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [selectedVolunteer, setSelectedVolunteer] = useState('');
@@ -22,9 +26,16 @@ const AdminAssignPVPage = () => {
 
     const loadData = async () => {
         try {
+<<<<<<< HEAD
             const [studentsData, volunteersData] = await Promise.all([
                 adminService.getTVSelectedStudents(),
                 adminService.getVolunteers()
+=======
+            const [studentsData, volunteersData, statsData] = await Promise.all([
+                adminService.getTVSelectedStudents(),
+                adminService.getVolunteers(),
+                adminService.getPVStatistics()
+>>>>>>> Tarun
             ]);
 
             if (studentsData.students) {
@@ -33,6 +44,12 @@ const AdminAssignPVPage = () => {
             if (volunteersData.volunteers) {
                 setVolunteers(volunteersData.volunteers);
             }
+<<<<<<< HEAD
+=======
+            if (statsData.statistics) {
+                setStatistics(statsData.statistics);
+            }
+>>>>>>> Tarun
         } catch (error) {
             console.error("Failed to load data:", error);
             if (error.response && error.response.status === 401) {
@@ -97,6 +114,7 @@ const AdminAssignPVPage = () => {
         }
     };
 
+<<<<<<< HEAD
     const handleSearchByEmail = async () => {
         if (!searchEmail.trim()) {
             setMessage({ type: 'error', text: 'Please enter an email address' });
@@ -130,6 +148,8 @@ const AdminAssignPVPage = () => {
             setAssigning(false);
         }
     };
+=======
+>>>>>>> Tarun
 
     const filteredVolunteers = volunteers.filter(v =>
         v.email.toLowerCase().includes(searchEmail.toLowerCase())
@@ -148,7 +168,34 @@ const AdminAssignPVPage = () => {
                 <div className="header-title">Admin Panel - Assign PV Volunteers</div>
             </header>
 
+<<<<<<< HEAD
             <div className="page-title">Assign Volunteers for Physical Verification</div>
+=======
+            {/* Statistics Cards */}
+            <div className="stats-container">
+                <div className="stat-card assigned">
+                    <div className="stat-icon">👥</div>
+                    <div className="stat-content">
+                        <div className="stat-value">{statistics.total_assigned}</div>
+                        <div className="stat-label">PV Assigned</div>
+                    </div>
+                </div>
+                <div className="stat-card completed">
+                    <div className="stat-icon">✅</div>
+                    <div className="stat-content">
+                        <div className="stat-value">{statistics.completed}</div>
+                        <div className="stat-label">Completed</div>
+                    </div>
+                </div>
+                <div className="stat-card pending">
+                    <div className="stat-icon">⏳</div>
+                    <div className="stat-content">
+                        <div className="stat-value">{statistics.pending}</div>
+                        <div className="stat-label">Pending</div>
+                    </div>
+                </div>
+            </div>
+>>>>>>> Tarun
 
             <div className="assign-container">
 
@@ -264,6 +311,7 @@ const AdminAssignPVPage = () => {
                                 </div>
                             )}
 
+<<<<<<< HEAD
                             {/* Method 1: Search by Email */}
                             <div className="form-section">
                                 <label>Search Volunteer by Email</label>
@@ -302,6 +350,45 @@ const AdminAssignPVPage = () => {
                                         </option>
                                     ))}
                                 </select>
+=======
+                            {/* Search Input */}
+                            <div className="search-container">
+                                <span className="search-icon-overlay">🔍</span>
+                                <input
+                                    type="text"
+                                    placeholder="Search volunteer by name or email..."
+                                    value={searchEmail}
+                                    onChange={(e) => setSearchEmail(e.target.value)}
+                                    className="search-input"
+                                    autoFocus
+                                />
+                            </div>
+
+                            {/* Volunteer List */}
+                            <div className="volunteer-list-container">
+                                {filteredVolunteers.length === 0 ? (
+                                    <div className="empty-state" style={{ padding: '20px', border: 'none' }}>
+                                        No volunteers found matching "{searchEmail}"
+                                    </div>
+                                ) : (
+                                    filteredVolunteers.map(volunteer => (
+                                        <div
+                                            key={volunteer.volunteerId}
+                                            className={`volunteer-item ${selectedVolunteer === volunteer.volunteerId ? 'selected' : ''}`}
+                                            onClick={() => setSelectedVolunteer(volunteer.volunteerId)}
+                                        >
+                                            <div className="volunteer-info">
+                                                <span className="volunteer-email">{volunteer.email}</span>
+                                                <span className="volunteer-id-badge">ID: {volunteer.volunteerId}</span>
+                                            </div>
+                                            <div className="check-icon">✓</div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+
+                            <div className="modal-footer">
+>>>>>>> Tarun
                                 <button
                                     className="assign-submit-btn"
                                     onClick={handleAssign}

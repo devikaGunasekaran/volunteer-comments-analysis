@@ -36,6 +36,11 @@ def login():
                     return redirect(url_for('volunteer.students_assign'))
                 elif volunteer['role'] == 'admin':
                     return redirect(url_for('admin.admin_assign'))
+                elif volunteer['role'] == 'tv':
+                    # This is for server-side templates, but we are moving to React for TV.
+                    # Ideally this route usage decreases, but keeping for completeness.
+                    # Since React will use /api/login, this might just be fallback.
+                    return redirect(url_for('auth.login')) # Or a placeholder page
                 else:
                     return redirect(url_for('volunteer.students_assign'))
             else:

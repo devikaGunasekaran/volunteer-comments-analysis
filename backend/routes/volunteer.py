@@ -63,7 +63,7 @@ def pv_form(student_id):
 
 @volunteer_bp.route("/api/assigned-students")
 def api_assigned_students():
-    """Get students assigned to logged-in volunteer"""
+    """Get students assigned to logged-in volunteer with statistics"""
     if 'volunteerId' not in session or session.get('role') != 'pv':
         return jsonify({'error': 'Unauthorized'}), 401
 
@@ -74,7 +74,8 @@ def api_assigned_students():
         return jsonify({'error': 'Database connection failed'}), 500
 
     cursor = conn.cursor(dictionary=True)
-    # Only show if pv.status IS NULL (not started yet)
+    
+    # Get pending students (status IS NULL)
     query = """
         SELECT s.studentId, s.name AS studentName, s.phone AS phoneNumber, s.district, pv.status
         FROM PhysicalVerification pv
@@ -83,16 +84,36 @@ def api_assigned_students():
     """
     cursor.execute(query, (volunteerId,))
     students = cursor.fetchall()
+    
+    # Get statistics
+    stats_query = """
+        SELECT 
+            COUNT(*) as total_assigned,
+            SUM(CASE WHEN status IS NOT NULL AND status != 'PROCESSING' THEN 1 ELSE 0 END) as completed,
+            SUM(CASE WHEN status IS NULL OR status = 'PROCESSING' THEN 1 ELSE 0 END) as pending
+        FROM PhysicalVerification
+        WHERE volunteerId = %s
+    """
+    cursor.execute(stats_query, (volunteerId,))
+    stats = cursor.fetchone()
+    
     cursor.close()
     conn.close()
 
-    return jsonify({'students': students})
+    return jsonify({
+        'students': students,
+        'statistics': {
+            'total_assigned': stats['total_assigned'] or 0,
+            'completed': stats['completed'] or 0,
+            'pending': stats['pending'] or 0
+        }
+    })
 
 
 @volunteer_bp.route("/api/student/<student_id>")
 def api_student_details(student_id):
     """Get full student details"""
-    if 'volunteerId' not in session or session.get('role') != 'pv':
+    if 'volunteerId' not in session or session.get('role') not in ['pv', 'tv']:
         return jsonify({'error': 'Unauthorized'}), 401
 
     conn = get_db_connection()
@@ -396,6 +417,8 @@ def image_count(studentId):
 @volunteer_bp.route("/get-images/<studentId>")
 def get_images(studentId):
     """Get presigned URLs for student images"""
+    if 'volunteerId' not in session or session.get('role') not in ['pv', 'tv']:
+        return jsonify({'error': 'Unauthorized'}), 401
     conn = get_db_connection()
     cursor = conn.cursor()
 

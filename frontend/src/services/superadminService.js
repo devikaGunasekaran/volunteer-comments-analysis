@@ -111,6 +111,81 @@ const superadminService = {
             console.error('Error fetching VI details:', error);
             throw error;
         }
+<<<<<<< HEAD
+=======
+    },
+
+    /**
+     * Get students ready for final decision (completed RI)
+     */
+    getStudentsForFinalDecision: async () => {
+        try {
+            const response = await axios.get(`${API_BASE}/superadmin/api/students-for-final-decision`, {
+                withCredentials: true
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching students for final decision:', error);
+            throw error;
+        }
+    },
+
+    /**
+     * Submit final scholarship decision
+     * @param {string} studentId - Student ID
+     * @param {string} decision - 'SELECTED' or 'REJECTED'
+     * @param {string} remarks - Decision remarks
+     */
+    submitFinalDecision: async (studentId, decision, remarks, riDetails = {}) => {
+        try {
+            const response = await axios.post(
+                `${API_BASE}/superadmin/api/submit-final-decision`,
+                {
+                    studentId,
+                    decision,
+                    remarks,
+                    riDetails
+                },
+                {
+                    withCredentials: true
+                }
+            );
+            return response.data;
+        } catch (error) {
+            console.error('Error submitting final decision:', error);
+            throw error;
+        }
+    },
+
+    /**
+     * Get all students with final decisions
+     */
+    getFinalDecisions: async () => {
+        try {
+            const response = await axios.get(`${API_BASE}/superadmin/api/final-decisions`, {
+                withCredentials: true
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching final decisions:', error);
+            throw error;
+        }
+    },
+
+    /**
+     * Get final selection statistics
+     */
+    getFinalSelectionStats: async () => {
+        try {
+            const response = await axios.get(`${API_BASE}/superadmin/api/final-selection-stats`, {
+                withCredentials: true
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching final selection stats:', error);
+            throw error;
+        }
+>>>>>>> Tarun
     }
 };
 

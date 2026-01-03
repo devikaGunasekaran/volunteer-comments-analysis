@@ -19,6 +19,7 @@ const adminService = {
         });
     },
 
+<<<<<<< HEAD
     // Physical Verification Workflow APIs
 
     // Get students from TeleVerification with status='SELECTED'
@@ -43,6 +44,44 @@ const adminService = {
     // Get students with completed PV
     async getCompletedPVStudents() {
         return api.get('/admin/api/completed-pv-students');
+=======
+    // --- TV Workflow ---
+
+    // Get unassigned TV students
+    async getUnassignedTVStudents() {
+        return api.get('/admin/api/unassigned-tv-students');
+    },
+
+    // Get all TV volunteers
+    async getTVVolunteers() {
+        return api.get('/admin/api/tv-volunteers');
+    },
+
+    // Assign students to TV volunteer
+    async assignTV(studentIds, volunteerId) {
+        return api.post('/admin/api/assign-tv', { studentIds, volunteerId });
+    },
+
+<<<<<<< Updated upstream
+    // Get submitted TV reports for review
+    async getTVReports() {
+        return api.get('/admin/api/submitted-tv-reports');
+    },
+
+    // Admin decision on TV review
+    async reviewTVSubmission(studentId, decision, remarks = '') {
+        return api.post('/admin/api/review-tv-submission', { studentId, decision, remarks });
+=======
+    // Get students with completed PV
+    async getCompletedPVStudents() {
+        return api.get('/admin/api/completed-pv-students');
+    },
+
+    // Get PV statistics for admin dashboard
+    async getPVStatistics() {
+        return api.get('/admin/api/pv-statistics');
+>>>>>>> Stashed changes
+>>>>>>> Tarun
     }
 };
 

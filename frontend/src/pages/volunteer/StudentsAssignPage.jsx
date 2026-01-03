@@ -7,6 +7,7 @@ import logo from '../../assets/logo_icon.jpg';
 
 const StudentsAssignPage = () => {
     const [students, setStudents] = useState([]);
+    const [statistics, setStatistics] = useState({ total_assigned: 0, completed: 0, pending: 0 });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
@@ -21,6 +22,7 @@ const StudentsAssignPage = () => {
         const result = await volunteerService.getAssignedStudents();
         if (result.success) {
             setStudents(result.students);
+            setStatistics(result.statistics || { total_assigned: 0, completed: 0, pending: 0 });
             setError('');
         } else {
             setError(result.error);
@@ -41,6 +43,31 @@ const StudentsAssignPage = () => {
                 <img src={logo} alt="Logo" className="header-logo-center" />
                 <div className="header-title">PV - Assigned Students</div>
             </header>
+
+            {/* Statistics Cards */}
+            <div className="stats-container">
+                <div className="stat-card total">
+                    <div className="stat-icon">📊</div>
+                    <div className="stat-content">
+                        <div className="stat-value">{statistics.total_assigned}</div>
+                        <div className="stat-label">Total Assigned</div>
+                    </div>
+                </div>
+                <div className="stat-card completed">
+                    <div className="stat-icon">✅</div>
+                    <div className="stat-content">
+                        <div className="stat-value">{statistics.completed}</div>
+                        <div className="stat-label">Completed</div>
+                    </div>
+                </div>
+                <div className="stat-card pending">
+                    <div className="stat-icon">⏳</div>
+                    <div className="stat-content">
+                        <div className="stat-value">{statistics.pending}</div>
+                        <div className="stat-label">Pending</div>
+                    </div>
+                </div>
+            </div>
 
             <div className="page-title">Assigned Students</div>
 

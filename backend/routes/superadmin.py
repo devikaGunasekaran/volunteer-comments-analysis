@@ -245,3 +245,212 @@ def get_vi_details(student_id):
     except Exception as e:
         print(f"Error fetching VI details: {e}")
         return jsonify({'error': str(e)}), 500
+<<<<<<< HEAD
+=======
+
+
+# ============================================
+# Final Selection/Rejection Endpoints
+# ============================================
+
+@superadmin_bp.route('/api/students-for-final-decision', methods=['GET'])
+def get_students_for_final_decision():
+    """
+    Get students who have been assigned RI volunteer and are ready for final decision
+    Returns complete student journey: PV, VI, RI details
+    """
+    try:
+        query = """
+            SELECT 
+                s.studentId,
+                s.name,
+                s.district,
+                s.phone,
+                s.email,
+                s.status as student_status,
+                s.finalDecision,
+                s.finalRemarks,
+                pv.verificationDate as pv_date,
+                pv.sentiment as pv_recommendation,
+                pv.comment as pv_comments,
+                pv.elementsSummary as pv_elements,
+                pv.sentiment_text as pv_sentiment_score,
+                pv_vol.name as pv_volunteer_name,
+                pv_vol.email as pv_volunteer_email,
+                vi.interviewDate as vi_date,
+                vi.status as vi_status,
+                vi.overallRecommendation as vi_recommendation,
+                vi.comments as vi_comments,
+                vi.technicalScore as vi_technical_score,
+                vi.communicationScore as vi_communication_score,
+                vi_vol.name as vi_volunteer_name,
+                vi_vol.email as vi_volunteer_email,
+                ri.assignedDate as ri_assigned_date,
+                ri.interviewDate as ri_date,
+                ri.status as ri_status,
+                ri.overallRecommendation as ri_recommendation,
+                ri.remarks as ri_remarks,
+                ri.technicalScore as ri_technical_score,
+                ri.communicationScore as ri_communication_score,
+                ri_vol.name as ri_volunteer_name,
+                ri_vol.email as ri_volunteer_email,
+                tv.volunteerId as tv_volunteer_id, tv_vol.name as tv_volunteer_name, 
+                tv.verificationDate as tv_date, tv.status as tv_status, tv.comments as tv_comments
+            FROM Student s
+            INNER JOIN RealInterview ri ON s.studentId = ri.studentId
+            LEFT JOIN Volunteer ri_vol ON ri.volunteerId = ri_vol.volunteerId
+            LEFT JOIN VirtualInterview vi ON s.studentId = vi.studentId
+            LEFT JOIN Volunteer vi_vol ON vi.volunteerId = vi_vol.volunteerId
+            LEFT JOIN PhysicalVerification pv ON s.studentId = pv.studentId
+            LEFT JOIN Volunteer pv_vol ON pv.volunteerId = pv_vol.volunteerId
+            LEFT JOIN TeleVerification tv ON s.studentId = tv.studentId
+            LEFT JOIN Volunteer tv_vol ON tv.volunteerId = tv_vol.volunteerId
+            WHERE ri.volunteerId IS NOT NULL
+              AND s.finalDecision IS NULL
+            ORDER BY ri.assignedDate DESC
+        """
+        students = fetchall_dict(query)
+        return jsonify({'success': True, 'students': students})
+    except Exception as e:
+        print(f"Error fetching students for final decision: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@superadmin_bp.route('/api/submit-final-decision', methods=['POST'])
+def submit_final_decision():
+    """
+    Submit final scholarship decision (SELECTED/REJECTED) with remarks
+    """
+    try:
+        data = request.get_json()
+        student_id = data.get('studentId')
+        decision = data.get('decision')  # 'SELECTED' or 'REJECTED'
+        remarks = data.get('remarks')
+        
+        if not student_id or not decision or not remarks:
+            return jsonify({'error': 'studentId, decision, and remarks are required'}), 400
+        
+        if decision not in ['SELECTED', 'REJECTED']:
+            return jsonify({'error': 'decision must be SELECTED or REJECTED'}), 400
+        
+        superadmin_id = session.get('volunteerId', 'superadmin')
+        
+        # Update student with final decision
+        execute_query("""
+            UPDATE Student
+            SET finalDecision = %s,
+                finalRemarks = %s,
+                finalDecisionDate = %s,
+                finalDecisionBy = %s
+            WHERE studentId = %s
+        """, (decision, remarks, datetime.now(), superadmin_id, student_id))
+
+        ri_details = data.get('riDetails', {})
+        ri_technical_score = ri_details.get('technicalScore')
+        ri_communication_score = ri_details.get('communicationScore')
+        ri_recommendation = ri_details.get('recommendation')
+        ri_remarks = ri_details.get('riRemarks')
+
+        # Also update RealInterview status to COMPLETED as per user workflow
+        # "when student details filled into final scholarship... he should get into view completed real interview"
+        execute_query("""
+            UPDATE RealInterview
+            SET status = 'COMPLETED',
+                overallRecommendation = %s,
+                remarks = %s,
+                technicalScore = %s,
+                communicationScore = %s,
+                interviewDate = %s,
+                updatedAt = NOW()
+            WHERE studentId = %s
+        """, (ri_recommendation or decision, ri_remarks or remarks, 
+              ri_technical_score, ri_communication_score, 
+              datetime.now(), student_id))
+        
+        return jsonify({
+            'success': True,
+            'message': f'Student {decision.lower()} for scholarship successfully'
+        })
+        
+    except Exception as e:
+        print(f"Error submitting final decision: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@superadmin_bp.route('/api/final-decisions', methods=['GET'])
+def get_final_decisions():
+    """
+    Get all students with final decisions (SELECTED/REJECTED)
+    """
+    try:
+        query = """
+            SELECT 
+                s.studentId,
+                s.name,
+                s.district,
+                s.phone,
+                s.email,
+                s.finalDecision,
+                s.finalRemarks,
+                s.finalDecisionDate,
+                s.finalDecisionBy,
+                ri.overallRecommendation as ri_recommendation,
+                ri.remarks as ri_remarks,
+                vi.overallRecommendation as vi_recommendation
+            FROM Student s
+            LEFT JOIN RealInterview ri ON s.studentId = ri.studentId
+            LEFT JOIN VirtualInterview vi ON s.studentId = vi.studentId
+            WHERE s.finalDecision IS NOT NULL
+            ORDER BY s.finalDecisionDate DESC
+        """
+        students = fetchall_dict(query)
+        return jsonify({'success': True, 'students': students})
+    except Exception as e:
+        print(f"Error fetching final decisions: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@superadmin_bp.route('/api/final-selection-stats', methods=['GET'])
+def get_final_selection_stats():
+    """
+    Get statistics for final selection dashboard
+    """
+    try:
+        # Count students pending final decision
+        pending_query = """
+            SELECT COUNT(*) as count
+            FROM Student s
+            INNER JOIN RealInterview ri ON s.studentId = ri.studentId
+            WHERE ri.volunteerId IS NOT NULL
+              AND s.finalDecision IS NULL
+        """
+        pending = fetchone_dict(pending_query)
+        
+        # Count selected students
+        selected_query = """
+            SELECT COUNT(*) as count
+            FROM Student
+            WHERE finalDecision = 'SELECTED'
+        """
+        selected = fetchone_dict(selected_query)
+        
+        # Count rejected students
+        rejected_query = """
+            SELECT COUNT(*) as count
+            FROM Student
+            WHERE finalDecision = 'REJECTED'
+        """
+        rejected = fetchone_dict(rejected_query)
+        
+        return jsonify({
+            'success': True,
+            'stats': {
+                'pending': pending['count'] if pending else 0,
+                'selected': selected['count'] if selected else 0,
+                'rejected': rejected['count'] if rejected else 0
+            }
+        })
+    except Exception as e:
+        print(f"Error fetching final selection stats: {e}")
+        return jsonify({'error': str(e)}), 500
+>>>>>>> Tarun

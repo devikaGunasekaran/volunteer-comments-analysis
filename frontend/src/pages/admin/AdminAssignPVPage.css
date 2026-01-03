@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 /* Admin Assign PV Page - Matching StudentsAssignPage Design Exactly */
+=======
+/* Admin Assign PV Page - Consistent Header Design */
+>>>>>>> Tarun
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
@@ -11,6 +15,7 @@ body {
     animation: fadeIn 0.5s ease-out;
 }
 
+<<<<<<< HEAD
 /* Header with Logout on Right - Matching StudentsAssignPage */
 .header-with-logout {
     background: white;
@@ -22,14 +27,30 @@ body {
     top: 0;
     z-index: 100;
     animation: slideDown 0.4s ease-out;
+=======
+/* Header - Matching Other Pages */
+.header-vertical {
+    background: white;
+    padding: 20px;
+    position: relative;
+    border-bottom: 2px solid #E2E8F0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+>>>>>>> Tarun
 }
 
 .logout-btn-right {
     position: absolute;
     top: 16px;
     right: 24px;
+<<<<<<< HEAD
     width: auto;
     min-width: 0;
+=======
+>>>>>>> Tarun
     background: #FF6F00;
     border: none;
     color: white;
@@ -42,7 +63,10 @@ body {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     text-transform: uppercase;
     letter-spacing: 0.5px;
+<<<<<<< HEAD
     z-index: 101;
+=======
+>>>>>>> Tarun
 }
 
 .logout-btn-right:hover {
@@ -51,6 +75,7 @@ body {
     box-shadow: 0 2px 4px rgba(255, 111, 0, 0.2);
 }
 
+<<<<<<< HEAD
 .logout-btn-right:active {
     transform: translateY(0);
 }
@@ -64,6 +89,8 @@ body {
     gap: 12px;
 }
 
+=======
+>>>>>>> Tarun
 .header-logo-center {
     height: 48px;
     max-width: 150px;
@@ -76,12 +103,109 @@ body {
     transform: scale(1.05);
 }
 
+<<<<<<< HEAD
 .header-title-center {
     font-weight: 700;
     font-size: 18px;
     color: #2D3748;
     letter-spacing: -0.5px;
     animation: fadeIn 0.6s ease-out 0.1s both;
+=======
+.header-title {
+    font-weight: 700;
+    font-size: 18px;
+    color: #2D3748;
+    text-align: center;
+}
+
+/* Statistics Cards */
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    margin: 24px auto;
+    padding: 0 24px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    animation: slideIn 0.5s ease-out;
+    border: 2px solid #f7f7f7;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.stat-card.total {
+    border-left: 5px solid #FDB022;
+    background: linear-gradient(135deg, #FFFBF0 0%, #FFFFFF 100%);
+}
+
+.stat-card.assigned {
+    border-left: 5px solid #F59E0B;
+    background: linear-gradient(135deg, #FFF9E6 0%, #FFFFFF 100%);
+}
+
+.stat-card.completed {
+    border-left: 5px solid #10B981;
+    background: linear-gradient(135deg, #F0FDF4 0%, #FFFFFF 100%);
+}
+
+.stat-card.pending {
+    border-left: 5px solid #FF9800;
+    background: linear-gradient(135deg, #FFF5E6 0%, #FFFFFF 100%);
+}
+
+.stat-icon {
+    font-size: 40px;
+    line-height: 1;
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1A202C;
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.stat-card.total .stat-value {
+    color: #FDB022;
+}
+
+.stat-card.assigned .stat-value {
+    color: #F59E0B;
+}
+
+.stat-card.completed .stat-value {
+    color: #10B981;
+}
+
+.stat-card.pending .stat-value {
+    color: #FF9800;
+}
+
+.stat-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #718096;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+>>>>>>> Tarun
 }
 
 /* Page Title */
@@ -95,7 +219,11 @@ body {
 
 .assign-container {
     max-width: 1200px;
+<<<<<<< HEAD
     margin: 0 auto;
+=======
+    margin: 24px auto 0;
+>>>>>>> Tarun
 }
 
 .section-card {
@@ -112,6 +240,7 @@ body {
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
 
+<<<<<<< HEAD
 .section-card:nth-child(2) {
     animation-delay: 0.1s;
 }
@@ -120,6 +249,8 @@ body {
     animation-delay: 0.2s;
 }
 
+=======
+>>>>>>> Tarun
 .section-title {
     font-size: 18px;
     font-weight: 700;
@@ -164,6 +295,7 @@ body {
 
 .custom-table tbody tr {
     transition: all 0.3s cubic-bezier(0, 0, 0.2, 1);
+<<<<<<< HEAD
     animation: slideIn 0.4s ease-out both;
     border-bottom: 1px solid #F7FAFC;
 }
@@ -188,6 +320,11 @@ body {
     animation-delay: 0.5s;
 }
 
+=======
+    border-bottom: 1px solid #F7FAFC;
+}
+
+>>>>>>> Tarun
 .custom-table tbody tr:hover {
     background: linear-gradient(90deg, #FFF9F0 0%, #FFFFFF 100%);
     transform: translateX(4px);
@@ -284,6 +421,7 @@ body {
     animation: slideUp 0.3s ease;
 }
 
+<<<<<<< HEAD
 @keyframes slideUp {
     from {
         transform: translateY(50px);
@@ -296,6 +434,8 @@ body {
     }
 }
 
+=======
+>>>>>>> Tarun
 .modal-header {
     padding: 20px 25px;
     border-bottom: 2px solid #e0e0e0;
@@ -371,6 +511,7 @@ body {
     border: 1px solid #f5c6cb;
 }
 
+<<<<<<< HEAD
 .form-section {
     margin-bottom: 25px;
 }
@@ -466,6 +607,107 @@ body {
 .volunteer-select:focus {
     outline: none;
     border-color: #FF6F00;
+=======
+/* Modal form styles */
+.search-container {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 16px;
+    padding-left: 40px;
+    /* Space for icon */
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #FF6F00;
+    box-shadow: 0 0 0 3px rgba(255, 111, 0, 0.1);
+}
+
+.search-icon-overlay {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    font-size: 18px;
+    pointer-events: none;
+}
+
+.volunteer-list-container {
+    border: 2px solid #edf2f7;
+    border-radius: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+    background: #fff;
+    margin-bottom: 24px;
+}
+
+.volunteer-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid #edf2f7;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.volunteer-item:last-child {
+    border-bottom: none;
+}
+
+.volunteer-item:hover {
+    background-color: #f7fafc;
+}
+
+.volunteer-item.selected {
+    background-color: #fffaf0;
+    border-left: 4px solid #FF6F00;
+    padding-left: 12px;
+}
+
+.volunteer-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.volunteer-email {
+    font-weight: 500;
+    color: #2d3748;
+}
+
+.volunteer-id-badge {
+    font-size: 12px;
+    color: #718096;
+    margin-top: 2px;
+}
+
+.check-icon {
+    color: #FF6F00;
+    font-size: 18px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.2s ease;
+}
+
+.volunteer-item.selected .check-icon {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.modal-footer {
+    border-top: 1px solid #edf2f7;
+    padding-top: 20px;
+>>>>>>> Tarun
 }
 
 .assign-submit-btn {
@@ -474,11 +716,22 @@ body {
     color: white;
     border: none;
     padding: 14px;
+<<<<<<< HEAD
     border-radius: 6px;
+=======
+    border-radius: 8px;
+>>>>>>> Tarun
     cursor: pointer;
     font-weight: 600;
     font-size: 15px;
     transition: all 0.3s ease;
+<<<<<<< HEAD
+=======
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+>>>>>>> Tarun
 }
 
 .assign-submit-btn:hover:not(:disabled) {
@@ -503,6 +756,7 @@ body {
     }
 }
 
+<<<<<<< HEAD
 @keyframes slideDown {
     from {
         opacity: 0;
@@ -515,6 +769,8 @@ body {
     }
 }
 
+=======
+>>>>>>> Tarun
 @keyframes slideIn {
     from {
         opacity: 0;
@@ -539,13 +795,32 @@ body {
     }
 }
 
+<<<<<<< HEAD
 /* Responsive Design */
 @media (max-width: 768px) {
     .header-with-logout {
+=======
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header-vertical {
+>>>>>>> Tarun
         padding: 16px;
     }
 
     .logout-btn-right {
+<<<<<<< HEAD
         top: 16px;
         right: 16px;
         padding: 8px 18px;
@@ -554,6 +829,20 @@ body {
 
     .header-title-center {
         font-size: 18px;
+=======
+        top: 12px;
+        right: 16px;
+        padding: 6px 14px;
+        font-size: 12px;
+    }
+
+    .header-logo-center {
+        height: 60px;
+    }
+
+    .header-title {
+        font-size: 16px;
+>>>>>>> Tarun
     }
 
     .page-title {
@@ -563,10 +852,14 @@ body {
 
     .section-card {
         margin: 0 16px 20px;
+<<<<<<< HEAD
     }
 
     .table-wrapper {
         overflow-x: auto;
+=======
+        padding: 16px;
+>>>>>>> Tarun
     }
 
     .custom-table {
@@ -576,5 +869,9 @@ body {
     .custom-table tbody tr:hover {
         transform: none;
     }
+<<<<<<< HEAD
 }
 
+=======
+}
+>>>>>>> Tarun

@@ -8,7 +8,10 @@ import './SuperadminRealInterviewStudentsPage.css';
 const SuperadminRealInterviewStudentsPage = () => {
     const [interviews, setInterviews] = useState([]);
     const [loading, setLoading] = useState(true);
+<<<<<<< HEAD
     const [expandedRow, setExpandedRow] = useState(null);
+=======
+>>>>>>> Tarun
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -33,9 +36,12 @@ const SuperadminRealInterviewStudentsPage = () => {
         navigate('/login');
     };
 
+<<<<<<< HEAD
     const toggleRow = (riId) => {
         setExpandedRow(expandedRow === riId ? null : riId);
     };
+=======
+>>>>>>> Tarun
 
     const getStatusBadgeClass = (status) => {
         switch (status?.toUpperCase()) {
@@ -53,12 +59,20 @@ const SuperadminRealInterviewStudentsPage = () => {
     const getRecommendationBadgeClass = (recommendation) => {
         switch (recommendation?.toUpperCase()) {
             case 'STRONG_YES':
+<<<<<<< HEAD
+=======
+            case 'SELECTED':
+>>>>>>> Tarun
                 return 'strong-yes';
             case 'YES':
                 return 'yes';
             case 'MAYBE':
                 return 'maybe';
             case 'NO':
+<<<<<<< HEAD
+=======
+            case 'REJECTED':
+>>>>>>> Tarun
                 return 'no';
             default:
                 return '';
@@ -105,15 +119,20 @@ const SuperadminRealInterviewStudentsPage = () => {
                                         <th>Student Name</th>
                                         <th>District</th>
                                         <th>RI Volunteer</th>
+<<<<<<< HEAD
                                         <th>Interview Date</th>
                                         <th>Status</th>
                                         <th>Recommendation</th>
                                         <th>Scores</th>
                                         <th>Details</th>
+=======
+                                        <th>Recommendation</th>
+>>>>>>> Tarun
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {interviews.map((interview, index) => (
+<<<<<<< HEAD
                                         <React.Fragment key={interview.riId}>
                                             <tr>
                                                 <td>{index + 1}</td>
@@ -212,6 +231,29 @@ const SuperadminRealInterviewStudentsPage = () => {
                                                 </tr>
                                             )}
                                         </React.Fragment>
+=======
+                                        <tr key={interview.riId}>
+                                            <td>{index + 1}</td>
+                                            <td className="student-id">{interview.studentId}</td>
+                                            <td>{interview.student_name}</td>
+                                            <td>{interview.district}</td>
+                                            <td>
+                                                <div className="volunteer-info">
+                                                    <div className="volunteer-name">
+                                                        {interview.volunteer_name || interview.volunteerId}
+                                                    </div>
+                                                    <div className="volunteer-email">
+                                                        {interview.volunteer_email}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span className={`recommendation-badge ${getRecommendationBadgeClass(interview.overallRecommendation)}`}>
+                                                    {interview.overallRecommendation || 'N/A'}
+                                                </span>
+                                            </td>
+                                        </tr>
+>>>>>>> Tarun
                                     ))}
                                 </tbody>
                             </table>

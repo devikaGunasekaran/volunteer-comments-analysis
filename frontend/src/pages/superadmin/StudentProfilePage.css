@@ -1,0 +1,151 @@
+/* Student Profile Page Styles */
+
+.student-profile-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.profile-section {
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.profile-section h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1A202C;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid #E2E8F0;
+}
+
+.basic-info {
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    border-left: 5px solid #667eea;
+}
+
+.pv-section {
+    border-left: 5px solid #48bb78;
+}
+
+.vi-section {
+    border-left: 5px solid #9f7aea;
+}
+
+.ri-section {
+    border-left: 5px solid #ed8936;
+}
+
+.edu-section {
+    border-left: 5px solid #3182ce;
+}
+
+.final-section {
+    border-left: 5px solid #FF9800;
+    background: linear-gradient(135deg, #fffaf0 0%, #feebc8 100%);
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.info-item label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #718096;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-item span {
+    font-size: 15px;
+    color: #2D3748;
+    font-weight: 500;
+}
+
+.info-item .highlight {
+    color: #667eea;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.info-item .score {
+    color: #48bb78;
+    font-weight: 700;
+}
+
+.badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 13px;
+    display: inline-block;
+    width: fit-content;
+}
+
+.badge.selected,
+.badge.positive,
+.badge.recommended {
+    background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%);
+    color: #22543d;
+}
+
+.badge.rejected,
+.badge.negative,
+.badge.not_recommended {
+    background: linear-gradient(135deg, #fed7d7 0%, #fc8181 100%);
+    color: #742a2a;
+}
+
+.badge.completed {
+    background: linear-gradient(135deg, #bee3f8 0%, #90cdf4 100%);
+    color: #2c5282;
+}
+
+.badge.pending {
+    background: linear-gradient(135deg, #feebc8 0%, #fbd38d 100%);
+    color: #7c2d12;
+}
+
+.comments-box {
+    margin-top: 20px;
+    padding: 16px;
+    background: #f7fafc;
+    border-radius: 10px;
+    border-left: 4px solid #667eea;
+}
+
+.comments-box strong {
+    display: block;
+    color: #1A202C;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.comments-box p {
+    margin: 0;
+    color: #4A5568;
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-section {
+        padding: 20px;
+    }
+}

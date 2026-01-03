@@ -1,0 +1,32 @@
+/* TVFormPage.css - Matching PVFormPage style exactly */
+@import '../volunteer/PVFormPage.css';
+
+/* Remove blue overrides and match orange theme */
+.student-info-banner {
+    background: #FFF3E0;
+    color: #E65100;
+    border: 1px solid #FFE0B2;
+}
+
+textarea:focus,
+select:focus {
+    border-color: #FF9800;
+    box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.1);
+}
+
+.submit-btn {
+    background: linear-gradient(135deg, #FF9800 0%, #FF6F00 100%);
+    box-shadow: 0 4px 6px rgba(255, 152, 0, 0.2);
+}
+
+.submit-btn:hover:not(:disabled) {
+    box-shadow: 0 6px 12px rgba(255, 152, 0, 0.3);
+}
+
+.comments-group {
+    background: #F8FAFC;
+}
+
+.comment-field {
+    border: 1px solid #EDF2F7;
+}

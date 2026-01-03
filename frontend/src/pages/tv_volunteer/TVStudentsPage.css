@@ -1,0 +1,32 @@
+/* TVStudentsPage.css - Matching StudentsAssignPage style exactly */
+@import '../volunteer/StudentsAssignPage.css';
+
+/* Remove blue overrides and match orange theme */
+.header-title-center {
+    color: #2D3748;
+}
+
+/* These are not needed anymore as we want to match the imported orange style */
+/* If the base CSS has blue or if we want to ensure orange: */
+
+thead {
+    /* Base CSS usually has orange, but let's be explicit if needed */
+    background: linear-gradient(135deg, #FFF5E6 0%, #FFE8CC 100%);
+}
+
+th {
+    border-bottom: 2px solid #FF9800;
+}
+
+.student-id-link {
+    color: #FF6F00;
+}
+
+.student-id-link:hover {
+    background: #FFF5E6;
+    color: #FF9800;
+}
+
+.student-id-link::before {
+    background: #FF9800;
+}

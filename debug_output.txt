@@ -1,0 +1,27 @@
+--- TeleVerification Rows (VERIFIED/REJECTED) ---
+{'studentId': '2025-001', 'volunteerId': 'V002', 'tv_status': 'VERIFIED', 'student_status': 'APPROVED', 'name': 'Arun Kumar', 'verificationDate': datetime.date(2025, 12, 31)}
+{'studentId': '2025-002', 'volunteerId': 'V002', 'tv_status': 'VERIFIED', 'student_status': 'APPROVED', 'name': 'Priya S', 'verificationDate': datetime.date(2025, 12, 31)}
+{'studentId': '2025-003', 'volunteerId': 'V002', 'tv_status': 'VERIFIED', 'student_status': None, 'name': 'Ravi M', 'verificationDate': datetime.date(2025, 12, 31)}
+{'studentId': '2025-004', 'volunteerId': 'V002', 'tv_status': 'VERIFIED', 'student_status': 'REJECTED', 'name': 'Divya R', 'verificationDate': datetime.date(2026, 1, 1)}
+{'studentId': '2025-005', 'volunteerId': 'V002', 'tv_status': 'VERIFIED', 'student_status': None, 'name': 'Karthik V', 'verificationDate': datetime.date(2026, 1, 1)}
+{'studentId': '2025-006', 'volunteerId': 'V002', 'tv_status': 'VERIFIED', 'student_status': 'APPROVED', 'name': 'Kumar S', 'verificationDate': datetime.date(2026, 1, 1)}
+{'studentId': '2025-010', 'volunteerId': 'V002', 'tv_status': 'VERIFIED', 'student_status': 'PV', 'name': 'Suresh Kumar', 'verificationDate': datetime.date(2026, 1, 1)}
+{'studentId': '2025-011', 'volunteerId': 'V002', 'tv_status': 'VERIFIED', 'student_status': 'PV', 'name': 'Meena Kumari', 'verificationDate': datetime.date(2025, 12, 31)}
+{'studentId': '2025-012', 'volunteerId': 'V002', 'tv_status': 'VERIFIED', 'student_status': 'PV', 'name': 'Venkatesh R', 'verificationDate': datetime.date(2026, 1, 1)}
+{'studentId': '2025-013', 'volunteerId': 'V002', 'tv_status': 'VERIFIED', 'student_status': 'PV', 'name': 'Anitha S', 'verificationDate': datetime.date(2026, 1, 1)}
+{'studentId': '2025-014', 'volunteerId': 'V002', 'tv_status': 'VERIFIED', 'student_status': 'TV', 'name': 'Prabhu D', 'verificationDate': datetime.date(2026, 1, 1)}
+{'studentId': '2025-015', 'volunteerId': 'V002', 'tv_status': 'VERIFIED', 'student_status': 'TV', 'name': 'Deepika M', 'verificationDate': datetime.date(2026, 1, 1)}
+
+--- All TeleVerification Rows ---
+ID: 2025-001, TV Status: VERIFIED, Student Status: APPROVED
+ID: 2025-002, TV Status: VERIFIED, Student Status: APPROVED
+ID: 2025-003, TV Status: VERIFIED, Student Status: None
+ID: 2025-004, TV Status: VERIFIED, Student Status: REJECTED
+ID: 2025-005, TV Status: VERIFIED, Student Status: None
+ID: 2025-006, TV Status: VERIFIED, Student Status: APPROVED
+ID: 2025-010, TV Status: VERIFIED, Student Status: PV
+ID: 2025-011, TV Status: VERIFIED, Student Status: PV
+ID: 2025-012, TV Status: VERIFIED, Student Status: PV
+ID: 2025-013, TV Status: VERIFIED, Student Status: PV
+ID: 2025-014, TV Status: VERIFIED, Student Status: TV
+ID: 2025-015, TV Status: VERIFIED, Student Status: TV

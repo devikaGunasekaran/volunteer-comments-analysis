@@ -18,7 +18,12 @@ const AdminViewPage = () => {
 
     useEffect(() => {
         loadData();
-    }, [studentId]);
+    }, [studentId, navigate]);
+
+    const handleLogout = () => {
+        authService.logout();
+        navigate('/login');
+    };
 
     const loadData = async () => {
         try {
@@ -67,7 +72,12 @@ const AdminViewPage = () => {
 
     return (
         <div className="admin-view-page">
+<<<<<<< HEAD
             <header className="header-vertical">
+=======
+<<<<<<< Updated upstream
+            <header className="header-with-logout">
+>>>>>>> Tarun
                 <button
                     onClick={() => {
                         authService.logout();
@@ -77,8 +87,23 @@ const AdminViewPage = () => {
                 >
                     LOGOUT
                 </button>
+<<<<<<< HEAD
                 <img src={logo} alt="Logo" className="header-logo-center" />
                 <div className="header-title">Admin - Student Verification Review</div>
+=======
+                <div className="header-center-content">
+                    <img src={logo} alt="Logo" className="header-logo-center" />
+                    <div className="header-title-center">Admin - Student Verification Review</div>
+                </div>
+=======
+            <header className="header-vertical">
+                <button onClick={handleLogout} className="logout-btn-right">
+                    LOGOUT
+                </button>
+                <img src={logo} alt="Logo" className="header-logo-center" />
+                <div className="header-title">Admin Dashboard</div>
+>>>>>>> Stashed changes
+>>>>>>> Tarun
             </header>
 
             <div className="view-container">

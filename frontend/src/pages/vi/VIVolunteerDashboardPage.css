@@ -101,6 +101,7 @@
 }
 
 .stat-card {
+<<<<<<< HEAD
     background: linear-gradient(135deg, #FF6F00 0%, #FF9800 100%);
     padding: 25px;
     border-radius: 12px;
@@ -138,6 +139,100 @@
     opacity: 0.9;
     text-transform: uppercase;
     letter-spacing: 1px;
+=======
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 2px solid #f7f7f7;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Total Card - Yellow */
+.stat-card:not(.pending-card):not(.completed-card) {
+    border-left: 5px solid #FDB022;
+    background: linear-gradient(135deg, #FFFBF0 0%, #FFFFFF 100%);
+}
+
+.stat-card:not(.pending-card):not(.completed-card) .stat-value {
+    color: #FDB022;
+}
+
+.stat-card:not(.pending-card):not(.completed-card) .stat-icon {
+    color: #FDB022;
+    /* Icon matches text */
+}
+
+
+/* Pending Card - Orange */
+.stat-card.pending-card {
+    border-left: 5px solid #F59E0B;
+    background: linear-gradient(135deg, #FFF9E6 0%, #FFFFFF 100%);
+}
+
+.stat-card.pending-card .stat-value {
+    color: #F59E0B;
+}
+
+.stat-card.pending-card .stat-icon {
+    color: #F59E0B;
+}
+
+/* Completed Card - Green (or Darker Orange/Yellow if strictly "yellow shade") */
+/* User asked for "yellow shade". But typically completed is green. 
+   I will use a greenish-yellow or stay safe with Green as per Admin dashboard?
+   Admin dashboard uses Green for completed. User said "color cards should be in yellow shade".
+   Maybe ALL should be yellow/orange? 
+   I will stick to Admin theme: Green for completed. 
+   If they specifically meant ALL yellow, I can change later. 
+   However, "yellow shade" usually refers to the overall look vs the old "Orange/Blue/Red".
+   Let's keep Completed Green for distinctness, but styled consistently.
+*/
+.stat-card.completed-card {
+    border-left: 5px solid #10B981;
+    background: linear-gradient(135deg, #F0FDF4 0%, #FFFFFF 100%);
+}
+
+.stat-card.completed-card .stat-value {
+    color: #10B981;
+}
+
+.stat-card.completed-card .stat-icon {
+    color: #10B981;
+}
+
+
+.stat-icon {
+    font-size: 40px;
+    line-height: 1;
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+    margin: 5px 0;
+}
+
+.stat-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748B;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+>>>>>>> Tarun
 }
 
 /* Table Container */
@@ -297,5 +392,9 @@
     .students-table td {
         padding: 10px 8px;
     }
+<<<<<<< HEAD
 }
 
+=======
+}
+>>>>>>> Tarun

@@ -1,0 +1,30 @@
+/* TVStudentDetailsPage.css - Matching StudentDetailsPage style exactly */
+@import '../volunteer/StudentDetailsPage.css';
+
+/* Remove blue overrides and match orange theme */
+.accordion-header {
+    border-left: 6px solid #ff9800;
+}
+
+.go-tv-btn {
+    display: inline-block;
+    background: #ff9800;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 700;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    float: right;
+    transition: background 0.2s;
+}
+
+.go-tv-btn:hover {
+    background: #f57c00;
+}
+
+.marks-title {
+    color: #FF9800;
+    border-bottom: 2px solid #FFF3E0;
+}

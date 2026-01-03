@@ -62,15 +62,6 @@ const AdminAssignPage = () => {
 
     return (
         <div className="admin-assign-page">
-            <header className="header-with-logout">
-                <button onClick={handleLogout} className="logout-btn-right">Logout</button>
-                <div className="header-center-content">
-                    <img src={logo} alt="Logo" className="header-logo-center" />
-                    <div className="header-title-center">Admin Panel - Verified Students</div>
-                </div>
-            </header>
-
-            <div className="assigned-container">
             <header className="header-vertical">
                 <button onClick={handleLogout} className="logout-btn-right">
                     LOGOUT

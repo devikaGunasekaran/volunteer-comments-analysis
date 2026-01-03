@@ -72,20 +72,6 @@ const AdminViewPage = () => {
 
     return (
         <div className="admin-view-page">
-            <header className="header-with-logout">
-                <button
-                    onClick={() => {
-                        authService.logout();
-                        navigate('/login');
-                    }}
-                    className="logout-btn-right"
-                >
-                    Logout
-                </button>
-                <div className="header-center-content">
-                    <img src={logo} alt="Logo" className="header-logo-center" />
-                    <div className="header-title-center">Admin - Student Verification Review</div>
-                </div>
             <header className="header-vertical">
                 <button onClick={handleLogout} className="logout-btn-right">
                     LOGOUT

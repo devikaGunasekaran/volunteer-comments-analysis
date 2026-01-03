@@ -63,7 +63,7 @@ def pv_form(student_id):
 
 @volunteer_bp.route("/api/assigned-students")
 def api_assigned_students():
-    """Get students assigned to logged-in volunteer"""
+    """Get students assigned to logged-in volunteer with statistics"""
     if 'volunteerId' not in session or session.get('role') != 'pv':
         return jsonify({'error': 'Unauthorized'}), 401
 
@@ -74,7 +74,8 @@ def api_assigned_students():
         return jsonify({'error': 'Database connection failed'}), 500
 
     cursor = conn.cursor(dictionary=True)
-    # Only show if pv.status IS NULL (not started yet)
+    
+    # Get pending students (status IS NULL)
     query = """
         SELECT s.studentId, s.name AS studentName, s.phone AS phoneNumber, s.district, pv.status
         FROM PhysicalVerification pv
@@ -83,10 +84,30 @@ def api_assigned_students():
     """
     cursor.execute(query, (volunteerId,))
     students = cursor.fetchall()
+    
+    # Get statistics
+    stats_query = """
+        SELECT 
+            COUNT(*) as total_assigned,
+            SUM(CASE WHEN status IS NOT NULL AND status != 'PROCESSING' THEN 1 ELSE 0 END) as completed,
+            SUM(CASE WHEN status IS NULL OR status = 'PROCESSING' THEN 1 ELSE 0 END) as pending
+        FROM PhysicalVerification
+        WHERE volunteerId = %s
+    """
+    cursor.execute(stats_query, (volunteerId,))
+    stats = cursor.fetchone()
+    
     cursor.close()
     conn.close()
 
-    return jsonify({'students': students})
+    return jsonify({
+        'students': students,
+        'statistics': {
+            'total_assigned': stats['total_assigned'] or 0,
+            'completed': stats['completed'] or 0,
+            'pending': stats['pending'] or 0
+        }
+    })
 
 
 @volunteer_bp.route("/api/student/<student_id>")

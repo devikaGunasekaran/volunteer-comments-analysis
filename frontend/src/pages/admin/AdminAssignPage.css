@@ -94,6 +94,95 @@ body {
     margin: 0;
 }
 
+/* Statistics Cards */
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    margin: 24px auto;
+    padding: 0 24px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    animation: slideIn 0.5s ease-out;
+    border: 2px solid #f7f7f7;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.stat-card.total {
+    border-left: 5px solid #FDB022;
+    background: linear-gradient(135deg, #FFFBF0 0%, #FFFFFF 100%);
+}
+
+.stat-card.assigned {
+    border-left: 5px solid #F59E0B;
+    background: linear-gradient(135deg, #FFF9E6 0%, #FFFFFF 100%);
+}
+
+.stat-card.completed {
+    border-left: 5px solid #10B981;
+    background: linear-gradient(135deg, #F0FDF4 0%, #FFFFFF 100%);
+}
+
+.stat-card.pending {
+    border-left: 5px solid #FF9800;
+    background: linear-gradient(135deg, #FFF5E6 0%, #FFFFFF 100%);
+}
+
+.stat-icon {
+    font-size: 40px;
+    line-height: 1;
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1A202C;
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.stat-card.total .stat-value {
+    color: #FDB022;
+}
+
+.stat-card.assigned .stat-value {
+    color: #F59E0B;
+}
+
+.stat-card.completed .stat-value {
+    color: #10B981;
+}
+
+.stat-card.pending .stat-value {
+    color: #FF9800;
+}
+
+.stat-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #718096;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
 /* Table Wrapper */
 .table-wrapper {
     max-width: 1200px;
@@ -299,4 +388,48 @@ body {
         opacity: 1;
         transform: scale(1);
     }
+<<<<<<< Updated upstream
+=======
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header-with-logout {
+        padding: 16px;
+    }
+
+    .logout-btn-right {
+        top: 16px;
+        right: 16px;
+        padding: 8px 18px;
+        font-size: 13px;
+    }
+
+    .header-title-center {
+        font-size: 18px;
+    }
+
+    .nav-buttons-container {
+        flex-direction: column;
+        padding: 16px;
+    }
+
+    .page-title {
+        font-size: 20px;
+        padding: 20px 16px 12px;
+    }
+
+    .table-wrapper {
+        padding: 0 16px;
+        overflow-x: auto;
+    }
+
+    .custom-table {
+        min-width: 600px;
+    }
+
+    .custom-table tbody tr:hover {
+        transform: none;
+    }
+>>>>>>> Stashed changes
 }

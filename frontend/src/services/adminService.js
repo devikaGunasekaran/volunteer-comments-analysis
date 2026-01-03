@@ -36,6 +36,7 @@ const adminService = {
         return api.post('/admin/api/assign-tv', { studentIds, volunteerId });
     },
 
+<<<<<<< Updated upstream
     // Get submitted TV reports for review
     async getTVReports() {
         return api.get('/admin/api/submitted-tv-reports');
@@ -44,6 +45,16 @@ const adminService = {
     // Admin decision on TV review
     async reviewTVSubmission(studentId, decision, remarks = '') {
         return api.post('/admin/api/review-tv-submission', { studentId, decision, remarks });
+=======
+    // Get students with completed PV
+    async getCompletedPVStudents() {
+        return api.get('/admin/api/completed-pv-students');
+    },
+
+    // Get PV statistics for admin dashboard
+    async getPVStatistics() {
+        return api.get('/admin/api/pv-statistics');
+>>>>>>> Stashed changes
     }
 };
 

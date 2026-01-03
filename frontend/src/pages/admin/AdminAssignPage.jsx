@@ -7,6 +7,7 @@ import './AdminAssignPage.css';
 
 const AdminAssignPage = () => {
     const [students, setStudents] = useState([]);
+    const [statistics, setStatistics] = useState({ total_assigned: 0, completed: 0, pending: 0 });
     const [loading, setLoading] = useState(true);
     const [expandedRow, setExpandedRow] = useState(null);
     const navigate = useNavigate();
@@ -19,9 +20,16 @@ const AdminAssignPage = () => {
 
     const loadStudents = async () => {
         try {
-            const data = await adminService.getPendingStudents();
-            if (data.students) {
-                setStudents(data.students);
+            const [pendingData, statsData] = await Promise.all([
+                adminService.getPendingStudents(),
+                adminService.getPVStatistics()
+            ]);
+
+            if (pendingData.students) {
+                setStudents(pendingData.students);
+            }
+            if (statsData.statistics) {
+                setStatistics(statsData.statistics);
             }
         } catch (error) {
             console.error("Failed to load students:", error);
@@ -54,6 +62,7 @@ const AdminAssignPage = () => {
 
     return (
         <div className="admin-assign-page">
+<<<<<<< Updated upstream
             <header className="header-with-logout">
                 <button onClick={handleLogout} className="logout-btn-right">Logout</button>
                 <div className="header-center-content">
@@ -63,6 +72,58 @@ const AdminAssignPage = () => {
             </header>
 
             <div className="assigned-container">
+=======
+            <header className="header-vertical">
+                <button onClick={handleLogout} className="logout-btn-right">
+                    LOGOUT
+                </button>
+                <img src={logo} alt="Logo" className="header-logo-center" />
+                <div className="header-title">Admin Panel - Verified Students</div>
+            </header>
+
+            <div className="assigned-container">
+                {/* Navigation Buttons */}
+                <div className="nav-buttons-container">
+                    <button
+                        onClick={() => navigate('/admin/assign-pv')}
+                        className="nav-btn assign-pv-btn"
+                    >
+                        📋 Assign PV Volunteers
+                    </button>
+                    <button
+                        onClick={() => navigate('/admin/pv-students')}
+                        className="nav-btn completed-pv-btn"
+                    >
+                        ✅ View Completed PV
+                    </button>
+                </div>
+
+                {/* Statistics Cards */}
+                <div className="stats-container">
+                    <div className="stat-card assigned">
+                        <div className="stat-icon">👥</div>
+                        <div className="stat-content">
+                            <div className="stat-value">{statistics.total_assigned}</div>
+                            <div className="stat-label">PV Assigned</div>
+                        </div>
+                    </div>
+                    <div className="stat-card completed">
+                        <div className="stat-icon">✅</div>
+                        <div className="stat-content">
+                            <div className="stat-value">{statistics.completed}</div>
+                            <div className="stat-label">Completed</div>
+                        </div>
+                    </div>
+                    <div className="stat-card pending">
+                        <div className="stat-icon">⏳</div>
+                        <div className="stat-content">
+                            <div className="stat-value">{statistics.pending}</div>
+                            <div className="stat-label">Pending</div>
+                        </div>
+                    </div>
+                </div>
+
+>>>>>>> Stashed changes
                 <h2 className="page-title">Students Pending Review ({students.length})</h2>
 
                 <div className="table-wrapper">

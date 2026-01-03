@@ -17,7 +17,11 @@ const volunteerService = {
             }
 
             const data = await response.json();
-            return { success: true, students: data.students || [] };
+            return {
+                success: true,
+                students: data.students || [],
+                statistics: data.statistics || {}
+            };
         } catch (error) {
             console.error('Error fetching assigned students:', error);
             return { success: false, error: error.message };

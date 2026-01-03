@@ -622,6 +622,96 @@ def assign_tv():
         print(e)
         return jsonify({'error': str(e)}), 500
 
+
+@admin_bp.route("/api/pv-statistics")
+def api_pv_statistics():
+    """Get PV assignment statistics for admin dashboard"""
+    if 'role' not in session or session.get('role') != 'admin':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        # Get total students with TV status SELECTED
+        total_tv_selected = fetchone_dict("""
+            SELECT COUNT(*) as count
+            FROM TeleVerification
+            WHERE status = 'SELECTED'
+        """)
+        
+        # Get students assigned to PV
+        total_assigned = fetchone_dict("""
+            SELECT COUNT(DISTINCT studentId) as count
+            FROM PhysicalVerification
+        """)
+        
+        # Get completed PV (status is not NULL and not PROCESSING)
+        completed = fetchone_dict("""
+            SELECT COUNT(*) as count
+            FROM PhysicalVerification
+            WHERE status IS NOT NULL AND status != 'PROCESSING'
+        """)
+        
+        # Get pending PV (status IS NULL or PROCESSING)
+        pending = fetchone_dict("""
+            SELECT COUNT(*) as count
+            FROM PhysicalVerification
+            WHERE status IS NULL OR status = 'PROCESSING'
+        """)
+        
+        return jsonify({
+            'statistics': {
+                'total_tv_selected': total_tv_selected['count'] or 0,
+                'total_assigned': total_assigned['count'] or 0,
+                'completed': completed['count'] or 0,
+                'pending': pending['count'] or 0
+            }
+        })
+        
+    except Exception as e:
+        print(f"Error fetching PV statistics: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@admin_bp.route("/api/assign-pv-volunteer", methods=["POST"])
+def api_assign_pv_volunteer():
+    """Assign a volunteer to a student for physical verification"""
+    if 'role' not in session or session.get('role') != 'admin':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    data = request.json
+    studentIds = data.get('studentIds', [])
+    volunteerId = data.get('volunteerId')
+    
+    if not studentIds or not volunteerId:
+        return jsonify({'error': 'Missing studentIds or volunteerId'}), 400
+    
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({'error': 'DB Connection failed'}), 500
+    
+    try:
+        cursor = conn.cursor()
+        for sid in studentIds:
+            # Check if already exists (prevent duplicate assignments)
+            cursor.execute("SELECT teleId FROM televerification WHERE studentId = %s", (sid,))
+            if cursor.fetchone():
+                continue
+                
+            cursor.execute("""
+                INSERT INTO televerification (studentId, volunteerId, status, comments, verificationDate)
+                VALUES (%s, %s, %s, %s, NOW())
+            """, (sid, volunteerId, 'ASSIGNED', 'Assigned by Admin'))
+            
+            # Update student status to 'TV' if it was NULL (Application Received state)
+            cursor.execute("UPDATE student SET status = 'TV' WHERE studentId = %s AND status IS NULL", (sid,))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({'success': True, 'message': f'Assigned {len(studentIds)} students'})
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 500
+
 @admin_bp.route("/api/submitted-tv-reports")
 def get_submitted_tv_reports():
     """Fetch students with submitted TV reports for admin review"""

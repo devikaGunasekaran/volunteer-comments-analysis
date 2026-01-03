@@ -1,0 +1,355 @@
+/* VI Volunteer Dashboard Page Styles */
+
+.vi-volunteer-dashboard-page {
+    min-height: 100vh;
+    background: #f5f5f5;
+    font-family: Arial, sans-serif;
+}
+
+/* Header Styles */
+.header-with-logout {
+    background: white;
+    padding: 22px 20px;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+.logout-btn-right {
+    background: #FF6F00;
+    color: white;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.logout-btn-right:hover {
+    background: #FF9800;
+}
+
+.header-center-content {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-logo-center {
+    height: 48px;
+}
+
+.header-title-center {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Container */
+.container {
+    max-width: 1400px;
+    margin: 30px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Page Header */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.page-header h2 {
+    margin: 0;
+    color: #333;
+    font-size: 28px;
+}
+
+.completed-btn {
+    background: #FF6F00;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.completed-btn:hover {
+    background: #FF9800;
+}
+
+/* Statistics Cards */
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 2px solid #f7f7f7;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Total Card - Yellow */
+.stat-card:not(.pending-card):not(.completed-card) {
+    border-left: 5px solid #FDB022;
+    background: linear-gradient(135deg, #FFFBF0 0%, #FFFFFF 100%);
+}
+
+.stat-card:not(.pending-card):not(.completed-card) .stat-value {
+    color: #FDB022;
+}
+
+.stat-card:not(.pending-card):not(.completed-card) .stat-icon {
+    color: #FDB022;
+    /* Icon matches text */
+}
+
+
+/* Pending Card - Orange */
+.stat-card.pending-card {
+    border-left: 5px solid #F59E0B;
+    background: linear-gradient(135deg, #FFF9E6 0%, #FFFFFF 100%);
+}
+
+.stat-card.pending-card .stat-value {
+    color: #F59E0B;
+}
+
+.stat-card.pending-card .stat-icon {
+    color: #F59E0B;
+}
+
+/* Completed Card - Green (or Darker Orange/Yellow if strictly "yellow shade") */
+/* User asked for "yellow shade". But typically completed is green. 
+   I will use a greenish-yellow or stay safe with Green as per Admin dashboard?
+   Admin dashboard uses Green for completed. User said "color cards should be in yellow shade".
+   Maybe ALL should be yellow/orange? 
+   I will stick to Admin theme: Green for completed. 
+   If they specifically meant ALL yellow, I can change later. 
+   However, "yellow shade" usually refers to the overall look vs the old "Orange/Blue/Red".
+   Let's keep Completed Green for distinctness, but styled consistently.
+*/
+.stat-card.completed-card {
+    border-left: 5px solid #10B981;
+    background: linear-gradient(135deg, #F0FDF4 0%, #FFFFFF 100%);
+}
+
+.stat-card.completed-card .stat-value {
+    color: #10B981;
+}
+
+.stat-card.completed-card .stat-icon {
+    color: #10B981;
+}
+
+
+.stat-icon {
+    font-size: 40px;
+    line-height: 1;
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+    margin: 5px 0;
+}
+
+.stat-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748B;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Table Container */
+.table-container {
+    margin-top: 30px;
+}
+
+.table-container h3 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 22px;
+}
+
+.students-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.students-table thead {
+    background: #fafafa;
+}
+
+.students-table th {
+    padding: 15px 12px;
+    text-align: left;
+    font-weight: bold;
+    color: #333;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.students-table td {
+    padding: 15px 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.students-table tbody tr:hover {
+    background: #f9f9f9;
+}
+
+.student-id {
+    color: #0066cc;
+    font-weight: 600;
+}
+
+/* Status Badges */
+.status-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.status-badge.pending {
+    background: #FFA726;
+    color: white;
+}
+
+.status-badge.recommended {
+    background: #66BB6A;
+    color: white;
+}
+
+.status-badge.not-recommended {
+    background: #EF5350;
+    color: white;
+}
+
+.status-badge.on-hold {
+    background: #42A5F5;
+    color: white;
+}
+
+/* Action Buttons */
+.interview-btn {
+    background: #FF6F00;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.interview-btn:hover {
+    background: #FF9800;
+}
+
+.view-btn {
+    background: #FF6F00;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.view-btn:hover {
+    background: #FF9800;
+}
+
+/* Loading States */
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+}
+
+.loading-spinner {
+    font-size: 18px;
+    color: #666;
+    font-weight: 600;
+}
+
+/* No Data */
+.no-data {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+    font-style: italic;
+    font-size: 18px;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .container {
+        margin: 20px;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-title-center {
+        font-size: 18px;
+    }
+
+    .page-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+
+    .stats-container {
+        grid-template-columns: 1fr;
+    }
+
+    .students-table {
+        font-size: 14px;
+    }
+
+    .students-table th,
+    .students-table td {
+        padding: 10px 8px;
+    }
+}

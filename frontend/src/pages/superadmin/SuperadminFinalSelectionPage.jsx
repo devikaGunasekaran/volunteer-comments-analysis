@@ -8,6 +8,7 @@ import './SuperadminFinalSelectionPage.css';
 const SuperadminFinalSelectionPage = () => {
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [selectedStudent, setSelectedStudent] = useState(null);
     const [decision, setDecision] = useState('');
     const [remarks, setRemarks] = useState('');
     // const [riTechnicalScore, setRiTechnicalScore] = useState(''); // Removed

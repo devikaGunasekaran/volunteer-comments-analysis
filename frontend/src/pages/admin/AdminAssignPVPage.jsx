@@ -8,6 +8,24 @@ import './AdminAssignPVPage.css';
 const AdminAssignPVPage = () => {
     const [students, setStudents] = useState([]);
     const [volunteers, setVolunteers] = useState([]);
+    const [statistics, setStatistics] = useState({ total_tv_selected: 0, total_assigned: 0, completed: 0, pending: 0 });
+    const [loading, setLoading] = useState(true);
+    const [selectedStudent, setSelectedStudent] = useState(null);
+    const [selectedVolunteer, setSelectedVolunteer] = useState('');
+    const [searchEmail, setSearchEmail] = useState('');
+    const [assigning, setAssigning] = useState(false);
+    const [message, setMessage] = useState({ type: '', text: '' });
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        loadData();
+    }, []);
+
+    const loadData = async () => {
+        try {
+            const [studentsData, volunteersData] = await Promise.all([
+                adminService.getTVSelectedStudents(),
+                adminService.getVolunteers()
             const [studentsData, volunteersData, statsData] = await Promise.all([
                 adminService.getTVSelectedStudents(),
                 adminService.getVolunteers(),
@@ -20,6 +38,106 @@ const AdminAssignPVPage = () => {
             if (volunteersData.volunteers) {
                 setVolunteers(volunteersData.volunteers);
             }
+            if (statsData.statistics) {
+                setStatistics(statsData.statistics);
+            }
+        } catch (error) {
+            console.error("Failed to load data:", error);
+            if (error.response && error.response.status === 401) {
+                authService.logout();
+                navigate('/login');
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleLogout = () => {
+        authService.logout();
+        navigate('/login');
+    };
+
+    const openAssignModal = (student) => {
+        setSelectedStudent(student);
+        setSelectedVolunteer('');
+        setSearchEmail('');
+        setMessage({ type: '', text: '' });
+    };
+
+    const closeAssignModal = () => {
+        setSelectedStudent(null);
+        setSelectedVolunteer('');
+        setSearchEmail('');
+        setMessage({ type: '', text: '' });
+    };
+
+    const handleAssign = async () => {
+        if (!selectedStudent || !selectedVolunteer) {
+            setMessage({ type: 'error', text: 'Please select a volunteer' });
+            return;
+        }
+
+        setAssigning(true);
+        setMessage({ type: '', text: '' });
+
+        try {
+            const result = await adminService.assignPVVolunteer(
+                selectedStudent.studentId,
+                selectedVolunteer,
+                null
+            );
+
+            if (result.success) {
+                setMessage({ type: 'success', text: result.message || 'Volunteer assigned successfully!' });
+                setTimeout(() => {
+                    closeAssignModal();
+                    loadData(); // Reload data to show updated assignments
+                }, 1500);
+            }
+        } catch (error) {
+            console.error("Assignment failed:", error);
+            setMessage({
+                type: 'error',
+                text: error.response?.data?.error || 'Failed to assign volunteer'
+            });
+        } finally {
+            setAssigning(false);
+        }
+    };
+
+    const handleSearchByEmail = async () => {
+        if (!searchEmail.trim()) {
+            setMessage({ type: 'error', text: 'Please enter an email address' });
+            return;
+        }
+
+        setAssigning(true);
+        setMessage({ type: '', text: '' });
+
+        try {
+            const result = await adminService.assignPVVolunteer(
+                selectedStudent.studentId,
+                null,
+                searchEmail
+            );
+
+            if (result.success) {
+                setMessage({ type: 'success', text: result.message || 'Volunteer assigned successfully!' });
+                setTimeout(() => {
+                    closeAssignModal();
+                    loadData();
+                }, 1500);
+            }
+        } catch (error) {
+            console.error("Assignment failed:", error);
+            setMessage({
+                type: 'error',
+                text: error.response?.data?.error || 'Volunteer not found or assignment failed'
+            });
+        } finally {
+            setAssigning(false);
+        }
+    };
 
     const filteredVolunteers = volunteers.filter(v =>
         v.email.toLowerCase().includes(searchEmail.toLowerCase())
@@ -178,6 +296,44 @@ const AdminAssignPVPage = () => {
                                 </div>
                             )}
 
+                            {/* Method 1: Search by Email */}
+                            <div className="form-section">
+                                <label>Search Volunteer by Email</label>
+                                <div className="search-group">
+                                    <input
+                                        type="email"
+                                        placeholder="Enter volunteer email"
+                                        value={searchEmail}
+                                        onChange={(e) => setSearchEmail(e.target.value)}
+                                        className="email-input"
+                                    />
+                                    <button
+                                        className="search-assign-btn"
+                                        onClick={handleSearchByEmail}
+                                        disabled={assigning}
+                                    >
+                                        {assigning ? 'Assigning...' : 'Assign by Email'}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="divider">OR</div>
+
+                            {/* Method 2: Select from List */}
+                            <div className="form-section">
+                                <label>Select from Volunteer List</label>
+                                <select
+                                    value={selectedVolunteer}
+                                    onChange={(e) => setSelectedVolunteer(e.target.value)}
+                                    className="volunteer-select"
+                                >
+                                    <option value="">-- Select Volunteer --</option>
+                                    {filteredVolunteers.map(volunteer => (
+                                        <option key={volunteer.volunteerId} value={volunteer.volunteerId}>
+                                            {volunteer.email} ({volunteer.volunteerId})
+                                        </option>
+                                    ))}
+                                </select>
                             {/* Search Input */}
                             <div className="search-container">
                                 <span className="search-icon-overlay">🔍</span>

@@ -44,6 +44,8 @@ const adminService = {
     // Admin decision on TV review
     async reviewTVSubmission(studentId, decision, remarks = '') {
         return api.post('/admin/api/review-tv-submission', { studentId, decision, remarks });
+    },
+
     // Get students with completed PV
     async getCompletedPVStudents() {
         return api.get('/admin/api/completed-pv-students');

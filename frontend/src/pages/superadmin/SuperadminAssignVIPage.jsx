@@ -11,6 +11,16 @@ const SuperadminAssignVIPage = () => {
     const [loading, setLoading] = useState(true);
     const [assigningStudentId, setAssigningStudentId] = useState(null);
     const [filterStatus, setFilterStatus] = useState('all'); // all, assigned, unassigned
+    const [message, setMessage] = useState({ type: '', text: '' });
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        loadData();
+    }, []);
+
+    const loadData = async () => {
+        try {
+            setLoading(true);
             // Don't set global loading on refresh to avoid flicker if desired, but here we keep it for clarity
             if (!assigningStudentId) setLoading(true);
 
@@ -19,6 +29,11 @@ const SuperadminAssignVIPage = () => {
                 superadminService.getVIVolunteers()
             ]);
 
+            setStudents(studentsData.students || []);
+            setVolunteers(volunteersData.volunteers || []);
+        } catch (error) {
+            console.error('Error loading data:', error);
+            alert('Failed to load data. Please try again.');
             setVolunteers(volunteersData.volunteers || []);
 
             // Filter out students who have COMPLETED the process (completed, recommended, not_recommended)
@@ -42,12 +57,19 @@ const SuperadminAssignVIPage = () => {
 
     const handleAssignVolunteer = async (studentId, volunteerId) => {
         if (!volunteerId) {
+            alert('Please select a volunteer');
             setMessage({ type: 'error', text: 'Please select a volunteer' });
             return;
         }
 
         try {
             setAssigningStudentId(studentId);
+            await superadminService.assignVIVolunteer(studentId, volunteerId);
+            alert('VI Volunteer assigned successfully!');
+            await loadData(); // Reload data to show updated assignments
+        } catch (error) {
+            console.error('Error assigning volunteer:', error);
+            alert('Failed to assign volunteer. Please try again.');
             setMessage({ type: '', text: '' });
 
             await superadminService.assignVIVolunteer(studentId, volunteerId);

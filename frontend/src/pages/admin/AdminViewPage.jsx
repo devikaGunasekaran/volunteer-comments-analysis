@@ -72,6 +72,7 @@ const AdminViewPage = () => {
 
     return (
         <div className="admin-view-page">
+            <header className="header-vertical">
             <header className="header-with-logout">
                 <button
                     onClick={() => {
@@ -82,6 +83,8 @@ const AdminViewPage = () => {
                 >
                     LOGOUT
                 </button>
+                <img src={logo} alt="Logo" className="header-logo-center" />
+                <div className="header-title">Admin - Student Verification Review</div>
                 <div className="header-center-content">
                     <img src={logo} alt="Logo" className="header-logo-center" />
                     <div className="header-title-center">Admin - Student Verification Review</div>

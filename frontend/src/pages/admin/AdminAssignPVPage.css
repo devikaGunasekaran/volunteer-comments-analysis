@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-/* Admin Assign PV Page - Matching StudentsAssignPage Design Exactly */
-=======
 /* Admin Assign PV Page - Consistent Header Design */
->>>>>>> Tarun
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
@@ -15,19 +11,6 @@ body {
     animation: fadeIn 0.5s ease-out;
 }
 
-<<<<<<< HEAD
-/* Header with Logout on Right - Matching StudentsAssignPage */
-.header-with-logout {
-    background: white;
-    padding: 22px 20px;
-    position: relative;
-    border-bottom: 2px solid #E2E8F0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    animation: slideDown 0.4s ease-out;
-=======
 /* Header - Matching Other Pages */
 .header-vertical {
     background: white;
@@ -39,18 +22,12 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 10px;
->>>>>>> Tarun
 }
 
 .logout-btn-right {
     position: absolute;
     top: 16px;
     right: 24px;
-<<<<<<< HEAD
-    width: auto;
-    min-width: 0;
-=======
->>>>>>> Tarun
     background: #FF6F00;
     border: none;
     color: white;
@@ -63,10 +40,7 @@ body {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-<<<<<<< HEAD
     z-index: 101;
-=======
->>>>>>> Tarun
 }
 
 .logout-btn-right:hover {
@@ -75,22 +49,6 @@ body {
     box-shadow: 0 2px 4px rgba(255, 111, 0, 0.2);
 }
 
-<<<<<<< HEAD
-.logout-btn-right:active {
-    transform: translateY(0);
-}
-
-.header-center-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    gap: 12px;
-}
-
-=======
->>>>>>> Tarun
 .header-logo-center {
     height: 48px;
     max-width: 150px;
@@ -103,14 +61,12 @@ body {
     transform: scale(1.05);
 }
 
-<<<<<<< HEAD
 .header-title-center {
     font-weight: 700;
     font-size: 18px;
     color: #2D3748;
     letter-spacing: -0.5px;
     animation: fadeIn 0.6s ease-out 0.1s both;
-=======
 .header-title {
     font-weight: 700;
     font-size: 18px;
@@ -205,7 +161,6 @@ body {
     color: #718096;
     text-transform: uppercase;
     letter-spacing: 0.5px;
->>>>>>> Tarun
 }
 
 /* Page Title */
@@ -219,11 +174,7 @@ body {
 
 .assign-container {
     max-width: 1200px;
-<<<<<<< HEAD
-    margin: 0 auto;
-=======
     margin: 24px auto 0;
->>>>>>> Tarun
 }
 
 .section-card {
@@ -240,17 +191,6 @@ body {
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
 
-<<<<<<< HEAD
-.section-card:nth-child(2) {
-    animation-delay: 0.1s;
-}
-
-.section-card:nth-child(3) {
-    animation-delay: 0.2s;
-}
-
-=======
->>>>>>> Tarun
 .section-title {
     font-size: 18px;
     font-weight: 700;
@@ -295,7 +235,6 @@ body {
 
 .custom-table tbody tr {
     transition: all 0.3s cubic-bezier(0, 0, 0.2, 1);
-<<<<<<< HEAD
     animation: slideIn 0.4s ease-out both;
     border-bottom: 1px solid #F7FAFC;
 }
@@ -320,11 +259,9 @@ body {
     animation-delay: 0.5s;
 }
 
-=======
     border-bottom: 1px solid #F7FAFC;
 }
 
->>>>>>> Tarun
 .custom-table tbody tr:hover {
     background: linear-gradient(90deg, #FFF9F0 0%, #FFFFFF 100%);
     transform: translateX(4px);
@@ -421,21 +358,6 @@ body {
     animation: slideUp 0.3s ease;
 }
 
-<<<<<<< HEAD
-@keyframes slideUp {
-    from {
-        transform: translateY(50px);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-=======
->>>>>>> Tarun
 .modal-header {
     padding: 20px 25px;
     border-bottom: 2px solid #e0e0e0;
@@ -511,7 +433,6 @@ body {
     border: 1px solid #f5c6cb;
 }
 
-<<<<<<< HEAD
 .form-section {
     margin-bottom: 25px;
 }
@@ -607,7 +528,6 @@ body {
 .volunteer-select:focus {
     outline: none;
     border-color: #FF6F00;
-=======
 /* Modal form styles */
 .search-container {
     position: relative;
@@ -707,7 +627,6 @@ body {
 .modal-footer {
     border-top: 1px solid #edf2f7;
     padding-top: 20px;
->>>>>>> Tarun
 }
 
 .assign-submit-btn {
@@ -716,61 +635,11 @@ body {
     color: white;
     border: none;
     padding: 14px;
-<<<<<<< HEAD
-    border-radius: 6px;
-=======
     border-radius: 8px;
->>>>>>> Tarun
     cursor: pointer;
     font-weight: 600;
     font-size: 15px;
     transition: all 0.3s ease;
-<<<<<<< HEAD
-=======
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
->>>>>>> Tarun
-}
-
-.assign-submit-btn:hover:not(:disabled) {
-    background: #FF9800;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 111, 0, 0.4);
-}
-
-.assign-submit-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-/* Animations */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-<<<<<<< HEAD
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-=======
->>>>>>> Tarun
 @keyframes slideIn {
     from {
         opacity: 0;
@@ -795,11 +664,9 @@ body {
     }
 }
 
-<<<<<<< HEAD
 /* Responsive Design */
 @media (max-width: 768px) {
     .header-with-logout {
-=======
 @keyframes slideUp {
     from {
         transform: translateY(50px);
@@ -815,21 +682,10 @@ body {
 /* Responsive Design */
 @media (max-width: 768px) {
     .header-vertical {
->>>>>>> Tarun
         padding: 16px;
     }
 
     .logout-btn-right {
-<<<<<<< HEAD
-        top: 16px;
-        right: 16px;
-        padding: 8px 18px;
-        font-size: 13px;
-    }
-
-    .header-title-center {
-        font-size: 18px;
-=======
         top: 12px;
         right: 16px;
         padding: 6px 14px;
@@ -842,7 +698,6 @@ body {
 
     .header-title {
         font-size: 16px;
->>>>>>> Tarun
     }
 
     .page-title {
@@ -852,14 +707,7 @@ body {
 
     .section-card {
         margin: 0 16px 20px;
-<<<<<<< HEAD
-    }
-
-    .table-wrapper {
-        overflow-x: auto;
-=======
         padding: 16px;
->>>>>>> Tarun
     }
 
     .custom-table {
@@ -869,9 +717,4 @@ body {
     .custom-table tbody tr:hover {
         transform: none;
     }
-<<<<<<< HEAD
 }
-
-=======
-}
->>>>>>> Tarun

@@ -37,7 +37,7 @@ const VICompletedInterviewsPage = () => {
         setExpandedRow(expandedRow === viId ? null : viId);
     };
 
-<<<<<<< HEAD
+
     const getStatusBadgeClass = (status) => {
         switch (status?.toUpperCase()) {
             case 'RECOMMENDED':
@@ -50,8 +50,7 @@ const VICompletedInterviewsPage = () => {
                 return '';
         }
     };
-=======
->>>>>>> Tarun
+
 
     const getRecommendationText = (recommendation) => {
         switch (recommendation?.toUpperCase()) {
@@ -78,11 +77,8 @@ const VICompletedInterviewsPage = () => {
 
             <div className="container">
                 <div className="page-header">
-<<<<<<< HEAD
+
                     <h2>My Completed Interviews</h2>
-=======
-                
->>>>>>> Tarun
                     <button
                         onClick={() => navigate('/vi/dashboard')}
                         className="back-btn"
@@ -111,10 +107,7 @@ const VICompletedInterviewsPage = () => {
                                         <th>District</th>
                                         <th>Interview Date</th>
                                         <th>Recommendation</th>
-<<<<<<< HEAD
-                                        <th>Status</th>
-=======
->>>>>>> Tarun
+
                                         <th>Details</th>
                                     </tr>
                                 </thead>
@@ -138,14 +131,13 @@ const VICompletedInterviewsPage = () => {
                                                     </span>
                                                 </td>
                                                 <td>
-<<<<<<< HEAD
+
                                                     <span className={`status-badge ${getStatusBadgeClass(interview.status)}`}>
                                                         {interview.status}
                                                     </span>
                                                 </td>
                                                 <td>
-=======
->>>>>>> Tarun
+
                                                     <button
                                                         className="details-btn"
                                                         onClick={() => toggleRow(interview.viId)}

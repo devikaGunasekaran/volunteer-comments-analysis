@@ -62,27 +62,15 @@ const AdminAssignPage = () => {
 
     return (
         <div className="admin-assign-page">
-<<<<<<< HEAD
-            <header className="header">
-                <div><img src={logo} alt="Logo" className="logo-img" /></div>
-                <div className="header-title">Admin Panel - Verified Students</div>
-                <div>
-                    <button onClick={handleLogout} className="logout-link">LOGOUT</button>
-=======
-<<<<<<< Updated upstream
             <header className="header-with-logout">
                 <button onClick={handleLogout} className="logout-btn-right">Logout</button>
                 <div className="header-center-content">
                     <img src={logo} alt="Logo" className="header-logo-center" />
                     <div className="header-title-center">Admin Panel - Verified Students</div>
->>>>>>> Tarun
                 </div>
             </header>
 
             <div className="assigned-container">
-<<<<<<< HEAD
-=======
-=======
             <header className="header-vertical">
                 <button onClick={handleLogout} className="logout-btn-right">
                     LOGOUT
@@ -92,7 +80,6 @@ const AdminAssignPage = () => {
             </header>
 
             <div className="assigned-container">
->>>>>>> Tarun
                 {/* Navigation Buttons */}
                 <div className="nav-buttons-container">
                     <button
@@ -109,8 +96,6 @@ const AdminAssignPage = () => {
                     </button>
                 </div>
 
-<<<<<<< HEAD
-=======
                 {/* Statistics Cards */}
                 <div className="stats-container">
                     <div className="stat-card assigned">
@@ -136,8 +121,6 @@ const AdminAssignPage = () => {
                     </div>
                 </div>
 
->>>>>>> Stashed changes
->>>>>>> Tarun
                 <h2 className="page-title">Students Pending Review ({students.length})</h2>
 
                 <div className="table-wrapper">

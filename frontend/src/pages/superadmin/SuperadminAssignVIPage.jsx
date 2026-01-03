@@ -11,37 +11,14 @@ const SuperadminAssignVIPage = () => {
     const [loading, setLoading] = useState(true);
     const [assigningStudentId, setAssigningStudentId] = useState(null);
     const [filterStatus, setFilterStatus] = useState('all'); // all, assigned, unassigned
-<<<<<<< HEAD
-=======
-    const [message, setMessage] = useState({ type: '', text: '' });
->>>>>>> Tarun
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        loadData();
-    }, []);
-
-    const loadData = async () => {
-        try {
-<<<<<<< HEAD
-            setLoading(true);
-=======
             // Don't set global loading on refresh to avoid flicker if desired, but here we keep it for clarity
             if (!assigningStudentId) setLoading(true);
 
->>>>>>> Tarun
             const [studentsData, volunteersData] = await Promise.all([
                 superadminService.getApprovedStudents(),
                 superadminService.getVIVolunteers()
             ]);
 
-<<<<<<< HEAD
-            setStudents(studentsData.students || []);
-            setVolunteers(volunteersData.volunteers || []);
-        } catch (error) {
-            console.error('Error loading data:', error);
-            alert('Failed to load data. Please try again.');
-=======
             setVolunteers(volunteersData.volunteers || []);
 
             // Filter out students who have COMPLETED the process (completed, recommended, not_recommended)
@@ -58,7 +35,6 @@ const SuperadminAssignVIPage = () => {
         } catch (error) {
             console.error('Error loading data:', error);
             setMessage({ type: 'error', text: 'Failed to load data. Please try again.' });
->>>>>>> Tarun
         } finally {
             setLoading(false);
         }
@@ -66,24 +42,12 @@ const SuperadminAssignVIPage = () => {
 
     const handleAssignVolunteer = async (studentId, volunteerId) => {
         if (!volunteerId) {
-<<<<<<< HEAD
-            alert('Please select a volunteer');
-=======
             setMessage({ type: 'error', text: 'Please select a volunteer' });
->>>>>>> Tarun
             return;
         }
 
         try {
             setAssigningStudentId(studentId);
-<<<<<<< HEAD
-            await superadminService.assignVIVolunteer(studentId, volunteerId);
-            alert('VI Volunteer assigned successfully!');
-            await loadData(); // Reload data to show updated assignments
-        } catch (error) {
-            console.error('Error assigning volunteer:', error);
-            alert('Failed to assign volunteer. Please try again.');
-=======
             setMessage({ type: '', text: '' });
 
             await superadminService.assignVIVolunteer(studentId, volunteerId);
@@ -102,7 +66,6 @@ const SuperadminAssignVIPage = () => {
         } catch (error) {
             console.error('Error assigning volunteer:', error);
             setMessage({ type: 'error', text: 'Failed to assign volunteer. Please try again.' });
->>>>>>> Tarun
         } finally {
             setAssigningStudentId(null);
         }
@@ -147,15 +110,12 @@ const SuperadminAssignVIPage = () => {
                     </button>
                 </div>
 
-<<<<<<< HEAD
-=======
                 {message.text && (
                     <div className={`message-toast ${message.type}`}>
                         {message.text}
                     </div>
                 )}
 
->>>>>>> Tarun
                 {/* Filter Buttons */}
                 <div className="filter-container">
                     <button

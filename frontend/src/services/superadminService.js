@@ -111,8 +111,6 @@ const superadminService = {
             console.error('Error fetching VI details:', error);
             throw error;
         }
-<<<<<<< HEAD
-=======
     },
 
     /**
@@ -185,7 +183,6 @@ const superadminService = {
             console.error('Error fetching final selection stats:', error);
             throw error;
         }
->>>>>>> Tarun
     }
 };
 

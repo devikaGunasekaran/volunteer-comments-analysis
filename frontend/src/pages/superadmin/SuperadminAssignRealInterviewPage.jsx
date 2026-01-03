@@ -194,10 +194,6 @@ const SuperadminAssignRealInterviewPage = () => {
                                                 <th>District</th>
                                                 <th>Assigned RI Volunteer</th>
                                                 <th>Assigned Date</th>
-<<<<<<< HEAD
-                                                <th>Status</th>
-=======
->>>>>>> Tarun
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -220,14 +216,11 @@ const SuperadminAssignRealInterviewPage = () => {
                                                             : 'N/A'}
                                                     </td>
                                                     <td>
-<<<<<<< HEAD
                                                         <span className={`status-badge ${student.ri_status?.toLowerCase()}`}>
                                                             {student.ri_status || 'PENDING'}
                                                         </span>
                                                     </td>
                                                     <td>
-=======
->>>>>>> Tarun
                                                         <button
                                                             className="reassign-btn"
                                                             onClick={() => openAssignModal(student)}

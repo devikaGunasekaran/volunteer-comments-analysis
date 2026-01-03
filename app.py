@@ -9,13 +9,10 @@ from backend.config import Config
 from backend.routes.auth import auth_bp
 from backend.routes.volunteer import volunteer_bp
 from backend.routes.admin import admin_bp
-<<<<<<< Updated upstream
-=======
 from backend.routes.superadmin import superadmin_bp
 from backend.routes.vi_volunteer import vi_volunteer_bp
 from backend.routes.real_interview import real_interview_bp
 from backend.routes.educational import educational_bp
->>>>>>> Stashed changes
 from backend.routes.analytics import analytics_bp, register_analytics_page
 from backend.routes.scholarship import scholarship_bp
 from backend.routes.tv_volunteer import tv_volunteer_bp
@@ -52,8 +49,6 @@ app.register_blueprint(volunteer_bp)
 # Admin routes
 app.register_blueprint(admin_bp)
 
-<<<<<<< Updated upstream
-=======
 # Superadmin routes
 app.register_blueprint(superadmin_bp)
 
@@ -65,8 +60,6 @@ app.register_blueprint(real_interview_bp)
 
 # Educational Details routes
 app.register_blueprint(educational_bp)
-
->>>>>>> Stashed changes
 # Analytics routes
 app.register_blueprint(analytics_bp)
 

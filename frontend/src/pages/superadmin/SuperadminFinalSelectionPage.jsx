@@ -11,8 +11,8 @@ const SuperadminFinalSelectionPage = () => {
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [decision, setDecision] = useState('');
     const [remarks, setRemarks] = useState('');
-    // const [riTechnicalScore, setRiTechnicalScore] = useState(''); // Removed
-    // const [riCommunicationScore, setRiCommunicationScore] = useState(''); // Removed
+    const [riTechnicalScore, setRiTechnicalScore] = useState('');
+    const [riCommunicationScore, setRiCommunicationScore] = useState('');
     const [riRecommendation, setRiRecommendation] = useState('');
     const [riRemarks, setRiRemarks] = useState('');
     const [submitting, setSubmitting] = useState(false);

@@ -67,6 +67,8 @@ body {
     color: #2D3748;
     letter-spacing: -0.5px;
     animation: fadeIn 0.6s ease-out 0.1s both;
+}
+
 .header-title {
     font-weight: 700;
     font-size: 18px;
@@ -257,9 +259,6 @@ body {
 
 .custom-table tbody tr:nth-child(5) {
     animation-delay: 0.5s;
-}
-
-    border-bottom: 1px solid #F7FAFC;
 }
 
 .custom-table tbody tr:hover {
@@ -528,6 +527,8 @@ body {
 .volunteer-select:focus {
     outline: none;
     border-color: #FF6F00;
+}
+
 /* Modal form styles */
 .search-container {
     position: relative;
@@ -538,7 +539,6 @@ body {
     width: 100%;
     padding: 12px 16px;
     padding-left: 40px;
-    /* Space for icon */
     border: 2px solid #e0e0e0;
     border-radius: 8px;
     font-size: 15px;
@@ -640,6 +640,30 @@ body {
     font-weight: 600;
     font-size: 15px;
     transition: all 0.3s ease;
+}
+
+.assign-submit-btn:hover:not(:disabled) {
+    background: #FF9800;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 111, 0, 0.4);
+}
+
+.assign-submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
 @keyframes slideIn {
     from {
         opacity: 0;
@@ -664,9 +688,6 @@ body {
     }
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .header-with-logout {
 @keyframes slideUp {
     from {
         transform: translateY(50px);

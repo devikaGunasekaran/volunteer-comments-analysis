@@ -26,7 +26,6 @@ const VIVolunteerDashboardPage = () => {
             const studentsList = data.students || [];
             setStudents(studentsList);
 
-            // Calculate stats
             // Calculate stats from ALL students
             const pending = studentsList.filter(s => s.status === 'PENDING').length;
             const completed = studentsList.filter(s =>
@@ -83,7 +82,6 @@ const VIVolunteerDashboardPage = () => {
 
             <div className="container">
                 <div className="page-header">
-                    <h2>Virtual Interview Dashboard</h2>
 
                     <button
                         onClick={() => navigate('/vi/completed')}

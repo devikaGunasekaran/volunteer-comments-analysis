@@ -23,9 +23,6 @@ const AdminAssignPVPage = () => {
 
     const loadData = async () => {
         try {
-            const [studentsData, volunteersData] = await Promise.all([
-                adminService.getTVSelectedStudents(),
-                adminService.getVolunteers()
             const [studentsData, volunteersData, statsData] = await Promise.all([
                 adminService.getTVSelectedStudents(),
                 adminService.getVolunteers(),
@@ -105,39 +102,6 @@ const AdminAssignPVPage = () => {
         }
     };
 
-    const handleSearchByEmail = async () => {
-        if (!searchEmail.trim()) {
-            setMessage({ type: 'error', text: 'Please enter an email address' });
-            return;
-        }
-
-        setAssigning(true);
-        setMessage({ type: '', text: '' });
-
-        try {
-            const result = await adminService.assignPVVolunteer(
-                selectedStudent.studentId,
-                null,
-                searchEmail
-            );
-
-            if (result.success) {
-                setMessage({ type: 'success', text: result.message || 'Volunteer assigned successfully!' });
-                setTimeout(() => {
-                    closeAssignModal();
-                    loadData();
-                }, 1500);
-            }
-        } catch (error) {
-            console.error("Assignment failed:", error);
-            setMessage({
-                type: 'error',
-                text: error.response?.data?.error || 'Volunteer not found or assignment failed'
-            });
-        } finally {
-            setAssigning(false);
-        }
-    };
 
     const filteredVolunteers = volunteers.filter(v =>
         v.email.toLowerCase().includes(searchEmail.toLowerCase())
@@ -156,7 +120,6 @@ const AdminAssignPVPage = () => {
                 <div className="header-title">Admin Panel - Assign PV Volunteers</div>
             </header>
 
-            <div className="page-title">Assign Volunteers for Physical Verification</div>
             {/* Statistics Cards */}
             <div className="stats-container">
                 <div className="stat-card assigned">
@@ -296,44 +259,6 @@ const AdminAssignPVPage = () => {
                                 </div>
                             )}
 
-                            {/* Method 1: Search by Email */}
-                            <div className="form-section">
-                                <label>Search Volunteer by Email</label>
-                                <div className="search-group">
-                                    <input
-                                        type="email"
-                                        placeholder="Enter volunteer email"
-                                        value={searchEmail}
-                                        onChange={(e) => setSearchEmail(e.target.value)}
-                                        className="email-input"
-                                    />
-                                    <button
-                                        className="search-assign-btn"
-                                        onClick={handleSearchByEmail}
-                                        disabled={assigning}
-                                    >
-                                        {assigning ? 'Assigning...' : 'Assign by Email'}
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div className="divider">OR</div>
-
-                            {/* Method 2: Select from List */}
-                            <div className="form-section">
-                                <label>Select from Volunteer List</label>
-                                <select
-                                    value={selectedVolunteer}
-                                    onChange={(e) => setSelectedVolunteer(e.target.value)}
-                                    className="volunteer-select"
-                                >
-                                    <option value="">-- Select Volunteer --</option>
-                                    {filteredVolunteers.map(volunteer => (
-                                        <option key={volunteer.volunteerId} value={volunteer.volunteerId}>
-                                            {volunteer.email} ({volunteer.volunteerId})
-                                        </option>
-                                    ))}
-                                </select>
                             {/* Search Input */}
                             <div className="search-container">
                                 <span className="search-icon-overlay">🔍</span>

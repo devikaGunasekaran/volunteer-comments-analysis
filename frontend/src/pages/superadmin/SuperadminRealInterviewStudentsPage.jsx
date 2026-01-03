@@ -8,7 +8,6 @@ import './SuperadminRealInterviewStudentsPage.css';
 const SuperadminRealInterviewStudentsPage = () => {
     const [interviews, setInterviews] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [expandedRow, setExpandedRow] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -33,9 +32,6 @@ const SuperadminRealInterviewStudentsPage = () => {
         navigate('/login');
     };
 
-    const toggleRow = (riId) => {
-        setExpandedRow(expandedRow === riId ? null : riId);
-    };
 
     const getStatusBadgeClass = (status) => {
         switch (status?.toUpperCase()) {
@@ -107,114 +103,11 @@ const SuperadminRealInterviewStudentsPage = () => {
                                         <th>Student Name</th>
                                         <th>District</th>
                                         <th>RI Volunteer</th>
-                                        <th>Interview Date</th>
-                                        <th>Status</th>
-                                        <th>Recommendation</th>
-                                        <th>Scores</th>
-                                        <th>Details</th>
                                         <th>Recommendation</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {interviews.map((interview, index) => (
-                                        <React.Fragment key={interview.riId}>
-                                            <tr>
-                                                <td>{index + 1}</td>
-                                                <td className="student-id">{interview.studentId}</td>
-                                                <td>{interview.student_name}</td>
-                                                <td>{interview.district}</td>
-                                                <td>
-                                                    <div className="volunteer-info">
-                                                        <div className="volunteer-name">
-                                                            {interview.volunteer_name || interview.volunteerId}
-                                                        </div>
-                                                        <div className="volunteer-email">
-                                                            {interview.volunteer_email}
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    {interview.interviewDate
-                                                        ? new Date(interview.interviewDate).toLocaleString()
-                                                        : 'N/A'}
-                                                </td>
-                                                <td>
-                                                    <span className={`status-badge ${getStatusBadgeClass(interview.status)}`}>
-                                                        {interview.status}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <span className={`recommendation-badge ${getRecommendationBadgeClass(interview.overallRecommendation)}`}>
-                                                        {interview.overallRecommendation || 'N/A'}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <div className="scores">
-                                                        <div>Tech: {interview.technicalScore || 'N/A'}</div>
-                                                        <div>Comm: {interview.communicationScore || 'N/A'}</div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <button
-                                                        className="details-btn"
-                                                        onClick={() => toggleRow(interview.riId)}
-                                                    >
-                                                        {expandedRow === interview.riId ? '▲ Hide' : '▼ Show'}
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                            {expandedRow === interview.riId && (
-                                                <tr className="expanded-row">
-                                                    <td colSpan="10">
-                                                        <div className="details-panel">
-                                                            <div className="detail-section">
-                                                                <h4>Interview Remarks</h4>
-                                                                <p>{interview.remarks || 'No remarks provided'}</p>
-                                                            </div>
-
-                                                            <div className="detail-grid">
-                                                                <div className="detail-item">
-                                                                    <label>Technical Score:</label>
-                                                                    <span className="score-value">
-                                                                        {interview.technicalScore || 'N/A'}/100
-                                                                    </span>
-                                                                </div>
-                                                                <div className="detail-item">
-                                                                    <label>Communication Score:</label>
-                                                                    <span className="score-value">
-                                                                        {interview.communicationScore || 'N/A'}/100
-                                                                    </span>
-                                                                </div>
-                                                                <div className="detail-item">
-                                                                    <label>Overall Recommendation:</label>
-                                                                    <span className={`recommendation-badge ${getRecommendationBadgeClass(interview.overallRecommendation)}`}>
-                                                                        {interview.overallRecommendation || 'N/A'}
-                                                                    </span>
-                                                                </div>
-                                                                <div className="detail-item">
-                                                                    <label>Status:</label>
-                                                                    <span className={`status-badge ${getStatusBadgeClass(interview.status)}`}>
-                                                                        {interview.status}
-                                                                    </span>
-                                                                </div>
-                                                                <div className="detail-item">
-                                                                    <label>Student Phone:</label>
-                                                                    <span>{interview.phone || 'N/A'}</span>
-                                                                </div>
-                                                                <div className="detail-item">
-                                                                    <label>Assigned Date:</label>
-                                                                    <span>
-                                                                        {interview.assignedDate
-                                                                            ? new Date(interview.assignedDate).toLocaleDateString()
-                                                                            : 'N/A'}
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            )}
-                                        </React.Fragment>
                                         <tr key={interview.riId}>
                                             <td>{index + 1}</td>
                                             <td className="student-id">{interview.studentId}</td>

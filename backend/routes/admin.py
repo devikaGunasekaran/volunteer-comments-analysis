@@ -559,7 +559,6 @@ def interview_decision(student_id):
         print(f"Error in interview_decision: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
-<<<<<<< HEAD
 
 # =====================================================
 # PHYSICAL VERIFICATION WORKFLOW ENDPOINTS
@@ -602,7 +601,6 @@ def api_tv_selected_students():
 @admin_bp.route("/api/volunteers")
 def api_volunteers():
     """Get all volunteers from Volunteer table"""
-=======
 @admin_bp.route("/api/unassigned-tv-students")
 def get_unassigned_tv_students():
     """Fetch students with status 'TV' who are not yet assigned to any volunteer"""
@@ -673,25 +671,11 @@ def assign_tv():
 @admin_bp.route("/api/pv-statistics")
 def api_pv_statistics():
     """Get PV assignment statistics for admin dashboard"""
->>>>>>> Tarun
+
     if 'role' not in session or session.get('role') != 'admin':
         return jsonify({'error': 'Unauthorized'}), 401
     
     try:
-<<<<<<< HEAD
-        rows = fetchall_dict("""
-            SELECT 
-                volunteerId,
-                email,
-                role
-            FROM Volunteer
-            WHERE role = 'pv'
-            ORDER BY volunteerId
-        """)
-        return jsonify({'volunteers': rows})
-    except Exception as e:
-        print(f"Error in api_volunteers: {e}")
-=======
         # Get total students with TV status SELECTED
         total_tv_selected = fetchone_dict("""
             SELECT COUNT(*) as count
@@ -730,7 +714,6 @@ def api_pv_statistics():
         
     except Exception as e:
         print(f"Error fetching PV statistics: {e}")
->>>>>>> Tarun
         return jsonify({'error': str(e)}), 500
 
 
@@ -740,33 +723,33 @@ def api_assign_pv_volunteer():
     if 'role' not in session or session.get('role') != 'admin':
         return jsonify({'error': 'Unauthorized'}), 401
     
-<<<<<<< HEAD
+    
+    data = request.json
+    student_id = data.get('studentId')
+    volunteer_id = data.get('volunteerId')
+    volunteer_email = data.get('volunteerEmail')
+    
+    if not student_id:
+        return jsonify({'error': 'studentId is required'}), 400
+    
+    # If email provided, lookup volunteerId
+    if volunteer_email and not volunteer_id:
+        volunteer_row = fetchone_dict(
+            "SELECT volunteerId FROM Volunteer WHERE email = %s",
+            (volunteer_email,)
+        )
+        if not volunteer_row:
+            return jsonify({'error': 'Volunteer not found with that email'}), 404
+        volunteer_id = volunteer_row['volunteerId']
+    
+    if not volunteer_id:
+        return jsonify({'error': 'volunteerId or volunteerEmail is required'}), 400
+    
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({'error': 'Database connection failed'}), 500
+    
     try:
-        data = request.json
-        student_id = data.get('studentId')
-        volunteer_id = data.get('volunteerId')
-        volunteer_email = data.get('volunteerEmail')
-        
-        if not student_id:
-            return jsonify({'error': 'studentId is required'}), 400
-        
-        # If email provided, lookup volunteerId
-        if volunteer_email and not volunteer_id:
-            volunteer_row = fetchone_dict(
-                "SELECT volunteerId FROM Volunteer WHERE email = %s",
-                (volunteer_email,)
-            )
-            if not volunteer_row:
-                return jsonify({'error': 'Volunteer not found with that email'}), 404
-            volunteer_id = volunteer_row['volunteerId']
-        
-        if not volunteer_id:
-            return jsonify({'error': 'volunteerId or volunteerEmail is required'}), 400
-        
-        conn = get_db_connection()
-        if not conn:
-            return jsonify({'error': 'Database connection failed'}), 500
-        
         cursor = conn.cursor()
         
         # Check if assignment already exists
@@ -793,39 +776,10 @@ def api_assign_pv_volunteer():
                 VALUES (%s, %s, NULL)
             """, (student_id, volunteer_id))
             message = 'Volunteer assigned successfully'
-=======
-    data = request.json
-    studentIds = data.get('studentIds', [])
-    volunteerId = data.get('volunteerId')
-    
-    if not studentIds or not volunteerId:
-        return jsonify({'error': 'Missing studentIds or volunteerId'}), 400
-    
-    conn = get_db_connection()
-    if not conn:
-        return jsonify({'error': 'DB Connection failed'}), 500
-    
-    try:
-        cursor = conn.cursor()
-        for sid in studentIds:
-            # Check if already exists (prevent duplicate assignments)
-            cursor.execute("SELECT teleId FROM televerification WHERE studentId = %s", (sid,))
-            if cursor.fetchone():
-                continue
-                
-            cursor.execute("""
-                INSERT INTO televerification (studentId, volunteerId, status, comments, verificationDate)
-                VALUES (%s, %s, %s, %s, NOW())
-            """, (sid, volunteerId, 'ASSIGNED', 'Assigned by Admin'))
-            
-            # Update student status to 'TV' if it was NULL (Application Received state)
-            cursor.execute("UPDATE student SET status = 'TV' WHERE studentId = %s AND status IS NULL", (sid,))
->>>>>>> Tarun
         
         conn.commit()
         cursor.close()
         conn.close()
-<<<<<<< HEAD
         
         return jsonify({'success': True, 'message': message})
         
@@ -864,10 +818,6 @@ def api_completed_pv_students():
         return jsonify({'students': rows})
     except Exception as e:
         print(f"Error in api_completed_pv_students: {e}")
-=======
-        return jsonify({'success': True, 'message': f'Assigned {len(studentIds)} students'})
-    except Exception as e:
-        print(e)
         return jsonify({'error': str(e)}), 500
 
 @admin_bp.route("/api/submitted-tv-reports")
@@ -926,5 +876,5 @@ def review_tv_submission():
         return jsonify({'success': True, 'message': f'Student moved to {target_status}'})
     except Exception as e:
         print(e)
->>>>>>> Tarun
+
         return jsonify({'error': str(e)}), 500

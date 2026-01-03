@@ -245,8 +245,7 @@ def get_vi_details(student_id):
     except Exception as e:
         print(f"Error fetching VI details: {e}")
         return jsonify({'error': str(e)}), 500
-<<<<<<< HEAD
-=======
+
 
 
 # ============================================
@@ -453,4 +452,3 @@ def get_final_selection_stats():
     except Exception as e:
         print(f"Error fetching final selection stats: {e}")
         return jsonify({'error': str(e)}), 500
->>>>>>> Tarun

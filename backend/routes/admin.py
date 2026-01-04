@@ -752,18 +752,18 @@ def api_pv_statistics():
             FROM PhysicalVerification
         """)
         
-        # Get completed PV (status is not NULL and not PROCESSING)
+        # Get completed PV (volunteer has submitted - status is SELECT or REJECT)
         completed = fetchone_dict("""
             SELECT COUNT(*) as count
             FROM PhysicalVerification
-            WHERE status IS NOT NULL AND status != 'PROCESSING'
+            WHERE status IN ('SELECT', 'REJECT')
         """)
         
-        # Get pending PV (status IS NULL or PROCESSING)
+        # Get pending PV (assigned but not yet completed - status is ASSIGNED or NULL)
         pending = fetchone_dict("""
             SELECT COUNT(*) as count
             FROM PhysicalVerification
-            WHERE status IS NULL OR status = 'PROCESSING'
+            WHERE status IS NULL OR status = 'ASSIGNED'
         """)
         
         return jsonify({

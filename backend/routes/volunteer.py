@@ -200,7 +200,7 @@ def temp_upload():
     })
 
 
-@volunteer_bp.route("/batch-quality-check", methods=["POST"])
+@volunteer_bp.route("/api/batch-quality-check", methods=["POST"])
 def batch_quality_check():
     """Check quality of multiple images in a single API call"""
     studentId = request.form.get("studentId")

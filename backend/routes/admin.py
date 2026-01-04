@@ -700,7 +700,7 @@ def assign_pv():
         cursor = conn.cursor()
         
         # Check if PV assignment already exists
-        cursor.execute("SELECT pvId FROM PhysicalVerification WHERE studentId = %s", (studentId,))
+        cursor.execute("SELECT verificationId FROM PhysicalVerification WHERE studentId = %s", (studentId,))
         existing = cursor.fetchone()
         
         if existing:

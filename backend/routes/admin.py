@@ -874,8 +874,7 @@ def api_completed_pv_students():
             FROM Student s
             INNER JOIN PhysicalVerification pv ON s.studentId = pv.studentId
             LEFT JOIN Volunteer v ON pv.volunteerId = v.volunteerId
-            WHERE pv.status IS NOT NULL 
-                AND pv.status != 'PROCESSING'
+            WHERE pv.status IN ('SELECT', 'REJECT')
             ORDER BY pv.verificationDate DESC
         """)
         return jsonify({'students': rows})

@@ -589,7 +589,7 @@ def api_tv_selected_students():
             INNER JOIN TeleVerification tv ON s.studentId = tv.studentId
             LEFT JOIN PhysicalVerification pv ON s.studentId = pv.studentId
             LEFT JOIN Volunteer v ON pv.volunteerId = v.volunteerId
-            WHERE tv.status = 'SELECTED'
+            WHERE tv.status = 'VERIFIED'
             ORDER BY tv.verificationDate DESC
         """)
         return jsonify({'students': rows})

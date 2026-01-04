@@ -46,6 +46,16 @@ const adminService = {
         return api.post('/admin/api/review-tv-submission', { studentId, decision, remarks });
     },
 
+    // Get TV-verified students for PV assignment
+    async getTVSelectedStudents() {
+        return api.get('/admin/api/tv-selected-students');
+    },
+
+    // Get PV volunteers for assignment
+    async getVolunteers() {
+        return api.get('/admin/api/pv-volunteers');
+    },
+
     // Get students with completed PV
     async getCompletedPVStudents() {
         return api.get('/admin/api/completed-pv-students');

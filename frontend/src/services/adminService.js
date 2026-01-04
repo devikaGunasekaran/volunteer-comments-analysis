@@ -19,30 +19,60 @@ const adminService = {
         });
     },
 
-    // Physical Verification Workflow APIs
+    // --- TV Workflow ---
 
-    // Get students from TeleVerification with status='SELECTED'
+    // Get unassigned TV students
+    async getUnassignedTVStudents() {
+        return api.get('/admin/api/unassigned-tv-students');
+    },
+
+    // Get all TV volunteers
+    async getTVVolunteers() {
+        return api.get('/admin/api/tv-volunteers');
+    },
+
+    // Assign students to TV volunteer
+    async assignTV(studentIds, volunteerId) {
+        return api.post('/admin/api/assign-tv', { studentIds, volunteerId });
+    },
+
+    // Get submitted TV reports for review
+    async getTVReports() {
+        return api.get('/admin/api/submitted-tv-reports');
+    },
+
+    // Admin decision on TV review
+    async reviewTVSubmission(studentId, decision, remarks = '') {
+        return api.post('/admin/api/review-tv-submission', { studentId, decision, remarks });
+    },
+
+    // Get TV-verified students for PV assignment
     async getTVSelectedStudents() {
         return api.get('/admin/api/tv-selected-students');
     },
 
-    // Get all volunteers
+    // Get PV volunteers for assignment
     async getVolunteers() {
-        return api.get('/admin/api/volunteers');
+        return api.get('/admin/api/pv-volunteers');
     },
 
-    // Assign volunteer to student for PV
-    async assignPVVolunteer(studentId, volunteerId, volunteerEmail = null) {
-        return api.post('/admin/api/assign-pv-volunteer', {
+    // Assign PV volunteer to student
+    async assignPVVolunteer(studentId, volunteerId, assignedBy) {
+        return api.post('/admin/api/assign-pv', {
             studentId,
             volunteerId,
-            volunteerEmail
+            assignedBy
         });
     },
 
     // Get students with completed PV
     async getCompletedPVStudents() {
         return api.get('/admin/api/completed-pv-students');
+    },
+
+    // Get PV statistics for admin dashboard
+    async getPVStatistics() {
+        return api.get('/admin/api/pv-statistics');
     }
 };
 

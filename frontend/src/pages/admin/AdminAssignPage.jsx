@@ -7,6 +7,7 @@ import './AdminAssignPage.css';
 
 const AdminAssignPage = () => {
     const [students, setStudents] = useState([]);
+    const [statistics, setStatistics] = useState({ total_assigned: 0, completed: 0, pending: 0 });
     const [loading, setLoading] = useState(true);
     const [expandedRow, setExpandedRow] = useState(null);
     const navigate = useNavigate();
@@ -19,9 +20,16 @@ const AdminAssignPage = () => {
 
     const loadStudents = async () => {
         try {
-            const data = await adminService.getPendingStudents();
-            if (data.students) {
-                setStudents(data.students);
+            const [pendingData, statsData] = await Promise.all([
+                adminService.getPendingStudents(),
+                adminService.getPVStatistics()
+            ]);
+
+            if (pendingData.students) {
+                setStudents(pendingData.students);
+            }
+            if (statsData.statistics) {
+                setStatistics(statsData.statistics);
             }
         } catch (error) {
             console.error("Failed to load students:", error);
@@ -54,12 +62,12 @@ const AdminAssignPage = () => {
 
     return (
         <div className="admin-assign-page">
-            <header className="header">
-                <div><img src={logo} alt="Logo" className="logo-img" /></div>
+            <header className="header-vertical">
+                <button onClick={handleLogout} className="logout-btn-right">
+                    LOGOUT
+                </button>
+                <img src={logo} alt="Logo" className="header-logo-center" />
                 <div className="header-title">Admin Panel - Verified Students</div>
-                <div>
-                    <button onClick={handleLogout} className="logout-link">LOGOUT</button>
-                </div>
             </header>
 
             <div className="assigned-container">
@@ -77,6 +85,31 @@ const AdminAssignPage = () => {
                     >
                         ✅ View Completed PV
                     </button>
+                </div>
+
+                {/* Statistics Cards */}
+                <div className="stats-container">
+                    <div className="stat-card assigned">
+                        <div className="stat-icon">👥</div>
+                        <div className="stat-content">
+                            <div className="stat-value">{statistics.total_assigned}</div>
+                            <div className="stat-label">PV Assigned</div>
+                        </div>
+                    </div>
+                    <div className="stat-card completed">
+                        <div className="stat-icon">✅</div>
+                        <div className="stat-content">
+                            <div className="stat-value">{statistics.completed}</div>
+                            <div className="stat-label">Completed</div>
+                        </div>
+                    </div>
+                    <div className="stat-card pending">
+                        <div className="stat-icon">⏳</div>
+                        <div className="stat-content">
+                            <div className="stat-value">{statistics.pending}</div>
+                            <div className="stat-label">Pending</div>
+                        </div>
+                    </div>
                 </div>
 
                 <h2 className="page-title">Students Pending Review ({students.length})</h2>
@@ -107,7 +140,7 @@ const AdminAssignPage = () => {
                                             <td>{index + 1}</td>
                                             <td>
                                                 <Link
-                                                    to={`/admin/decision/${s.studentId}`}
+                                                    to={`/admin/view/${s.studentId}`}
                                                     className="clickable-id"
                                                     onClick={(e) => e.stopPropagation()}
                                                 >
@@ -135,7 +168,7 @@ const AdminAssignPage = () => {
                                                                 <div className="detail-value">{s.sentiment_text}%</div>
                                                             </div>
                                                             <div className="detail-item" style={{ display: 'flex', alignItems: 'end' }}>
-                                                                <Link to={`/admin/decision/${s.studentId}`} className="submit-btn" style={{ padding: '8px 16px', fontSize: '13px', width: 'auto' }}>
+                                                                <Link to={`/admin/view/${s.studentId}`} className="submit-btn" style={{ padding: '8px 16px', fontSize: '13px', width: 'auto' }}>
                                                                     View Full Details & Decide →
                                                                 </Link>
                                                             </div>

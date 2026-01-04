@@ -11,6 +11,7 @@ const SuperadminAssignVIPage = () => {
     const [loading, setLoading] = useState(true);
     const [assigningStudentId, setAssigningStudentId] = useState(null);
     const [filterStatus, setFilterStatus] = useState('all'); // all, assigned, unassigned
+    const [message, setMessage] = useState({ type: '', text: '' });
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -19,17 +20,30 @@ const SuperadminAssignVIPage = () => {
 
     const loadData = async () => {
         try {
-            setLoading(true);
+            // Don't set global loading on refresh to avoid flicker if desired, but here we keep it for clarity
+            if (!assigningStudentId) setLoading(true);
+
             const [studentsData, volunteersData] = await Promise.all([
                 superadminService.getApprovedStudents(),
                 superadminService.getVIVolunteers()
             ]);
 
-            setStudents(studentsData.students || []);
             setVolunteers(volunteersData.volunteers || []);
+
+            // Filter out students who have COMPLETED the process (completed, recommended, not_recommended)
+            // We want to show:
+            // 1. Unassigned (vi_status is null)
+            // 2. Pending/Assigned (vi_status is 'PENDING' or 'ASSIGNED') - so they can be reassigned if needed
+            const allStudents = studentsData.students || [];
+            const activeStudents = allStudents.filter(s => {
+                const status = s.vi_status || '';
+                return !['COMPLETED', 'RECOMMENDED', 'NOT_RECOMMENDED'].includes(status);
+            });
+
+            setStudents(activeStudents);
         } catch (error) {
             console.error('Error loading data:', error);
-            alert('Failed to load data. Please try again.');
+            setMessage({ type: 'error', text: 'Failed to load data. Please try again.' });
         } finally {
             setLoading(false);
         }
@@ -37,18 +51,30 @@ const SuperadminAssignVIPage = () => {
 
     const handleAssignVolunteer = async (studentId, volunteerId) => {
         if (!volunteerId) {
-            alert('Please select a volunteer');
+            setMessage({ type: 'error', text: 'Please select a volunteer' });
             return;
         }
 
         try {
             setAssigningStudentId(studentId);
+            setMessage({ type: '', text: '' });
+
             await superadminService.assignVIVolunteer(studentId, volunteerId);
-            alert('VI Volunteer assigned successfully!');
-            await loadData(); // Reload data to show updated assignments
+
+            setMessage({ type: 'success', text: 'VI Volunteer assigned successfully!' });
+
+            // Refresh data silently
+            const studentsData = await superadminService.getApprovedStudents();
+            setStudents(studentsData.students || []);
+
+            // Clear success message after delay
+            setTimeout(() => {
+                setMessage({ type: '', text: '' });
+            }, 3000);
+
         } catch (error) {
             console.error('Error assigning volunteer:', error);
-            alert('Failed to assign volunteer. Please try again.');
+            setMessage({ type: 'error', text: 'Failed to assign volunteer. Please try again.' });
         } finally {
             setAssigningStudentId(null);
         }
@@ -92,6 +118,12 @@ const SuperadminAssignVIPage = () => {
                         ← Back to Dashboard
                     </button>
                 </div>
+
+                {message.text && (
+                    <div className={`message-toast ${message.type}`}>
+                        {message.text}
+                    </div>
+                )}
 
                 {/* Filter Buttons */}
                 <div className="filter-container">

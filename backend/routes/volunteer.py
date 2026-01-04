@@ -63,7 +63,7 @@ def pv_form(student_id):
 
 @volunteer_bp.route("/api/assigned-students")
 def api_assigned_students():
-    """Get students assigned to logged-in volunteer"""
+    """Get students assigned to logged-in volunteer with statistics"""
     if 'volunteerId' not in session or session.get('role') != 'pv':
         return jsonify({'error': 'Unauthorized'}), 401
 
@@ -74,7 +74,8 @@ def api_assigned_students():
         return jsonify({'error': 'Database connection failed'}), 500
 
     cursor = conn.cursor(dictionary=True)
-    # Only show if pv.status IS NULL (not started yet)
+    
+    # Get pending students (status IS NULL)
     query = """
         SELECT s.studentId, s.name AS studentName, s.phone AS phoneNumber, s.district, pv.status
         FROM PhysicalVerification pv
@@ -83,16 +84,36 @@ def api_assigned_students():
     """
     cursor.execute(query, (volunteerId,))
     students = cursor.fetchall()
+    
+    # Get statistics
+    stats_query = """
+        SELECT 
+            COUNT(*) as total_assigned,
+            SUM(CASE WHEN status IS NOT NULL AND status NOT IN ('ASSIGNED', 'PROCESSING') THEN 1 ELSE 0 END) as completed,
+            SUM(CASE WHEN status IS NULL OR status = 'ASSIGNED' OR status = 'PROCESSING' THEN 1 ELSE 0 END) as pending
+        FROM PhysicalVerification
+        WHERE volunteerId = %s
+    """
+    cursor.execute(stats_query, (volunteerId,))
+    stats = cursor.fetchone()
+    
     cursor.close()
     conn.close()
 
-    return jsonify({'students': students})
+    return jsonify({
+        'students': students,
+        'statistics': {
+            'total_assigned': stats['total_assigned'] or 0,
+            'completed': stats['completed'] or 0,
+            'pending': stats['pending'] or 0
+        }
+    })
 
 
 @volunteer_bp.route("/api/student/<student_id>")
 def api_student_details(student_id):
     """Get full student details"""
-    if 'volunteerId' not in session or session.get('role') != 'pv':
+    if 'volunteerId' not in session or session.get('role') not in ['pv', 'tv']:
         return jsonify({'error': 'Unauthorized'}), 401
 
     conn = get_db_connection()
@@ -135,7 +156,7 @@ def api_student_details(student_id):
 # IMAGE UPLOAD ENDPOINTS
 # =====================================================
 
-@volunteer_bp.route("/temp-upload", methods=["POST"])
+@volunteer_bp.route("/api/temp-upload", methods=["POST"])
 def temp_upload():
     """Temporary image upload with quality check"""
     studentId = request.form.get("studentId")
@@ -179,7 +200,7 @@ def temp_upload():
     })
 
 
-@volunteer_bp.route("/batch-quality-check", methods=["POST"])
+@volunteer_bp.route("/api/batch-quality-check", methods=["POST"])
 def batch_quality_check():
     """Check quality of multiple images in a single API call"""
     studentId = request.form.get("studentId")
@@ -213,7 +234,7 @@ def batch_quality_check():
     return jsonify({"results": results})
 
 
-@volunteer_bp.route("/final-upload-batch", methods=["POST"])
+@volunteer_bp.route("/api/final-upload-batch", methods=["POST"])
 def final_upload_batch():
     """Upload accepted images from batch quality check (parallel S3 uploads)"""
     studentId = request.form.get("studentId")
@@ -295,7 +316,7 @@ def final_upload_batch():
         return jsonify({"error": str(e)}), 500
 
 
-@volunteer_bp.route("/final-upload", methods=["POST"])
+@volunteer_bp.route("/api/final-upload", methods=["POST"])
 def final_upload():
     """Final upload from temp storage to S3"""
     studentId = request.json.get("studentId")
@@ -363,7 +384,7 @@ def final_upload():
     })
 
 
-@volunteer_bp.route("/image-count/<studentId>")
+@volunteer_bp.route("/api/image-count/<studentId>")
 def image_count(studentId):
     """Get count of uploaded images"""
     try:
@@ -393,9 +414,11 @@ def image_count(studentId):
         }), 500
 
 
-@volunteer_bp.route("/get-images/<studentId>")
+@volunteer_bp.route("/api/get-images/<studentId>")
 def get_images(studentId):
     """Get presigned URLs for student images"""
+    if 'volunteerId' not in session or session.get('role') not in ['pv', 'tv']:
+        return jsonify({'error': 'Unauthorized'}), 401
     conn = get_db_connection()
     cursor = conn.cursor()
 
@@ -610,7 +633,7 @@ def run_pv_ai_pipeline(data, student_id, volunteer_id, recommendation):
         traceback.print_exc()
 
 
-@volunteer_bp.route("/submit-pv", methods=["POST"])
+@volunteer_bp.route("/api/submit-pv", methods=["POST"])
 def submit_pv():
     """Submit physical verification form"""
     try:

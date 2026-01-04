@@ -26,7 +26,7 @@ const VIVolunteerDashboardPage = () => {
             const studentsList = data.students || [];
             setStudents(studentsList);
 
-            // Calculate stats
+            // Calculate stats from ALL students
             const pending = studentsList.filter(s => s.status === 'PENDING').length;
             const completed = studentsList.filter(s =>
                 ['RECOMMENDED', 'NOT_RECOMMENDED', 'ON_HOLD'].includes(s.status)
@@ -37,6 +37,11 @@ const VIVolunteerDashboardPage = () => {
                 pending,
                 completed
             });
+
+            // Filter students state to ONLY show PENDING (active) students in the table
+            // Completed students should disappear from the list
+            const activeStudents = studentsList.filter(s => s.status === 'PENDING');
+            setStudents(activeStudents);
         } catch (error) {
             console.error('Error loading assigned students:', error);
             alert('Failed to load assigned students. Please try again.');
@@ -77,7 +82,7 @@ const VIVolunteerDashboardPage = () => {
 
             <div className="container">
                 <div className="page-header">
-                    <h2>Virtual Interview Dashboard</h2>
+
                     <button
                         onClick={() => navigate('/vi/completed')}
                         className="completed-btn"

@@ -1,0 +1,349 @@
+/* TV Report Details Page - Overhaul to match volunteer style */
+
+.student-details-page {
+    background: #f0f2f5;
+    min-height: 100vh;
+    padding-bottom: 50px;
+}
+
+/* ================= HEADER ================= */
+.header-vertical {
+    background: #ffffff;
+    padding: 22px 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+}
+
+.logout-btn-right {
+    position: absolute;
+    top: 16px;
+    right: 24px;
+    background: #FF6F00;
+    border: none;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 8px 18px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+}
+
+.back-button {
+    position: absolute;
+    top: 16px;
+    left: 24px;
+    background: transparent;
+    border: none;
+    color: #FF6F00;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 8px 12px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.back-button:hover {
+    color: #E65100;
+    text-decoration: none;
+}
+
+.header-logo-center {
+    height: 48px;
+    margin-bottom: 8px;
+}
+
+.header-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #222;
+}
+
+/* ================= CONTENT ================= */
+.page {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 0 16px;
+}
+
+.app-id-card {
+    background: #fff;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    border-left: 6px solid #FF9800;
+}
+
+.app-id-card strong {
+    color: #4a5568;
+    margin-right: 8px;
+}
+
+/* ================= ACCORDIONS ================= */
+.accordions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.accordion-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 18px 24px;
+    background: #fff;
+    border-radius: 10px;
+    border-left: 6px solid #ff9800;
+    cursor: pointer;
+    font-weight: 700;
+    color: #2d3748;
+    font-size: 16px;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+}
+
+.accordion-header:hover {
+    background: #fffaf0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.accordion-content {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 0 0 10px 10px;
+    margin-top: -6px;
+    border: 1px solid #edf2f7;
+    border-top: none;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ================= GRIDS & FIELDS ================= */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 24px;
+}
+
+.field-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #718096;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+}
+
+.field-value {
+    font-size: 15px;
+    font-weight: 700;
+    color: #2d3748;
+}
+
+/* ================= MARKS TABLES ================= */
+.marks-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.marks-title {
+    margin: 0 0 12px 0;
+    color: #FF9800;
+    font-size: 16px;
+    border-bottom: 2px solid #FFF3E0;
+    padding-bottom: 8px;
+}
+
+.marks-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.marks-table th {
+    text-align: left;
+    padding: 10px;
+    font-size: 12px;
+    color: #718096;
+    background: #f7fafc;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.marks-table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #edf2f7;
+}
+
+.total-row td {
+    background: #fffaf0 !important;
+    color: #c05621;
+    font-weight: 700;
+}
+
+.cutoff-row td {
+    background: #ebf8ff;
+    color: #2c5282;
+    font-size: 16px;
+}
+
+/* ================= FEEDBACK SECTION ================= */
+.feedback-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.feedback-text-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 16px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #4a5568;
+    white-space: pre-wrap;
+    min-height: 80px;
+}
+
+.feedback-text-box.suggestion {
+    background: #fffaf0;
+    border-color: #ffd8a8;
+    color: #744210;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.status-badge.verified {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.status-badge.rejected {
+    background: #fed7d7;
+    color: #822727;
+}
+
+.status-badge.pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+/* ================= ADMIN ACTIONS ================= */
+.admin-decision-card {
+    background: #fff;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-top: 30px;
+    text-align: center;
+    border: 2px solid #edf2f7;
+}
+
+.admin-decision-card h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #1a202c;
+}
+
+.decision-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.btn-select-pv {
+    background: #FF6F00;
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-select-pv:hover {
+    background: #e66400;
+    transform: translateY(-2px);
+}
+
+.btn-reject-app {
+    background: white;
+    color: #e53e3e;
+    border: 2px solid #feb2b2;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-reject-app:hover {
+    background: #fff5f5;
+    border-color: #fc8181;
+}
+
+.bottom-nav {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.back-to-list-link {
+    color: #718096;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.back-to-list-link:hover {
+    color: #2d3748;
+    text-decoration: underline;
+}
+
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+    font-size: 18px;
+    color: #ff9800;
+}
+
+@media (max-width: 600px) {
+    .decision-buttons {
+        flex-direction: column;
+    }
+
+    .btn-select-pv,
+    .btn-reject-app {
+        width: 100%;
+    }
+}

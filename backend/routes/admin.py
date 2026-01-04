@@ -269,7 +269,7 @@ def api_admin_pending_students():
 @admin_bp.route("/api/student/<student_id>")
 def api_admin_student_details(student_id):
     """API endpoint to get full student details for React Admin View"""
-    if 'role' not in session or session.get('role') != 'admin':
+    if 'role' not in session or session.get('role') not in ['admin', 'tv_admin']:
         return jsonify({'error': 'Unauthorized'}), 401
     
     try:
@@ -589,7 +589,7 @@ def api_tv_selected_students():
             INNER JOIN TeleVerification tv ON s.studentId = tv.studentId
             LEFT JOIN PhysicalVerification pv ON s.studentId = pv.studentId
             LEFT JOIN Volunteer v ON pv.volunteerId = v.volunteerId
-            WHERE tv.status = 'SELECTED'
+            WHERE tv.status = 'VERIFIED'
             ORDER BY tv.verificationDate DESC
         """)
         return jsonify({'students': rows})
@@ -601,22 +601,182 @@ def api_tv_selected_students():
 @admin_bp.route("/api/volunteers")
 def api_volunteers():
     """Get all volunteers from Volunteer table"""
+@admin_bp.route("/api/unassigned-tv-students")
+def get_unassigned_tv_students():
+    """Fetch students with status 'TV' who are not yet assigned to any volunteer"""
+    if 'role' not in session or session.get('role') not in ['admin', 'tv_admin']:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    query = """
+        SELECT studentId, name, district, phone 
+        FROM student 
+        WHERE (status = 'TV' OR status IS NULL)
+        AND studentId NOT IN (SELECT studentId FROM televerification)
+    """
+    students = fetchall_dict(query)
+    return jsonify({'students': students})
+
+@admin_bp.route("/api/tv-volunteers")
+def get_tv_volunteers():
+    """Fetch all volunteers with role 'tv'"""
+    if 'role' not in session or session.get('role') not in ['admin', 'tv_admin']:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    query = "SELECT volunteerId, name, email FROM volunteer WHERE role = 'tv'"
+    volunteers = fetchall_dict(query)
+    return jsonify({'volunteers': volunteers})
+
+@admin_bp.route("/api/pv-volunteers")
+def get_pv_volunteers():
+    """Fetch all volunteers with role 'pv' for PV assignment"""
+    if 'role' not in session or session.get('role') not in ['admin', 'tv_admin']:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    query = "SELECT volunteerId, name, email FROM volunteer WHERE role = 'pv'"
+    volunteers = fetchall_dict(query)
+    return jsonify({'volunteers': volunteers})
+
+@admin_bp.route("/api/assign-tv", methods=['POST'])
+def assign_tv():
+    """Assign students to a TV volunteer"""
+    if 'role' not in session or session.get('role') not in ['admin', 'tv_admin']:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    data = request.json
+    studentIds = data.get('studentIds', [])
+    volunteerId = data.get('volunteerId')
+    
+    if not studentIds or not volunteerId:
+        return jsonify({'error': 'Missing studentIds or volunteerId'}), 400
+    
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({'error': 'DB Connection failed'}), 500
+    
+    try:
+        cursor = conn.cursor()
+        for sid in studentIds:
+            # Check if already exists (prevent duplicate assignments)
+            cursor.execute("SELECT teleId FROM televerification WHERE studentId = %s", (sid,))
+            if cursor.fetchone():
+                continue
+                
+            cursor.execute("""
+                INSERT INTO televerification (studentId, volunteerId, status, comments, verificationDate)
+                VALUES (%s, %s, %s, %s, NOW())
+            """, (sid, volunteerId, 'ASSIGNED', 'Assigned by Admin'))
+            
+            # Update student status to 'TV' if it was NULL (Application Received state)
+            cursor.execute("UPDATE student SET status = 'TV' WHERE studentId = %s AND status IS NULL", (sid,))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({'success': True, 'message': f'Assigned {len(studentIds)} students'})
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 500
+
+
+@admin_bp.route("/api/assign-pv", methods=['POST'])
+def assign_pv():
+    """Assign a PV volunteer to a TV-verified student"""
+    if 'role' not in session or session.get('role') not in ['admin', 'tv_admin']:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    data = request.json
+    studentId = data.get('studentId')
+    volunteerId = data.get('volunteerId')
+    assignedBy = data.get('assignedBy', session.get('volunteerId', 'admin'))
+    
+    if not studentId or not volunteerId:
+        return jsonify({'error': 'Missing studentId or volunteerId'}), 400
+    
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({'error': 'DB Connection failed'}), 500
+    
+    try:
+        cursor = conn.cursor()
+        
+        # Check if PV assignment already exists
+        cursor.execute("SELECT verificationId FROM PhysicalVerification WHERE studentId = %s", (studentId,))
+        existing = cursor.fetchone()
+        
+        if existing:
+            # Update existing assignment
+            cursor.execute("""
+                UPDATE PhysicalVerification 
+                SET volunteerId = %s
+                WHERE studentId = %s
+            """, (volunteerId, studentId))
+        else:
+            # Create new PV assignment
+            cursor.execute("""
+                INSERT INTO PhysicalVerification (studentId, volunteerId, status)
+                VALUES (%s, %s, %s)
+            """, (studentId, volunteerId, 'ASSIGNED'))
+        
+        # Update student status to indicate PV assignment
+        cursor.execute("UPDATE student SET status = 'PV' WHERE studentId = %s", (studentId,))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({'success': True, 'message': 'PV volunteer assigned successfully'})
+    except Exception as e:
+        print(f"Error in assign_pv: {e}")
+        if conn:
+            conn.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+@admin_bp.route("/api/pv-statistics")
+def api_pv_statistics():
+    """Get PV assignment statistics for admin dashboard"""
+
     if 'role' not in session or session.get('role') != 'admin':
         return jsonify({'error': 'Unauthorized'}), 401
     
     try:
-        rows = fetchall_dict("""
-            SELECT 
-                volunteerId,
-                email,
-                role
-            FROM Volunteer
-            WHERE role = 'pv'
-            ORDER BY volunteerId
+        # Get total students with TV status SELECTED
+        total_tv_selected = fetchone_dict("""
+            SELECT COUNT(*) as count
+            FROM TeleVerification
+            WHERE status = 'SELECTED'
         """)
-        return jsonify({'volunteers': rows})
+        
+        # Get students assigned to PV
+        total_assigned = fetchone_dict("""
+            SELECT COUNT(DISTINCT studentId) as count
+            FROM PhysicalVerification
+        """)
+        
+        # Get completed PV (volunteer has submitted - status is not ASSIGNED or PROCESSING)
+        completed = fetchone_dict("""
+            SELECT COUNT(*) as count
+            FROM PhysicalVerification
+            WHERE status IS NOT NULL AND status NOT IN ('ASSIGNED', 'PROCESSING')
+        """)
+        
+        # Get pending PV (assigned but not yet completed - status is ASSIGNED or NULL)
+        pending = fetchone_dict("""
+            SELECT COUNT(*) as count
+            FROM PhysicalVerification
+            WHERE status IS NULL OR status = 'ASSIGNED'
+        """)
+        
+        return jsonify({
+            'statistics': {
+                'total_tv_selected': total_tv_selected['count'] or 0,
+                'total_assigned': total_assigned['count'] or 0,
+                'completed': completed['count'] or 0,
+                'pending': pending['count'] or 0
+            }
+        })
+        
     except Exception as e:
-        print(f"Error in api_volunteers: {e}")
+        print(f"Error fetching PV statistics: {e}")
         return jsonify({'error': str(e)}), 500
 
 
@@ -626,32 +786,33 @@ def api_assign_pv_volunteer():
     if 'role' not in session or session.get('role') != 'admin':
         return jsonify({'error': 'Unauthorized'}), 401
     
+    
+    data = request.json
+    student_id = data.get('studentId')
+    volunteer_id = data.get('volunteerId')
+    volunteer_email = data.get('volunteerEmail')
+    
+    if not student_id:
+        return jsonify({'error': 'studentId is required'}), 400
+    
+    # If email provided, lookup volunteerId
+    if volunteer_email and not volunteer_id:
+        volunteer_row = fetchone_dict(
+            "SELECT volunteerId FROM Volunteer WHERE email = %s",
+            (volunteer_email,)
+        )
+        if not volunteer_row:
+            return jsonify({'error': 'Volunteer not found with that email'}), 404
+        volunteer_id = volunteer_row['volunteerId']
+    
+    if not volunteer_id:
+        return jsonify({'error': 'volunteerId or volunteerEmail is required'}), 400
+    
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({'error': 'Database connection failed'}), 500
+    
     try:
-        data = request.json
-        student_id = data.get('studentId')
-        volunteer_id = data.get('volunteerId')
-        volunteer_email = data.get('volunteerEmail')
-        
-        if not student_id:
-            return jsonify({'error': 'studentId is required'}), 400
-        
-        # If email provided, lookup volunteerId
-        if volunteer_email and not volunteer_id:
-            volunteer_row = fetchone_dict(
-                "SELECT volunteerId FROM Volunteer WHERE email = %s",
-                (volunteer_email,)
-            )
-            if not volunteer_row:
-                return jsonify({'error': 'Volunteer not found with that email'}), 404
-            volunteer_id = volunteer_row['volunteerId']
-        
-        if not volunteer_id:
-            return jsonify({'error': 'volunteerId or volunteerEmail is required'}), 400
-        
-        conn = get_db_connection()
-        if not conn:
-            return jsonify({'error': 'Database connection failed'}), 500
-        
         cursor = conn.cursor()
         
         # Check if assignment already exists
@@ -713,11 +874,69 @@ def api_completed_pv_students():
             FROM Student s
             INNER JOIN PhysicalVerification pv ON s.studentId = pv.studentId
             LEFT JOIN Volunteer v ON pv.volunteerId = v.volunteerId
-            WHERE pv.status IS NOT NULL 
-                AND pv.status != 'PROCESSING'
+            WHERE pv.status IS NOT NULL AND pv.status NOT IN ('ASSIGNED', 'PROCESSING')
             ORDER BY pv.verificationDate DESC
         """)
         return jsonify({'students': rows})
     except Exception as e:
         print(f"Error in api_completed_pv_students: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@admin_bp.route("/api/submitted-tv-reports")
+def get_submitted_tv_reports():
+    """Fetch students with submitted TV reports for admin review"""
+    if 'role' not in session or session.get('role') not in ['admin', 'tv_admin']:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    query = """
+        SELECT 
+            s.studentId, 
+            s.name, 
+            s.district, 
+            v.name as volunteerName,
+            tv.status as tvStatus,
+            tv.comments as tvComments,
+            tv.verificationDate
+        FROM student s
+        JOIN televerification tv ON s.studentId = tv.studentId
+        JOIN volunteer v ON tv.volunteerId = v.volunteerId
+        WHERE tv.status IN ('VERIFIED', 'REJECTED')
+        AND s.status = 'TV'
+    """
+    reports = fetchall_dict(query)
+    return jsonify({'reports': reports})
+
+@admin_bp.route("/api/review-tv-submission", methods=['POST'])
+def review_tv_submission():
+    """Admin decision on TV submission (move to PV or Reject)"""
+    if 'role' not in session or session.get('role') not in ['admin', 'tv_admin']:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    data = request.json
+    studentId = data.get('studentId')
+    decision = data.get('decision') # 'SELECT' (moves to PV) or 'REJECT'
+    remarks = data.get('remarks', '')
+    
+    if not studentId or not decision:
+        return jsonify({'error': 'Missing studentId or decision'}), 400
+    
+    conn = get_db_connection()
+    try:
+        cursor = conn.cursor()
+        
+        target_status = 'PV' if decision == 'SELECT' else 'REJECTED'
+        
+        cursor.execute("""
+            UPDATE student 
+            SET status = %s, admin_remarks = %s 
+            WHERE studentId = %s
+        """, (target_status, remarks, studentId))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({'success': True, 'message': f'Student moved to {target_status}'})
+    except Exception as e:
+        print(e)
+
         return jsonify({'error': str(e)}), 500

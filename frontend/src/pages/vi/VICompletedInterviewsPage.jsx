@@ -37,6 +37,7 @@ const VICompletedInterviewsPage = () => {
         setExpandedRow(expandedRow === viId ? null : viId);
     };
 
+
     const getStatusBadgeClass = (status) => {
         switch (status?.toUpperCase()) {
             case 'RECOMMENDED':
@@ -49,6 +50,7 @@ const VICompletedInterviewsPage = () => {
                 return '';
         }
     };
+
 
     const getRecommendationText = (recommendation) => {
         switch (recommendation?.toUpperCase()) {
@@ -75,6 +77,7 @@ const VICompletedInterviewsPage = () => {
 
             <div className="container">
                 <div className="page-header">
+
                     <h2>My Completed Interviews</h2>
                     <button
                         onClick={() => navigate('/vi/dashboard')}
@@ -104,7 +107,7 @@ const VICompletedInterviewsPage = () => {
                                         <th>District</th>
                                         <th>Interview Date</th>
                                         <th>Recommendation</th>
-                                        <th>Status</th>
+
                                         <th>Details</th>
                                     </tr>
                                 </thead>
@@ -128,11 +131,13 @@ const VICompletedInterviewsPage = () => {
                                                     </span>
                                                 </td>
                                                 <td>
+
                                                     <span className={`status-badge ${getStatusBadgeClass(interview.status)}`}>
                                                         {interview.status}
                                                     </span>
                                                 </td>
                                                 <td>
+
                                                     <button
                                                         className="details-btn"
                                                         onClick={() => toggleRow(interview.viId)}

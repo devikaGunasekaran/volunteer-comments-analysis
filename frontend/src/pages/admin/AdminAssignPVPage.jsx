@@ -8,6 +8,7 @@ import './AdminAssignPVPage.css';
 const AdminAssignPVPage = () => {
     const [students, setStudents] = useState([]);
     const [volunteers, setVolunteers] = useState([]);
+    const [statistics, setStatistics] = useState({ total_tv_selected: 0, total_assigned: 0, completed: 0, pending: 0 });
     const [loading, setLoading] = useState(true);
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [selectedVolunteer, setSelectedVolunteer] = useState('');
@@ -22,9 +23,10 @@ const AdminAssignPVPage = () => {
 
     const loadData = async () => {
         try {
-            const [studentsData, volunteersData] = await Promise.all([
+            const [studentsData, volunteersData, statsData] = await Promise.all([
                 adminService.getTVSelectedStudents(),
-                adminService.getVolunteers()
+                adminService.getVolunteers(),
+                adminService.getPVStatistics()
             ]);
 
             if (studentsData.students) {
@@ -32,6 +34,9 @@ const AdminAssignPVPage = () => {
             }
             if (volunteersData.volunteers) {
                 setVolunteers(volunteersData.volunteers);
+            }
+            if (statsData.statistics) {
+                setStatistics(statsData.statistics);
             }
         } catch (error) {
             console.error("Failed to load data:", error);
@@ -97,39 +102,6 @@ const AdminAssignPVPage = () => {
         }
     };
 
-    const handleSearchByEmail = async () => {
-        if (!searchEmail.trim()) {
-            setMessage({ type: 'error', text: 'Please enter an email address' });
-            return;
-        }
-
-        setAssigning(true);
-        setMessage({ type: '', text: '' });
-
-        try {
-            const result = await adminService.assignPVVolunteer(
-                selectedStudent.studentId,
-                null,
-                searchEmail
-            );
-
-            if (result.success) {
-                setMessage({ type: 'success', text: result.message || 'Volunteer assigned successfully!' });
-                setTimeout(() => {
-                    closeAssignModal();
-                    loadData();
-                }, 1500);
-            }
-        } catch (error) {
-            console.error("Assignment failed:", error);
-            setMessage({
-                type: 'error',
-                text: error.response?.data?.error || 'Volunteer not found or assignment failed'
-            });
-        } finally {
-            setAssigning(false);
-        }
-    };
 
     const filteredVolunteers = volunteers.filter(v =>
         v.email.toLowerCase().includes(searchEmail.toLowerCase())
@@ -148,7 +120,30 @@ const AdminAssignPVPage = () => {
                 <div className="header-title">Admin Panel - Assign PV Volunteers</div>
             </header>
 
-            <div className="page-title">Assign Volunteers for Physical Verification</div>
+            {/* Statistics Cards */}
+            <div className="stats-container">
+                <div className="stat-card assigned">
+                    <div className="stat-icon">👥</div>
+                    <div className="stat-content">
+                        <div className="stat-value">{statistics.total_assigned}</div>
+                        <div className="stat-label">PV Assigned</div>
+                    </div>
+                </div>
+                <div className="stat-card completed">
+                    <div className="stat-icon">✅</div>
+                    <div className="stat-content">
+                        <div className="stat-value">{statistics.completed}</div>
+                        <div className="stat-label">Completed</div>
+                    </div>
+                </div>
+                <div className="stat-card pending">
+                    <div className="stat-icon">⏳</div>
+                    <div className="stat-content">
+                        <div className="stat-value">{statistics.pending}</div>
+                        <div className="stat-label">Pending</div>
+                    </div>
+                </div>
+            </div>
 
             <div className="assign-container">
 
@@ -264,44 +259,43 @@ const AdminAssignPVPage = () => {
                                 </div>
                             )}
 
-                            {/* Method 1: Search by Email */}
-                            <div className="form-section">
-                                <label>Search Volunteer by Email</label>
-                                <div className="search-group">
-                                    <input
-                                        type="email"
-                                        placeholder="Enter volunteer email"
-                                        value={searchEmail}
-                                        onChange={(e) => setSearchEmail(e.target.value)}
-                                        className="email-input"
-                                    />
-                                    <button
-                                        className="search-assign-btn"
-                                        onClick={handleSearchByEmail}
-                                        disabled={assigning}
-                                    >
-                                        {assigning ? 'Assigning...' : 'Assign by Email'}
-                                    </button>
-                                </div>
+                            {/* Search Input */}
+                            <div className="search-container">
+                                <span className="search-icon-overlay">🔍</span>
+                                <input
+                                    type="text"
+                                    placeholder="Search volunteer by name or email..."
+                                    value={searchEmail}
+                                    onChange={(e) => setSearchEmail(e.target.value)}
+                                    className="search-input"
+                                    autoFocus
+                                />
                             </div>
 
-                            <div className="divider">OR</div>
+                            {/* Volunteer List */}
+                            <div className="volunteer-list-container">
+                                {filteredVolunteers.length === 0 ? (
+                                    <div className="empty-state" style={{ padding: '20px', border: 'none' }}>
+                                        No volunteers found matching "{searchEmail}"
+                                    </div>
+                                ) : (
+                                    filteredVolunteers.map(volunteer => (
+                                        <div
+                                            key={volunteer.volunteerId}
+                                            className={`volunteer-item ${selectedVolunteer === volunteer.volunteerId ? 'selected' : ''}`}
+                                            onClick={() => setSelectedVolunteer(volunteer.volunteerId)}
+                                        >
+                                            <div className="volunteer-info">
+                                                <span className="volunteer-email">{volunteer.email}</span>
+                                                <span className="volunteer-id-badge">ID: {volunteer.volunteerId}</span>
+                                            </div>
+                                            <div className="check-icon">✓</div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
 
-                            {/* Method 2: Select from List */}
-                            <div className="form-section">
-                                <label>Select from Volunteer List</label>
-                                <select
-                                    value={selectedVolunteer}
-                                    onChange={(e) => setSelectedVolunteer(e.target.value)}
-                                    className="volunteer-select"
-                                >
-                                    <option value="">-- Select Volunteer --</option>
-                                    {filteredVolunteers.map(volunteer => (
-                                        <option key={volunteer.volunteerId} value={volunteer.volunteerId}>
-                                            {volunteer.email} ({volunteer.volunteerId})
-                                        </option>
-                                    ))}
-                                </select>
+                            <div className="modal-footer">
                                 <button
                                     className="assign-submit-btn"
                                     onClick={handleAssign}

@@ -2,53 +2,59 @@
 
 .superadmin-assign-vi-page {
     min-height: 100vh;
-    background: #f5f5f5;
-    font-family: Arial, sans-serif;
+    background: #f0f2f5;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
-/* Header Styles */
-.header-with-logout {
+/* Header Styles - Standard Vertical Theme */
+.header-vertical {
     background: white;
-    padding: 22px 20px;
-    border-bottom: 1px solid #ccc;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    padding: 20px;
     position: relative;
+    border-bottom: 2px solid #E2E8F0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
 }
 
 .logout-btn-right {
-    background: #f44336;
-    color: white;
+    position: absolute;
+    top: 16px;
+    right: 24px;
+    background: #FF6F00;
     border: none;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 13px;
     padding: 8px 18px;
     border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .logout-btn-right:hover {
-    background: #d32f2f;
-}
-
-.header-center-content {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    align-items: center;
-    gap: 15px;
+    background: #FF9800;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(255, 111, 0, 0.2);
 }
 
 .header-logo-center {
     height: 48px;
+    max-width: 150px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
-.header-title-center {
+.header-title {
+    font-weight: 700;
     font-size: 18px;
-    font-weight: bold;
-    color: #333;
+    color: #2D3748;
+    text-align: center;
 }
 
 /* Container */
@@ -346,3 +352,36 @@
 }
 
 
+/* Message Toast */
+.message-toast {
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    text-align: center;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.message-toast.success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+.message-toast.error {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

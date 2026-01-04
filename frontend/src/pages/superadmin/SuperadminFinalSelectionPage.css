@@ -1,0 +1,231 @@
+/* Additional styles for Final Selection Decision Modal */
+
+.decision-modal {
+    max-width: 700px;
+}
+
+.student-summary {
+    background: #f7fafc;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    border-left: 4px solid #FF9800;
+}
+
+.student-summary p {
+    margin: 8px 0;
+    font-size: 14px;
+    color: #2D3748;
+}
+
+.student-summary strong {
+    color: #1A202C;
+    font-weight: 600;
+}
+
+.form-section label.required::after {
+    content: ' *';
+    color: #e53e3e;
+}
+
+.decision-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.decision-option {
+    padding: 16px 24px;
+    border: 2px solid #E2E8F0;
+    border-radius: 12px;
+    background: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.decision-option:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.selected-option {
+    color: #38a169;
+}
+
+.selected-option.active {
+    background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
+    border-color: #38a169;
+    box-shadow: 0 4px 12px rgba(56, 161, 105, 0.2);
+}
+
+.rejected-option {
+    color: #e53e3e;
+}
+
+.rejected-option.active {
+    background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+    border-color: #e53e3e;
+    box-shadow: 0 4px 12px rgba(229, 62, 62, 0.2);
+}
+
+.remarks-textarea {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #E2E8F0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    margin-top: 8px;
+    transition: border-color 0.3s ease;
+}
+
+.remarks-textarea:focus {
+    outline: none;
+    border-color: #FF9800;
+}
+
+.submit-decision-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #FF6F00 0%, #FF9800 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 24px;
+    transition: all 0.3s ease;
+}
+
+.submit-decision-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 111, 0, 0.3);
+}
+
+.submit-decision-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.decide-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.decide-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Volunteer Info */
+.volunteer-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.volunteer-name {
+    font-weight: 600;
+    color: #2D3748;
+}
+
+.volunteer-email {
+    font-size: 12px;
+    color: #718096;
+}
+
+/* Journey Details */
+.journey-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1A202C;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid #FF9800;
+}
+
+.journey-section {
+    background: #f7fafc;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border-left: 4px solid #667eea;
+}
+
+.journey-section h4 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2D3748;
+    margin-bottom: 16px;
+}
+
+.remarks-section {
+    margin-top: 16px;
+    padding: 12px;
+    background: white;
+    border-radius: 8px;
+    border-left: 3px solid #FF9800;
+}
+
+.remarks-section strong {
+    color: #1A202C;
+    font-size: 14px;
+}
+
+.remarks-section p {
+    margin: 8px 0 0 0;
+    color: #4A5568;
+    line-height: 1.6;
+}
+
+/* Badges */
+.badge {
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: 12px;
+    display: inline-block;
+}
+
+.badge.selected,
+.badge.positive,
+.badge.recommended {
+    background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%);
+    color: #22543d;
+}
+
+.badge.rejected,
+.badge.negative,
+.badge.not_recommended {
+    background: linear-gradient(135deg, #fed7d7 0%, #fc8181 100%);
+    color: #742a2a;
+}
+
+.badge.vi {
+    background: linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%);
+    color: #5b21b6;
+}
+
+.badge.ri {
+    background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%);
+    color: #22543d;
+}
+
+.recommendation-badge.vi {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.recommendation-badge.ri {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+}

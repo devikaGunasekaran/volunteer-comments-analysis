@@ -12,8 +12,10 @@ from backend.routes.admin import admin_bp
 from backend.routes.superadmin import superadmin_bp
 from backend.routes.vi_volunteer import vi_volunteer_bp
 from backend.routes.real_interview import real_interview_bp
+from backend.routes.educational import educational_bp
 from backend.routes.analytics import analytics_bp, register_analytics_page
 from backend.routes.scholarship import scholarship_bp
+from backend.routes.tv_volunteer import tv_volunteer_bp
 
 # Create Flask app
 app = Flask(__name__, 
@@ -56,11 +58,16 @@ app.register_blueprint(vi_volunteer_bp)
 # Real Interview routes
 app.register_blueprint(real_interview_bp)
 
+# Educational Details routes
+app.register_blueprint(educational_bp)
 # Analytics routes
 app.register_blueprint(analytics_bp)
 
 # Scholarship routes
 app.register_blueprint(scholarship_bp)
+
+# TV Volunteer routes
+app.register_blueprint(tv_volunteer_bp)
 
 # Register analytics page route (special case)
 register_analytics_page(app)
@@ -85,12 +92,12 @@ def internal_error(error):
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("🚀 Starting Volunteer Comments Analysis Application")
+    print("Starting Volunteer Comments Analysis Application")
     print("=" * 60)
-    print(f"📁 Upload folder: {Config.UPLOAD_FOLDER}")
-    print(f"🗄️  Database: {Config.DB_NAME}")
-    print(f"☁️  S3 Bucket: {Config.AWS_BUCKET}")
-    print(f"🤖 RAG Enabled: {Config.RAG_ENABLED}")
+    print(f"Upload folder: {Config.UPLOAD_FOLDER}")
+    print(f"Database: {Config.DB_NAME}")
+    print(f"S3 Bucket: {Config.AWS_BUCKET}")
+    print(f"RAG Enabled: {Config.RAG_ENABLED}")
     print("=" * 60)
     
     app.run(debug=True, host='0.0.0.0', port=5000)

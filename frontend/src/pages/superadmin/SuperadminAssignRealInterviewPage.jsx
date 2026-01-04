@@ -194,7 +194,6 @@ const SuperadminAssignRealInterviewPage = () => {
                                                 <th>District</th>
                                                 <th>Assigned RI Volunteer</th>
                                                 <th>Assigned Date</th>
-                                                <th>Status</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>

@@ -1,0 +1,91 @@
+/* Additional styles for Selected Students Page */
+
+.filter-stats {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 24px;
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+}
+
+.student-id {
+    font-weight: 700;
+    color: #667eea;
+}
+
+.student-id.clickable {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.student-id.clickable:hover {
+    color: #764ba2;
+    text-decoration: underline;
+    transform: scale(1.05);
+}
+
+.filter-btn {
+    padding: 12px 24px;
+    border: 2px solid #E2E8F0;
+    border-radius: 10px;
+    background: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #4A5568;
+}
+
+.filter-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.filter-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: #667eea;
+}
+
+.filter-btn.selected.active {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    border-color: #48bb78;
+}
+
+.filter-btn.rejected.active {
+    background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+    border-color: #e53e3e;
+}
+
+.decision-badge {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 13px;
+    display: inline-block;
+}
+
+.decision-badge.selected {
+    background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%);
+    color: #22543d;
+}
+
+.decision-badge.rejected {
+    background: linear-gradient(135deg, #fed7d7 0%, #fc8181 100%);
+    color: #742a2a;
+}
+
+.decisions-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px 40px;
+}
+
+.decisions-table {
+    width: 100%;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}

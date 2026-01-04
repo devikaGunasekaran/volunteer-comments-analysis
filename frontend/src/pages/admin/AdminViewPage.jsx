@@ -18,7 +18,12 @@ const AdminViewPage = () => {
 
     useEffect(() => {
         loadData();
-    }, [studentId]);
+    }, [studentId, navigate]);
+
+    const handleLogout = () => {
+        authService.logout();
+        navigate('/login');
+    };
 
     const loadData = async () => {
         try {
@@ -68,17 +73,11 @@ const AdminViewPage = () => {
     return (
         <div className="admin-view-page">
             <header className="header-vertical">
-                <button
-                    onClick={() => {
-                        authService.logout();
-                        navigate('/login');
-                    }}
-                    className="logout-btn-right"
-                >
+                <button onClick={handleLogout} className="logout-btn-right">
                     LOGOUT
                 </button>
                 <img src={logo} alt="Logo" className="header-logo-center" />
-                <div className="header-title">Admin - Student Verification Review</div>
+                <div className="header-title">Admin Dashboard</div>
             </header>
 
             <div className="view-container">

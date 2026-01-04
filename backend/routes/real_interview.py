@@ -62,6 +62,7 @@ def get_eligible_students():
             LEFT JOIN Volunteer rv ON ri.volunteerId = rv.volunteerId
             WHERE vi.status IN ('RECOMMENDED', 'SELECT')
               AND s.status = 'APPROVED'
+              AND (ri.status IS NULL OR ri.status != 'COMPLETED')
             ORDER BY 
                 CASE WHEN ri.volunteerId IS NULL THEN 0 ELSE 1 END,
                 vi.interviewDate DESC

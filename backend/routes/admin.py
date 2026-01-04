@@ -752,11 +752,11 @@ def api_pv_statistics():
             FROM PhysicalVerification
         """)
         
-        # Get completed PV (volunteer has submitted - status is SELECT or REJECT)
+        # Get completed PV (volunteer has submitted - status is not ASSIGNED or PROCESSING)
         completed = fetchone_dict("""
             SELECT COUNT(*) as count
             FROM PhysicalVerification
-            WHERE status IN ('SELECT', 'REJECT')
+            WHERE status IS NOT NULL AND status NOT IN ('ASSIGNED', 'PROCESSING')
         """)
         
         # Get pending PV (assigned but not yet completed - status is ASSIGNED or NULL)
@@ -874,7 +874,7 @@ def api_completed_pv_students():
             FROM Student s
             INNER JOIN PhysicalVerification pv ON s.studentId = pv.studentId
             LEFT JOIN Volunteer v ON pv.volunteerId = v.volunteerId
-            WHERE pv.status IN ('SELECT', 'REJECT')
+            WHERE pv.status IS NOT NULL AND pv.status NOT IN ('ASSIGNED', 'PROCESSING')
             ORDER BY pv.verificationDate DESC
         """)
         return jsonify({'students': rows})

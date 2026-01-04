@@ -178,28 +178,48 @@ const SuperadminSelectedStudentsPage = () => {
                                                                 </div>
                                                             </div>
 
-                                                            {student.finalDecision === 'SELECTED' && (
-                                                                <div className="action-section" style={{ marginTop: '20px' }}>
-                                                                    <button
-                                                                        className="edit-edu-btn"
-                                                                        onClick={() => navigate('/superadmin/educational-details', { state: { student } })}
-                                                                        style={{
-                                                                            padding: '8px 16px',
-                                                                            backgroundColor: '#4a90e2',
-                                                                            color: 'white',
-                                                                            border: 'none',
-                                                                            borderRadius: '6px',
-                                                                            cursor: 'pointer',
-                                                                            fontSize: '14px',
-                                                                            display: 'flex',
-                                                                            alignItems: 'center',
-                                                                            gap: '8px'
-                                                                        }}
-                                                                    >
-                                                                        ✏️ Edit Educational Details
-                                                                    </button>
-                                                                </div>
-                                                            )}
+                                                            <div className="action-buttons" style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
+                                                                <button
+                                                                    className="edit-educational-btn"
+                                                                    onClick={() => navigate('/superadmin/educational-details', {
+                                                                        state: {
+                                                                            student: {
+                                                                                studentId: student.studentId,
+                                                                                name: student.name,
+                                                                                district: student.district
+                                                                            }
+                                                                        }
+                                                                    })}
+                                                                    style={{
+                                                                        padding: '10px 20px',
+                                                                        backgroundColor: '#4CAF50',
+                                                                        color: 'white',
+                                                                        border: 'none',
+                                                                        borderRadius: '5px',
+                                                                        cursor: 'pointer',
+                                                                        fontSize: '14px',
+                                                                        fontWeight: '500'
+                                                                    }}
+                                                                >
+                                                                    📝 Edit Educational Details
+                                                                </button>
+                                                                <button
+                                                                    className="view-profile-btn"
+                                                                    onClick={() => navigate(`/superadmin/student-profile/${student.studentId}`)}
+                                                                    style={{
+                                                                        padding: '10px 20px',
+                                                                        backgroundColor: '#2196F3',
+                                                                        color: 'white',
+                                                                        border: 'none',
+                                                                        borderRadius: '5px',
+                                                                        cursor: 'pointer',
+                                                                        fontSize: '14px',
+                                                                        fontWeight: '500'
+                                                                    }}
+                                                                >
+                                                                    👤 View Full Profile
+                                                                </button>
+                                                            </div>
 
                                                             {student.ri_remarks && (
                                                                 <div className="detail-section">

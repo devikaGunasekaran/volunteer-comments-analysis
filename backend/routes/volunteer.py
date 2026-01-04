@@ -89,8 +89,8 @@ def api_assigned_students():
     stats_query = """
         SELECT 
             COUNT(*) as total_assigned,
-            SUM(CASE WHEN status IS NOT NULL AND status != 'PROCESSING' THEN 1 ELSE 0 END) as completed,
-            SUM(CASE WHEN status IS NULL OR status = 'PROCESSING' THEN 1 ELSE 0 END) as pending
+            SUM(CASE WHEN status IS NOT NULL AND status NOT IN ('ASSIGNED', 'PROCESSING') THEN 1 ELSE 0 END) as completed,
+            SUM(CASE WHEN status IS NULL OR status = 'ASSIGNED' OR status = 'PROCESSING' THEN 1 ELSE 0 END) as pending
         FROM PhysicalVerification
         WHERE volunteerId = %s
     """
@@ -156,7 +156,7 @@ def api_student_details(student_id):
 # IMAGE UPLOAD ENDPOINTS
 # =====================================================
 
-@volunteer_bp.route("/temp-upload", methods=["POST"])
+@volunteer_bp.route("/api/temp-upload", methods=["POST"])
 def temp_upload():
     """Temporary image upload with quality check"""
     studentId = request.form.get("studentId")
@@ -234,7 +234,7 @@ def batch_quality_check():
     return jsonify({"results": results})
 
 
-@volunteer_bp.route("/final-upload-batch", methods=["POST"])
+@volunteer_bp.route("/api/final-upload-batch", methods=["POST"])
 def final_upload_batch():
     """Upload accepted images from batch quality check (parallel S3 uploads)"""
     studentId = request.form.get("studentId")
@@ -316,7 +316,7 @@ def final_upload_batch():
         return jsonify({"error": str(e)}), 500
 
 
-@volunteer_bp.route("/final-upload", methods=["POST"])
+@volunteer_bp.route("/api/final-upload", methods=["POST"])
 def final_upload():
     """Final upload from temp storage to S3"""
     studentId = request.json.get("studentId")
@@ -384,7 +384,7 @@ def final_upload():
     })
 
 
-@volunteer_bp.route("/image-count/<studentId>")
+@volunteer_bp.route("/api/image-count/<studentId>")
 def image_count(studentId):
     """Get count of uploaded images"""
     try:
@@ -414,7 +414,7 @@ def image_count(studentId):
         }), 500
 
 
-@volunteer_bp.route("/get-images/<studentId>")
+@volunteer_bp.route("/api/get-images/<studentId>")
 def get_images(studentId):
     """Get presigned URLs for student images"""
     if 'volunteerId' not in session or session.get('role') not in ['pv', 'tv']:
@@ -633,7 +633,7 @@ def run_pv_ai_pipeline(data, student_id, volunteer_id, recommendation):
         traceback.print_exc()
 
 
-@volunteer_bp.route("/submit-pv", methods=["POST"])
+@volunteer_bp.route("/api/submit-pv", methods=["POST"])
 def submit_pv():
     """Submit physical verification form"""
     try:

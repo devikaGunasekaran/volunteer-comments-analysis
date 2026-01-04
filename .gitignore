@@ -44,6 +44,10 @@ uploads/
 # ChromaDB (RAG vector database - regenerate with populate_knowledge_base.py)
 chroma_db/
 
+# Database dumps (share separately with collaborators)
+database_dump_*.sql
+*.sql
+
 # Logs
 *.log
 

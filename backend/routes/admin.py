@@ -626,6 +626,16 @@ def get_tv_volunteers():
     volunteers = fetchall_dict(query)
     return jsonify({'volunteers': volunteers})
 
+@admin_bp.route("/api/pv-volunteers")
+def get_pv_volunteers():
+    """Fetch all volunteers with role 'pv' for PV assignment"""
+    if 'role' not in session or session.get('role') not in ['admin', 'tv_admin']:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    query = "SELECT volunteerId, name, email FROM volunteer WHERE role = 'pv'"
+    volunteers = fetchall_dict(query)
+    return jsonify({'volunteers': volunteers})
+
 @admin_bp.route("/api/assign-tv", methods=['POST'])
 def assign_tv():
     """Assign students to a TV volunteer"""

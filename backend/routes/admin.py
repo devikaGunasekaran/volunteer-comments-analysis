@@ -678,6 +678,59 @@ def assign_tv():
         return jsonify({'error': str(e)}), 500
 
 
+@admin_bp.route("/api/assign-pv", methods=['POST'])
+def assign_pv():
+    """Assign a PV volunteer to a TV-verified student"""
+    if 'role' not in session or session.get('role') not in ['admin', 'tv_admin']:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    data = request.json
+    studentId = data.get('studentId')
+    volunteerId = data.get('volunteerId')
+    assignedBy = data.get('assignedBy', session.get('volunteerId', 'admin'))
+    
+    if not studentId or not volunteerId:
+        return jsonify({'error': 'Missing studentId or volunteerId'}), 400
+    
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({'error': 'DB Connection failed'}), 500
+    
+    try:
+        cursor = conn.cursor()
+        
+        # Check if PV assignment already exists
+        cursor.execute("SELECT pvId FROM PhysicalVerification WHERE studentId = %s", (studentId,))
+        existing = cursor.fetchone()
+        
+        if existing:
+            # Update existing assignment
+            cursor.execute("""
+                UPDATE PhysicalVerification 
+                SET volunteerId = %s
+                WHERE studentId = %s
+            """, (volunteerId, studentId))
+        else:
+            # Create new PV assignment
+            cursor.execute("""
+                INSERT INTO PhysicalVerification (studentId, volunteerId, status)
+                VALUES (%s, %s, %s)
+            """, (studentId, volunteerId, 'ASSIGNED'))
+        
+        # Update student status to indicate PV assignment
+        cursor.execute("UPDATE student SET status = 'PV' WHERE studentId = %s", (studentId,))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({'success': True, 'message': 'PV volunteer assigned successfully'})
+    except Exception as e:
+        print(f"Error in assign_pv: {e}")
+        if conn:
+            conn.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
 @admin_bp.route("/api/pv-statistics")
 def api_pv_statistics():
     """Get PV assignment statistics for admin dashboard"""

@@ -56,6 +56,15 @@ const adminService = {
         return api.get('/admin/api/pv-volunteers');
     },
 
+    // Assign PV volunteer to student
+    async assignPVVolunteer(studentId, volunteerId, assignedBy) {
+        return api.post('/admin/api/assign-pv', {
+            studentId,
+            volunteerId,
+            assignedBy
+        });
+    },
+
     // Get students with completed PV
     async getCompletedPVStudents() {
         return api.get('/admin/api/completed-pv-students');

@@ -27,6 +27,7 @@ import SuperadminFinalSelectionPage from './pages/superadmin/SuperadminFinalSele
 import SuperadminSelectedStudentsPage from './pages/superadmin/SuperadminSelectedStudentsPage';
 import EducationalDetailsFormPage from './pages/superadmin/EducationalDetailsFormPage';
 import StudentProfilePage from './pages/superadmin/StudentProfilePage';
+import SuperadminAnalyticsDashboard from './pages/superadmin/SuperadminAnalyticsDashboard';
 import './App.css';
 
 function App() {
@@ -72,6 +73,7 @@ function App() {
           <Route path="/superadmin/selected-students" element={<SuperadminSelectedStudentsPage />} />
           <Route path="/superadmin/educational-details" element={<EducationalDetailsFormPage />} />
           <Route path="/superadmin/student-profile/:studentId" element={<StudentProfilePage />} />
+          <Route path="/superadmin/analytics" element={<SuperadminAnalyticsDashboard />} />
 
 
           {/* VI Volunteer Routes */}

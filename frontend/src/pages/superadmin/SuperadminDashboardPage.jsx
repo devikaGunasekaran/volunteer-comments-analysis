@@ -192,6 +192,19 @@ const SuperadminDashboardPage = () => {
                 </button>
             </div>
 
+            {/* Analytics & Reports Section */}
+            <div className="section-header">
+                <h3>📊 Analytics & Reports</h3>
+            </div>
+            <div className="action-buttons-container">
+                <button
+                    onClick={() => navigate('/superadmin/analytics')}
+                    className="action-btn primary-btn"
+                >
+                    📊 View Analytics Dashboard
+                </button>
+            </div>
+
             {/* Back Button */}
             <div className="action-buttons-container">
                 <button

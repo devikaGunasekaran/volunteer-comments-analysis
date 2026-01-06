@@ -1,3 +1,5 @@
+@import './AdminAssignPage.css';
+
 /* Admin View Page Styles - Matching StudentsAssignPage Header/Animations */
 
 .admin-view-page {
@@ -215,6 +217,11 @@
     margin-bottom: 12px;
     padding-bottom: 8px;
     border-bottom: 2px solid #FF9800;
+}
+
+.radio-option.hold-option:has(input:checked) {
+    border-color: #FF6F00;
+    background: #FFF3E0;
 }
 
 .marks-table {
@@ -436,8 +443,8 @@
 }
 
 .decision-btn {
-    background: #DD6B20;
-    /* Darker orange */
+    background: #FF6F00;
+    /* Standard orange */
     color: white;
     padding: 12px 40px;
     border-radius: 8px;
@@ -503,4 +510,3 @@ audio {
         transform: scale(1);
     }
 }
-

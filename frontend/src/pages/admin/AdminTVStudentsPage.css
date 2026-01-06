@@ -1,14 +1,6 @@
-/* AdminPVStudentsPage - Modern Design with Sidebar */
+/* AdminTVStudentsPage - Modern Design with Sidebar */
+@import './TVAdminDashboard.css';
 
-/* Import shared sidebar styles */
-@import './AdminAssignPage.css';
-
-/* Page-specific styles */
-.page-container {
-    animation: fadeIn 0.5s ease-out;
-}
-
-/* Student ID Link */
 .student-id-link {
     color: var(--primary-orange);
     font-weight: var(--fw-semibold);
@@ -21,7 +13,6 @@
     text-decoration: underline;
 }
 
-/* Accordion Styles */
 .accordion-row {
     background: var(--gray-50);
 }
@@ -54,12 +45,4 @@
     font-size: var(--fs-base);
     font-weight: var(--fw-semibold);
     color: var(--text-primary);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .detail-grid {
-        grid-template-columns: 1fr;
-        gap: var(--spacing-md);
-    }
 }

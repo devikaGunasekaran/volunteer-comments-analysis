@@ -129,8 +129,36 @@
 }
 
 .student-id {
-    color: #0066cc;
     font-weight: 600;
+}
+
+.id-link {
+    color: #FF6F00;
+    text-decoration: none;
+    position: relative;
+    transition: all 0.3s ease;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.id-link::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #FF9800;
+    transition: width 0.3s ease;
+}
+
+.id-link:hover {
+    background: transparent;
+    color: #FF9800;
+}
+
+.id-link:hover::before {
+    width: 100%;
 }
 
 /* Status Badges */

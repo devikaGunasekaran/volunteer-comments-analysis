@@ -1,355 +1,253 @@
-/* VI Volunteer Dashboard Page Styles */
+/* VI Volunteer Dashboard Layout */
+/* Reusing standard sidebar layout classes */
 
-.vi-volunteer-dashboard-page {
+.admin-layout {
+    display: flex;
     min-height: 100vh;
-    background: #f5f5f5;
-    font-family: Arial, sans-serif;
+    background: #f7fafc;
 }
 
-/* Header Styles */
-.header-with-logout {
+/* Sidebar */
+.side-nav {
+    width: 260px;
     background: white;
-    padding: 22px 20px;
-    border-bottom: 1px solid #ccc;
+    border-right: 1px solid #E2E8F0;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
+    flex-direction: column;
+    padding: 24px 0;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
 }
 
-.logout-btn-right {
-    background: #FF6F00;
-    color: white;
+.nav-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 24px 32px;
+    border-bottom: 1px solid #edf2f7;
+    margin-bottom: 24px;
+}
+
+.nav-logo img.header-logo-center {
+    height: 56px;
+    max-width: 100%;
+    margin-bottom: 12px;
+    object-fit: contain;
+}
+
+.nav-logo span {
+    font-weight: 700;
+    font-size: 14px;
+    color: #4A5568;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 16px;
+}
+
+.nav-item {
+    background: transparent;
     border: none;
-    padding: 8px 18px;
-    border-radius: 6px;
+    border-radius: 8px;
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 15px;
+    font-weight: 500;
+    color: #4A5568;
     cursor: pointer;
-    font-weight: bold;
-    transition: background 0.3s;
-}
-
-.logout-btn-right:hover {
-    background: #FF9800;
-}
-
-.header-center-content {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    transition: all 0.2s;
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 12px;
 }
 
-.header-logo-center {
-    height: 48px;
-}
-
-.header-title-center {
+.nav-item .icon {
     font-size: 18px;
-    font-weight: bold;
-    color: #333;
 }
 
-/* Container */
-.container {
-    max-width: 1400px;
-    margin: 30px auto;
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+.nav-item:hover {
+    background: #F7FAFC;
+    color: #FF6F00;
 }
 
-/* Page Header */
-.page-header {
+.nav-item.active {
+    background: #FFF5E6;
+    color: #FF6F00;
+    font-weight: 600;
+}
+
+.nav-footer {
+    margin-top: auto;
+    padding: 24px 16px 24px;
+    border-top: 1px solid #edf2f7;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-    padding-bottom: 20px;
-    border-bottom: 2px solid #f0f0f0;
+    flex-direction: column;
+    gap: 12px;
 }
 
-.page-header h2 {
-    margin: 0;
-    color: #333;
-    font-size: 28px;
-}
-
-.completed-btn {
+.logout-btn {
+    width: 100%;
+    padding: 10px;
     background: #FF6F00;
     color: white;
     border: none;
-    padding: 10px 20px;
     border-radius: 6px;
+    font-weight: 600;
     cursor: pointer;
-    font-weight: bold;
-    transition: background 0.3s;
+    transition: background 0.2s;
+    position: relative !important;
+    /* Override any absolute positioning */
 }
 
-.completed-btn:hover {
-    background: #FF9800;
+.logout-btn:hover {
+    background: #E65100;
 }
 
-/* Statistics Cards */
-.stats-container {
+/* Main Content */
+.main-content {
+    flex: 1;
+    margin-left: 260px;
+    padding: 40px;
+}
+
+.section-header-row {
+    margin-bottom: 32px;
+}
+
+.section-header-row h3 {
+    font-size: 28px;
+    margin: 0 0 8px 0;
+    color: #1A202C;
+}
+
+.section-subtitle {
+    color: #718096;
+    margin: 0;
+    font-size: 16px;
+}
+
+/* Stats Grid */
+.stats-grid-3 {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
 }
 
 .stat-card {
     background: white;
-    border-radius: 16px;
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease;
-    border: 2px solid #f7f7f7;
-    position: relative;
-    overflow: hidden;
+    padding: 32px 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+    text-align: center;
+    transition: transform 0.2s;
 }
 
 .stat-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-}
-
-/* Total Card - Yellow */
-.stat-card:not(.pending-card):not(.completed-card) {
-    border-left: 5px solid #FDB022;
-    background: linear-gradient(135deg, #FFFBF0 0%, #FFFFFF 100%);
-}
-
-.stat-card:not(.pending-card):not(.completed-card) .stat-value {
-    color: #FDB022;
-}
-
-.stat-card:not(.pending-card):not(.completed-card) .stat-icon {
-    color: #FDB022;
-    /* Icon matches text */
-}
-
-
-/* Pending Card - Orange */
-.stat-card.pending-card {
-    border-left: 5px solid #F59E0B;
-    background: linear-gradient(135deg, #FFF9E6 0%, #FFFFFF 100%);
-}
-
-.stat-card.pending-card .stat-value {
-    color: #F59E0B;
-}
-
-.stat-card.pending-card .stat-icon {
-    color: #F59E0B;
-}
-
-/* Completed Card - Green (or Darker Orange/Yellow if strictly "yellow shade") */
-/* User asked for "yellow shade". But typically completed is green. 
-   I will use a greenish-yellow or stay safe with Green as per Admin dashboard?
-   Admin dashboard uses Green for completed. User said "color cards should be in yellow shade".
-   Maybe ALL should be yellow/orange? 
-   I will stick to Admin theme: Green for completed. 
-   If they specifically meant ALL yellow, I can change later. 
-   However, "yellow shade" usually refers to the overall look vs the old "Orange/Blue/Red".
-   Let's keep Completed Green for distinctness, but styled consistently.
-*/
-.stat-card.completed-card {
-    border-left: 5px solid #10B981;
-    background: linear-gradient(135deg, #F0FDF4 0%, #FFFFFF 100%);
-}
-
-.stat-card.completed-card .stat-value {
-    color: #10B981;
-}
-
-.stat-card.completed-card .stat-icon {
-    color: #10B981;
-}
-
-
-.stat-icon {
-    font-size: 40px;
-    line-height: 1;
-    margin-bottom: 5px;
 }
 
 .stat-value {
-    font-size: 32px;
-    font-weight: 700;
-    line-height: 1;
-    margin: 5px 0;
+    font-size: 42px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color: #2D3748;
 }
 
 .stat-label {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
-    color: #64748B;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-/* Table Container */
-.table-container {
-    margin-top: 30px;
-}
-
-.table-container h3 {
-    margin-bottom: 20px;
-    color: #333;
-    font-size: 22px;
-}
-
-.students-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.students-table thead {
-    background: #fafafa;
-}
-
-.students-table th {
-    padding: 15px 12px;
-    text-align: left;
-    font-weight: bold;
-    color: #333;
-    border-bottom: 2px solid #e0e0e0;
-}
-
-.students-table td {
-    padding: 15px 12px;
-    border-bottom: 1px solid #eee;
-}
-
-.students-table tbody tr:hover {
-    background: #f9f9f9;
-}
-
-.student-id {
-    color: #0066cc;
-    font-weight: 600;
-}
-
-/* Status Badges */
-.status-badge {
-    display: inline-block;
-    padding: 5px 12px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: bold;
+    color: #718096;
     text-transform: uppercase;
 }
 
-.status-badge.pending {
-    background: #FFA726;
-    color: white;
+/* Colors */
+.total-card {
+    border-bottom: 4px solid #F6AD55;
 }
 
-.status-badge.recommended {
-    background: #66BB6A;
-    color: white;
+.pending-card {
+    border-bottom: 4px solid #F6E05E;
 }
 
-.status-badge.not-recommended {
-    background: #EF5350;
-    color: white;
+.completed-card {
+    border-bottom: 4px solid #48BB78;
 }
 
-.status-badge.on-hold {
-    background: #42A5F5;
-    color: white;
+/* Action Grid */
+.section-title {
+    margin-bottom: 24px;
+    color: #4A5568;
+    font-size: 18px;
 }
 
-/* Action Buttons */
-.interview-btn {
-    background: #FF6F00;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
+.action-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+.action-card-modern {
+    background: white;
+    padding: 32px;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     cursor: pointer;
-    font-weight: bold;
-    transition: background 0.3s;
-}
-
-.interview-btn:hover {
-    background: #FF9800;
-}
-
-.view-btn {
-    background: #FF6F00;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.3s;
-}
-
-.view-btn:hover {
-    background: #FF9800;
-}
-
-/* Loading States */
-.loading-container {
+    transition: all 0.2s;
+    border: 1px solid #E2E8F0;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 60px 20px;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
-.loading-spinner {
+.action-card-modern:hover {
+    transform: translateY(-4px);
+    border-color: #FF6F00;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.action-icon {
+    font-size: 32px;
+    margin-bottom: 16px;
+    padding: 12px;
+    background: #FFF5E6;
+    border-radius: 12px;
+}
+
+.action-card-modern h3 {
     font-size: 18px;
-    color: #666;
-    font-weight: 600;
+    margin: 0 0 8px 0;
+    color: #2D3748;
 }
 
-/* No Data */
-.no-data {
-    text-align: center;
-    padding: 60px 20px;
-    color: #999;
-    font-style: italic;
-    font-size: 18px;
+.action-card-modern p {
+    margin: 0;
+    color: #718096;
+    font-size: 14px;
+    line-height: 1.5;
 }
 
-/* Responsive Design */
-@media (max-width: 1200px) {
-    .container {
-        margin: 20px;
-        padding: 20px;
-    }
+/* Animation */
+.fadeIn {
+    animation: fadeIn 0.4s ease-out;
 }
 
-@media (max-width: 768px) {
-    .header-title-center {
-        font-size: 18px;
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
     }
 
-    .page-header {
-        flex-direction: column;
-        gap: 15px;
-        align-items: flex-start;
-    }
-
-    .stats-container {
-        grid-template-columns: 1fr;
-    }
-
-    .students-table {
-        font-size: 14px;
-    }
-
-    .students-table th,
-    .students-table td {
-        padding: 10px 8px;
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }

@@ -1,0 +1,211 @@
+/* VI Assigned Students Page - Matching Admin Design */
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background: #f0f2f5;
+    margin: 0;
+}
+
+.vi-assigned-students-page {
+    min-height: 100vh;
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Header */
+.header-vertical {
+    background: white;
+    padding: 22px 20px;
+    position: relative;
+    border-bottom: 2px solid #E2E8F0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.logout-btn-right {
+    position: absolute;
+    top: 16px;
+    right: 24px;
+    width: auto;
+    background: #FF6F00;
+    border: none;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 8px 18px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    text-transform: uppercase;
+}
+
+.logout-btn-right:hover {
+    background: #FF9800;
+}
+
+.header-logo-center {
+    height: 48px;
+    max-width: 150px;
+}
+
+.header-title {
+    font-weight: 700;
+    font-size: 18px;
+    color: #2D3748;
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* Page Title & Back Button */
+.page-title {
+    padding: 24px 32px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: slideIn 0.5s ease-out 0.1s both;
+}
+
+.back-link {
+    background: none;
+    border: none;
+    color: #FF6F00;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+    padding: 0;
+    width: fit-content;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.page-title h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1A202C;
+    margin: 0;
+}
+
+/* Table Wrapper */
+.table-wrapper {
+    max-width: 1200px;
+    margin: 0 auto 24px;
+    padding: 0 24px;
+    animation: scaleIn 0.5s ease-out 0.2s both;
+}
+
+.custom-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.custom-table thead {
+    background: linear-gradient(135deg, #FFF5E6 0%, #FFE8CC 100%);
+}
+
+.custom-table th {
+    padding: 16px;
+    text-align: left;
+    font-weight: 700;
+    color: #2D3748;
+    font-size: 14px;
+    text-transform: uppercase;
+    border-bottom: 2px solid #FF9800;
+}
+
+.custom-table tbody tr {
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #F7FAFC;
+}
+
+.custom-table tbody tr:hover {
+    background: #FFF9F0;
+}
+
+.custom-table td {
+    padding: 16px;
+    font-size: 15px;
+    color: #4A5568;
+    border-bottom: 1px solid #edf2f7;
+}
+
+.clickable-id {
+    color: #FF6F00;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.clickable-id:hover {
+    text-decoration: underline;
+}
+
+.action-btn {
+    background: #FF6F00;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.action-btn:hover {
+    background: #FF9800;
+    transform: translateY(-1px);
+}
+
+.loading-state,
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #718096;
+    font-size: 16px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

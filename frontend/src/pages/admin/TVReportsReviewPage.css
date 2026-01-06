@@ -1,3 +1,5 @@
+@import './TVAdminDashboard.css';
+
 /* TV Reports Review Table View */
 .admin-assign-page {
     background-color: #f8fafc;
@@ -10,14 +12,55 @@
     padding: 2rem 1rem;
 }
 
-.page-title {
-    color: #1a202c;
-    font-size: 1.875rem;
-    font-weight: 800;
-    margin-bottom: 2rem;
+/* Header Vertical Style */
+.header-vertical {
+    background: white;
+    padding: 22px 20px;
+    border-bottom: 2px solid #E2E8F0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     position: relative;
-    padding-left: 1rem;
-    border-left: 5px solid #FF6F00;
+    z-index: 100;
+}
+
+.header-logo-center {
+    height: 48px;
+    margin: 0 auto 6px auto;
+    display: block;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.header-title {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.5px;
+}
+
+.logout-btn-right {
+    position: absolute;
+    top: 16px;
+    right: 24px;
+    background: #FF6F00;
+    border: none;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 8px 18px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+}
+
+.logout-btn-right:hover {
+    background: #FF9800;
+    transform: translateY(-1px);
 }
 
 /* Table Card Wrapper */
@@ -28,6 +71,7 @@
     overflow: hidden;
     border: 1px solid #e2e8f0;
     padding: 1rem;
+    margin-top: 2rem;
 }
 
 .custom-table {

@@ -13,16 +13,20 @@ import TVAssignmentPage from './pages/admin/TVAssignmentPage';
 import TVReportsReviewPage from './pages/admin/TVReportsReviewPage';
 import TVReportDetailsPage from './pages/admin/TVReportDetailsPage';
 import TVAdminDashboard from './pages/admin/TVAdminDashboard';
+import AdminTVStudentsPage from './pages/admin/AdminTVStudentsPage';
 import AdminPVStudentsPage from './pages/admin/AdminPVStudentsPage';
 import AdminAssignPVPage from './pages/admin/AdminAssignPVPage';
+import AdminPendingReviewsPage from './pages/admin/AdminPendingReviewsPage';
 import SuperadminDashboardPage from './pages/superadmin/SuperadminDashboardPage';
 import SuperadminAssignVIPage from './pages/superadmin/SuperadminAssignVIPage';
 import SuperadminVIStudentsPage from './pages/superadmin/SuperadminVIStudentsPage';
 import SuperadminAssignRealInterviewPage from './pages/superadmin/SuperadminAssignRealInterviewPage';
 import SuperadminRealInterviewStudentsPage from './pages/superadmin/SuperadminRealInterviewStudentsPage';
 import VIVolunteerDashboardPage from './pages/vi/VIVolunteerDashboardPage';
+import VIAssignedStudentsPage from './pages/vi/VIAssignedStudentsPage';
 import VIInterviewFormPage from './pages/vi/VIInterviewFormPage';
 import VICompletedInterviewsPage from './pages/vi/VICompletedInterviewsPage';
+import VIStudentDetailsPage from './pages/vi/VIStudentDetailsPage';
 import SuperadminFinalSelectionPage from './pages/superadmin/SuperadminFinalSelectionPage';
 import SuperadminSelectedStudentsPage from './pages/superadmin/SuperadminSelectedStudentsPage';
 import EducationalDetailsFormPage from './pages/superadmin/EducationalDetailsFormPage';
@@ -48,6 +52,7 @@ function App() {
           <Route path="/admin/assign" element={<AdminAssignPage />} />
           <Route path="/admin/dashboard" element={<Navigate to="/admin/assign" replace />} />
           <Route path="/admin/decision/:studentId" element={<AdminViewPage />} />
+          <Route path="/admin/reviews" element={<AdminPendingReviewsPage />} />
           <Route path="/admin/pv-students" element={<AdminPVStudentsPage />} />
           <Route path="/admin/assign-pv" element={<AdminAssignPVPage />} />
 
@@ -56,6 +61,7 @@ function App() {
           <Route path="/admin/tv-assignment" element={<TVAssignmentPage />} />
           <Route path="/admin/tv-reports" element={<TVReportsReviewPage />} />
           <Route path="/admin/tv-report/:studentId" element={<TVReportDetailsPage />} />
+          <Route path="/admin/tv-students" element={<AdminTVStudentsPage />} />
 
           {/* TV Volunteer Routes */}
           <Route path="/tv/students" element={<TVStudentsPage />} />
@@ -78,7 +84,9 @@ function App() {
 
           {/* VI Volunteer Routes */}
           <Route path="/vi/dashboard" element={<VIVolunteerDashboardPage />} />
+          <Route path="/vi/assigned" element={<VIAssignedStudentsPage />} />
           <Route path="/vi/interview/:studentId" element={<VIInterviewFormPage />} />
+          <Route path="/vi/student/:studentId" element={<VIStudentDetailsPage />} />
           <Route path="/vi/completed" element={<VICompletedInterviewsPage />} />
 
 

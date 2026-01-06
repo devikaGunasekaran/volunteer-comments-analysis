@@ -1,12 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Home, ClipboardList, FileCheck } from 'lucide-react';
 import volunteerService from '../../services/volunteerService';
+import authService from '../../services/authService';
 import './PVFormPage.css';
 import logo from '../../assets/logo_icon.jpg';
 
 const PVFormPage = () => {
     const { studentId } = useParams();
     const navigate = useNavigate();
+
+    const handleLogout = () => {
+        authService.logout();
+    };
 
     // Form State
     const [formData, setFormData] = useState({
@@ -284,170 +290,196 @@ Backup Plan: ${formData.backupPlan}`;
     };
 
     return (
-        <div className="pv-form-page">
-            <header className="header-vertical">
-                <img src={logo} alt="Logo" className="header-logo-center" />
-                <div className="header-title">Physical Verification Form</div>
-            </header>
-
-            <div className="pv-container">
-                <div className="student-info-banner">
-                    Student ID: {studentId}
+        <div className="admin-layout animate-fadeIn">
+            {/* Sidebar Navigation */}
+            <nav className="side-nav">
+                <div className="nav-logo">
+                    <img src={logo} alt="Matram Logo" className="header-logo-center" />
+                    <span>PV Volunteer Panel</span>
                 </div>
 
-                <div className="form-section">
-                    <label className="form-label">Property Type <span className="required">*</span></label>
-                    <textarea
-                        name="propertyType"
-                        value={formData.propertyType}
-                        onChange={handleInputChange}
-                        placeholder="House / Rental / Orphanage / Hostel"
-                    />
+                <div className="nav-links">
+                    <button className="nav-item" onClick={() => navigate('/students-assign')}>
+                        <span className="icon"><Home size={18} /></span> Overview
+                    </button>
+                    <button className="nav-item active" onClick={() => { }}>
+                        <span className="icon"><FileCheck size={18} /></span> PV Form
+                    </button>
                 </div>
 
-                <div className="form-section">
-                    <label className="form-label">What You Saw <span className="required">*</span></label>
-                    <textarea
-                        name="whatYouSaw"
-                        value={formData.whatYouSaw}
-                        onChange={handleInputChange}
-                        placeholder="Describe what you observed."
-                    />
+                <div className="nav-footer">
+                    <button onClick={handleLogout} className="logout-btn">
+                        Sign Out
+                    </button>
                 </div>
+            </nav>
 
-                {/* Additional Comments */}
-                <div className="form-section">
-                    <h3 style={{ fontSize: '18px', marginBottom: '16px', color: '#2D3748' }}>
-                        🧾 PV Volunteer Additional Comments
-                    </h3>
+            <main className="main-content">
+                <div className="pv-form-page">
+                    <header className="page-header">
+                        <div className="header-title">Physical Verification Form</div>
+                    </header>
 
-                    <div className="comments-group">
-                        {[
-                            { id: 'familyBackground', label: 'Family Background', placeholder: 'Jobs, income, education...' },
-                            { id: 'householdVerification', label: 'Household Verification', placeholder: 'Owned/rented, roof type, appliances...' },
-                            { id: 'financialObservation', label: 'Financial Observation', placeholder: 'Total income, expenses, savings...' },
-                            { id: 'loanDetails', label: 'Loan / EMI Details', placeholder: 'Existing loans, EMI amount...' },
-                            { id: 'educationLoan', label: 'Application for Education Loan', placeholder: 'Awareness, eligibility, applied status...' },
-                            { id: 'studentAttitude', label: 'Student Attitude / Behavior', placeholder: 'Willingness to study, responsibility...' },
-                            { id: 'otherObservations', label: 'Other Observations', placeholder: 'Special situations, health issues...' },
-                            { id: 'backupPlan', label: 'Backup Plan', placeholder: 'If scholarship not approved...' },
-                        ].map(field => (
-                            <div key={field.id} className="comment-field">
-                                <div className="comment-label">{field.label} <span className="required">*</span></div>
-                                <textarea
-                                    name={field.id}
-                                    value={formData[field.id]}
-                                    onChange={handleInputChange}
-                                    placeholder={field.placeholder}
-                                    required
-                                />
+                    <div className="pv-container">
+                        <div className="student-info-banner">
+                            Student ID: {studentId}
+                        </div>
+
+                        <div className="form-section">
+                            <label className="form-label">Property Type <span className="required">*</span></label>
+                            <textarea
+                                name="propertyType"
+                                value={formData.propertyType}
+                                onChange={handleInputChange}
+                                placeholder="House / Rental / Orphanage / Hostel"
+                            />
+                        </div>
+
+                        <div className="form-section">
+                            <label className="form-label">What You Saw <span className="required">*</span></label>
+                            <textarea
+                                name="whatYouSaw"
+                                value={formData.whatYouSaw}
+                                onChange={handleInputChange}
+                                placeholder="Describe what you observed."
+                            />
+                        </div>
+
+                        {/* Additional Comments */}
+                        <div className="form-section">
+                            <h3 style={{ fontSize: '18px', marginBottom: '16px', color: '#2D3748' }}>
+                                🧾 PV Volunteer Additional Comments
+                            </h3>
+
+                            <div className="comments-group">
+                                {[
+                                    { id: 'familyBackground', label: 'Family Background', placeholder: 'Jobs, income, education...' },
+                                    { id: 'householdVerification', label: 'Household Verification', placeholder: 'Owned/rented, roof type, appliances...' },
+                                    { id: 'financialObservation', label: 'Financial Observation', placeholder: 'Total income, expenses, savings...' },
+                                    { id: 'loanDetails', label: 'Loan / EMI Details', placeholder: 'Existing loans, EMI amount...' },
+                                    { id: 'educationLoan', label: 'Application for Education Loan', placeholder: 'Awareness, eligibility, applied status...' },
+                                    { id: 'studentAttitude', label: 'Student Attitude / Behavior', placeholder: 'Willingness to study, responsibility...' },
+                                    { id: 'otherObservations', label: 'Other Observations', placeholder: 'Special situations, health issues...' },
+                                    { id: 'backupPlan', label: 'Backup Plan', placeholder: 'If scholarship not approved...' },
+                                ].map(field => (
+                                    <div key={field.id} className="comment-field">
+                                        <div className="comment-label">{field.label} <span className="required">*</span></div>
+                                        <textarea
+                                            name={field.id}
+                                            value={formData[field.id]}
+                                            onChange={handleInputChange}
+                                            placeholder={field.placeholder}
+                                            required
+                                        />
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
-                </div>
+                        </div>
 
-                <div className="form-section">
-                    <label className="form-label">Recommendation <span className="required">*</span></label>
-                    <select
-                        name="recommendation"
-                        value={formData.recommendation}
-                        onChange={handleInputChange}
-                    >
-                        <option value="SELECT" disabled>-- Select Recommendation --</option>
-                        <option value="ON HOLD">On Hold</option>
-                        <option value="REJECT">Reject</option>
-                        <option value="SELECT_FOR_SCHOLARSHIP">Select for Scholarship</option>
-                    </select>
-                </div>
+                        <div className="form-section">
+                            <label className="form-label">Recommendation <span className="required">*</span></label>
+                            <select
+                                name="recommendation"
+                                value={formData.recommendation}
+                                onChange={handleInputChange}
+                            >
+                                <option value="SELECT" disabled>-- Select Recommendation --</option>
+                                <option value="ON HOLD">On Hold</option>
+                                <option value="REJECT">Reject</option>
+                                <option value="SELECT_FOR_SCHOLARSHIP">Select for Scholarship</option>
+                            </select>
+                        </div>
 
-                {/* Image Upload */}
-                <div className="form-section">
-                    <label className="form-label">House Images (Min {MIN_IMAGES}) <span className="required">*</span></label>
-                    <div className="img-upload-container">
-                        <label className="upload-trigger">
-                            📷 Select Images
+                        {/* Image Upload */}
+                        <div className="form-section">
+                            <label className="form-label">House Images (Min {MIN_IMAGES}) <span className="required">*</span></label>
+                            <div className="img-upload-container">
+                                <label className="upload-trigger">
+                                    📷 Select Images
+                                    <input
+                                        type="file"
+                                        className="file-input"
+                                        accept="image/*"
+                                        multiple
+                                        onChange={handleFileSelect}
+                                    />
+                                </label>
+
+                                <div className="img-preview-grid">
+                                    {previewImages.map(img => (
+                                        <div key={img.name} className={`img-preview-card ${img.status}`}>
+                                            {img.status === 'uploading' && (
+                                                <div className="status-badge blue">⏳ Checking...</div>
+                                            )}
+                                            {img.status === 'accepted' && (
+                                                <div className="status-badge green">✅ Accepted</div>
+                                            )}
+                                            {img.status === 'rejected' && (
+                                                <div className="status-badge red">❌ Rejected</div>
+                                            )}
+
+                                            <button className="img-delete-btn" onClick={() => removeImage(img.name)}>×</button>
+                                            <img src={img.url} alt="Preview" />
+                                            <div className="image-name" title={img.name}>{img.name}</div>
+                                            {img.reason && <div className="rejection-reason">{img.reason}</div>}
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <button
+                                    className="check-quality-btn"
+                                    onClick={handleCheckQuality}
+                                    disabled={selectedFiles.length < MIN_IMAGES || isCheckingQuality || qualityChecked}
+                                >
+                                    {isCheckingQuality ? 'Checking Quality...' : qualityChecked ? '✓ Quality Checked' : 'Check Quality'}
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Audio Recording */}
+                        <div className="form-section">
+                            <label className="form-label">Record Voice Comment</label>
+                            <div className="recording-controls">
+                                <button
+                                    className="record-btn"
+                                    onClick={startRecording}
+                                    disabled={isRecording}
+                                >
+                                    {isRecording ? 'Recording...' : '🎤 Start Recording'}
+                                </button>
+                                <button
+                                    className="stop-btn"
+                                    onClick={stopRecording}
+                                    disabled={!isRecording}
+                                >
+                                    ⏹ Stop
+                                </button>
+                            </div>
+
+                            {audioUrl && <audio src={audioUrl} controls className="audio-player" />}
+
+                            <div style={{ marginTop: '16px', textAlign: 'center', fontSize: '13px', color: '#718096' }}>OR</div>
+
+                            <label className="form-label" style={{ marginTop: '12px' }}>Upload Audio File</label>
                             <input
                                 type="file"
-                                className="file-input"
-                                accept="image/*"
-                                multiple
-                                onChange={handleFileSelect}
+                                accept="audio/*"
+                                onChange={handleAudioUpload}
+                                style={{ background: 'white' }}
                             />
-                        </label>
-
-                        <div className="img-preview-grid">
-                            {previewImages.map(img => (
-                                <div key={img.name} className={`img-preview-card ${img.status}`}>
-                                    {img.status === 'uploading' && (
-                                        <div className="status-badge blue">⏳ Checking...</div>
-                                    )}
-                                    {img.status === 'accepted' && (
-                                        <div className="status-badge green">✅ Accepted</div>
-                                    )}
-                                    {img.status === 'rejected' && (
-                                        <div className="status-badge red">❌ Rejected</div>
-                                    )}
-
-                                    <button className="img-delete-btn" onClick={() => removeImage(img.name)}>×</button>
-                                    <img src={img.url} alt="Preview" />
-                                    <div className="image-name" title={img.name}>{img.name}</div>
-                                    {img.reason && <div className="rejection-reason">{img.reason}</div>}
-                                </div>
-                            ))}
                         </div>
 
                         <button
-                            className="check-quality-btn"
-                            onClick={handleCheckQuality}
-                            disabled={selectedFiles.length < MIN_IMAGES || isCheckingQuality || qualityChecked}
+                            className="submit-btn"
+                            onClick={handleSubmit}
+                            disabled={isSubmitting}
                         >
-                            {isCheckingQuality ? 'Checking Quality...' : qualityChecked ? '✓ Quality Checked' : 'Check Quality'}
+                            {isSubmitting ? (isUploadingImages ? 'Uploading Images...' : 'Submitting PV...') : 'Submit PV Report'}
                         </button>
+
                     </div>
                 </div>
-
-                {/* Audio Recording */}
-                <div className="form-section">
-                    <label className="form-label">Record Voice Comment</label>
-                    <div className="recording-controls">
-                        <button
-                            className="record-btn"
-                            onClick={startRecording}
-                            disabled={isRecording}
-                        >
-                            {isRecording ? 'Recording...' : '🎤 Start Recording'}
-                        </button>
-                        <button
-                            className="stop-btn"
-                            onClick={stopRecording}
-                            disabled={!isRecording}
-                        >
-                            ⏹ Stop
-                        </button>
-                    </div>
-
-                    {audioUrl && <audio src={audioUrl} controls className="audio-player" />}
-
-                    <div style={{ marginTop: '16px', textAlign: 'center', fontSize: '13px', color: '#718096' }}>OR</div>
-
-                    <label className="form-label" style={{ marginTop: '12px' }}>Upload Audio File</label>
-                    <input
-                        type="file"
-                        accept="audio/*"
-                        onChange={handleAudioUpload}
-                        style={{ background: 'white' }}
-                    />
-                </div>
-
-                <button
-                    className="submit-btn"
-                    onClick={handleSubmit}
-                    disabled={isSubmitting}
-                >
-                    {isSubmitting ? (isUploadingImages ? 'Uploading Images...' : 'Submitting PV...') : 'Submit PV Report'}
-                </button>
-
-            </div>
+            </main>
         </div>
     );
 };

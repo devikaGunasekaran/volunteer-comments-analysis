@@ -6,47 +6,31 @@ import logo from '../../assets/logo_icon.jpg';
 import './VIVolunteerDashboardPage.css';
 
 const VIVolunteerDashboardPage = () => {
-    const [students, setStudents] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [stats, setStats] = useState({
-        total: 0,
-        pending: 0,
-        completed: 0
-    });
     const navigate = useNavigate();
+    const user = JSON.parse(localStorage.getItem('user'));
+    const [stats, setStats] = useState({ total_assigned: 0, completed: 0, pending: 0 });
+    const [activeTab, setActiveTab] = useState('overview');
 
     useEffect(() => {
-        loadAssignedStudents();
-    }, []);
+        if (!user || user.role !== 'vi') {
+            navigate('/login');
+            return;
+        }
+        loadStats();
+    }, [navigate, user]);
 
-    const loadAssignedStudents = async () => {
+    const loadStats = async () => {
         try {
-            setLoading(true);
-            const data = await viVolunteerService.getAssignedStudents();
-            const studentsList = data.students || [];
-            setStudents(studentsList);
-
-            // Calculate stats from ALL students
-            const pending = studentsList.filter(s => s.status === 'PENDING').length;
-            const completed = studentsList.filter(s =>
-                ['RECOMMENDED', 'NOT_RECOMMENDED', 'ON_HOLD'].includes(s.status)
-            ).length;
-
-            setStats({
-                total: studentsList.length,
-                pending,
-                completed
-            });
-
-            // Filter students state to ONLY show PENDING (active) students in the table
-            // Completed students should disappear from the list
-            const activeStudents = studentsList.filter(s => s.status === 'PENDING');
-            setStudents(activeStudents);
+            const result = await viVolunteerService.getAssignedStudents();
+            if (result.success) {
+                const students = result.students || [];
+                const total = students.length;
+                const completed = students.filter(s => s.vi_status === 'COMPLETED').length;
+                const pending = total - completed;
+                setStats({ total_assigned: total, completed, pending });
+            }
         } catch (error) {
-            console.error('Error loading assigned students:', error);
-            alert('Failed to load assigned students. Please try again.');
-        } finally {
-            setLoading(false);
+            console.error("Error loading stats:", error);
         }
     };
 
@@ -55,131 +39,95 @@ const VIVolunteerDashboardPage = () => {
         navigate('/login');
     };
 
-    const getStatusBadgeClass = (status) => {
-        switch (status) {
-            case 'PENDING':
-                return 'pending';
-            case 'RECOMMENDED':
-                return 'recommended';
-            case 'NOT_RECOMMENDED':
-                return 'not-recommended';
-            case 'ON_HOLD':
-                return 'on-hold';
+    const renderContent = () => {
+        switch (activeTab) {
+            case 'overview':
             default:
-                return '';
+                return (
+                    <div className="tab-content fadeIn">
+                        <div className="section-header-row">
+                            <h3>Dashboard Overview</h3>
+                            <p className="section-subtitle">Virtual Interview Volunteer</p>
+                        </div>
+
+                        {/* Stats Grid */}
+                        <div className="stats-grid-3">
+                            <div className="stat-card total-card">
+                                <div className="stat-value">{stats.total_assigned}</div>
+                                <div className="stat-label">Total Assigned</div>
+                            </div>
+                            <div className="stat-card pending-card">
+                                <div className="stat-value">{stats.pending}</div>
+                                <div className="stat-label">Pending Reviews</div>
+                            </div>
+                            <div className="stat-card completed-card">
+                                <div className="stat-value">{stats.completed}</div>
+                                <div className="stat-label">Completed</div>
+                            </div>
+                        </div>
+
+                        {/* Quick Actions Grid */}
+                        <h4 className="section-title">Quick Actions</h4>
+                        <div className="action-grid-3">
+                            <div className="action-card-modern" onClick={() => navigate('/vi/assigned')}>
+                                <div className="action-icon">📋</div>
+                                <h3>My Assignments</h3>
+                                <p>View and interview assigned students</p>
+                            </div>
+                            <div className="action-card-modern" onClick={() => navigate('/vi/completed')}>
+                                <div className="action-icon">✅</div>
+                                <h3>Completed Interviews</h3>
+                                <p>View history of completed interviews</p>
+                            </div>
+                        </div>
+                    </div>
+                );
         }
     };
 
+    if (!user) return null;
+
     return (
-        <div className="vi-volunteer-dashboard-page">
-            <header className="header-vertical">
-                <button onClick={handleLogout} className="logout-btn-right">
-                    LOGOUT
-                </button>
-                <img src={logo} alt="Logo" className="header-logo-center" />
-                <div className="header-title">VI Volunteer Dashboard</div>
-            </header>
+        <div className="admin-layout">
+            {/* Sidebar Navigation */}
+            <nav className="side-nav">
+                <div className="nav-logo">
+                    <img src={logo} alt="Matram Logo" className="header-logo-center" />
+                    <span>VI Volunteer Panel</span>
+                </div>
 
-            <div className="container">
-                <div className="page-header">
-
+                <div className="nav-links">
                     <button
-                        onClick={() => navigate('/vi/completed')}
-                        className="completed-btn"
+                        className={`nav-item ${activeTab === 'overview' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('overview')}
                     >
-                        📋 View Completed Interviews
+                        <span className="icon">🏠</span> Overview
+                    </button>
+                    <button
+                        className="nav-item"
+                        onClick={() => navigate('/vi/assigned')}
+                    >
+                        <span className="icon">📋</span> My Assignments
+                    </button>
+                    <button
+                        className="nav-item"
+                        onClick={() => navigate('/vi/completed')}
+                    >
+                        <span className="icon">✅</span> Completed Interviews
                     </button>
                 </div>
 
-                {/* Statistics Cards */}
-                <div className="stats-container">
-                    <div className="stat-card">
-                        <div className="stat-icon">📚</div>
-                        <div className="stat-value">{stats.total}</div>
-                        <div className="stat-label">Total Assigned</div>
-                    </div>
-                    <div className="stat-card pending-card">
-                        <div className="stat-icon">⏳</div>
-                        <div className="stat-value">{stats.pending}</div>
-                        <div className="stat-label">Pending Interviews</div>
-                    </div>
-                    <div className="stat-card completed-card">
-                        <div className="stat-icon">✅</div>
-                        <div className="stat-value">{stats.completed}</div>
-                        <div className="stat-label">Completed</div>
-                    </div>
+                <div className="nav-footer">
+                    <button onClick={handleLogout} className="logout-btn">
+                        Sign Out
+                    </button>
                 </div>
+            </nav>
 
-                {/* Students Table */}
-                {loading ? (
-                    <div className="loading-container">
-                        <div className="loading-spinner">Loading assigned students...</div>
-                    </div>
-                ) : (
-                    <div className="table-container">
-                        <h3>Assigned Students</h3>
-                        {students.length === 0 ? (
-                            <div className="no-data">
-                                No students assigned yet
-                            </div>
-                        ) : (
-                            <table className="students-table">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Student ID</th>
-                                        <th>Name</th>
-                                        <th>District</th>
-                                        <th>Phone</th>
-                                        <th>Assigned Date</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {students.map((student, index) => (
-                                        <tr key={student.viId}>
-                                            <td>{index + 1}</td>
-                                            <td className="student-id">{student.studentId}</td>
-                                            <td>{student.name}</td>
-                                            <td>{student.district}</td>
-                                            <td>{student.phone}</td>
-                                            <td>
-                                                {student.assignedDate
-                                                    ? new Date(student.assignedDate).toLocaleDateString()
-                                                    : 'N/A'
-                                                }
-                                            </td>
-                                            <td>
-                                                <span className={`status-badge ${getStatusBadgeClass(student.status)}`}>
-                                                    {student.status || 'PENDING'}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                {student.status === 'PENDING' ? (
-                                                    <button
-                                                        className="interview-btn"
-                                                        onClick={() => navigate(`/vi/interview/${student.studentId}`)}
-                                                    >
-                                                        Start Interview
-                                                    </button>
-                                                ) : (
-                                                    <button
-                                                        className="view-btn"
-                                                        onClick={() => navigate(`/vi/interview/${student.studentId}`)}
-                                                    >
-                                                        View Details
-                                                    </button>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        )}
-                    </div>
-                )}
-            </div>
+            {/* Main Content Area */}
+            <main className="main-content">
+                {renderContent()}
+            </main>
         </div>
     );
 };

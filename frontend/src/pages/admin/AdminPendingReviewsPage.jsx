@@ -4,9 +4,9 @@ import { Home, Users, FileText, CheckCircle, Clock } from 'lucide-react';
 import adminService from '../../services/adminService';
 import authService from '../../services/authService';
 import logo from '../../assets/logo_icon.jpg';
-import './AdminPVStudentsPage.css';
+import './AdminPendingReviewsPage.css';
 
-const AdminPVStudentsPage = () => {
+const AdminPendingReviewsPage = () => {
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [expandedRow, setExpandedRow] = useState(null);
@@ -20,9 +20,12 @@ const AdminPVStudentsPage = () => {
 
     const loadStudents = async () => {
         try {
-            const data = await adminService.getCompletedPVStudents();
-            if (data.students) {
-                setStudents(data.students);
+            const [pendingData] = await Promise.all([
+                adminService.getPendingStudents()
+            ]);
+
+            if (pendingData.students) {
+                setStudents(pendingData.students);
             }
         } catch (error) {
             console.error("Failed to load students:", error);
@@ -42,16 +45,6 @@ const AdminPVStudentsPage = () => {
 
     const toggleRow = (studentId) => {
         setExpandedRow(expandedRow === studentId ? null : studentId);
-    };
-
-    const getStatusBadge = (status) => {
-        const statusMap = {
-            'SELECT': { label: 'Recommended', class: 'badge-success' },
-            'REJECT': { label: 'Not Recommended', class: 'badge-danger' },
-            'ON HOLD': { label: 'On Hold', class: 'badge-warning' }
-        };
-        const statusInfo = statusMap[status] || { label: status, class: 'badge-gray' };
-        return <span className={`badge ${statusInfo.class}`}>{statusInfo.label}</span>;
     };
 
     return (
@@ -77,14 +70,14 @@ const AdminPVStudentsPage = () => {
                         <span className="icon"><Users size={18} /></span> Assign Volunteers
                     </button>
                     <button
-                        className="nav-item"
-                        onClick={() => navigate('/admin/reviews')}
+                        className="nav-item active"
+                        onClick={() => { }}
                     >
                         <span className="icon"><Clock size={18} /></span> Pending Reviews
                     </button>
                     <button
-                        className="nav-item active"
-                        onClick={() => { }}
+                        className="nav-item"
+                        onClick={() => navigate('/admin/pv-students')}
                     >
                         <span className="icon"><CheckCircle size={18} /></span> Completed PV
                     </button>
@@ -103,13 +96,15 @@ const AdminPVStudentsPage = () => {
                     {/* Page Header */}
                     <div className="page-header animate-slideUp">
                         <div className="header-text">
-                            <h1 className="page-title">Completed Physical Verifications</h1>
+                            <h1 className="page-title">Pending Reviews</h1>
                             <p className="page-subtitle">
-                                Students who have completed PV and are ready for final decision
+                                Students awaiting admin review and decision
                             </p>
                         </div>
                         <div className="header-badge">
-                            <span className="badge badge-primary">{students.length} Students</span>
+                            <span className="badge badge-warning">
+                                <Clock size={14} /> {students.length} Pending
+                            </span>
                         </div>
                     </div>
 
@@ -123,25 +118,23 @@ const AdminPVStudentsPage = () => {
                                         <th>Student ID</th>
                                         <th>Name</th>
                                         <th>District</th>
-                                        <th>PV Status</th>
-                                        <th>Volunteer</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {loading ? (
                                         <tr>
-                                            <td colSpan="6" className="empty-state">
+                                            <td colSpan="4" className="empty-state">
                                                 <div className="spinner"></div>
-                                                <p>Loading students...</p>
+                                                <p>Loading pending students...</p>
                                             </td>
                                         </tr>
                                     ) : students.length === 0 ? (
                                         <tr>
-                                            <td colSpan="6" className="empty-state">
-                                                <div className="empty-state-icon">📋</div>
-                                                <div className="empty-state-title">No Completed PV Students</div>
+                                            <td colSpan="4" className="empty-state">
+                                                <div className="empty-state-icon">✅</div>
+                                                <div className="empty-state-title">All Caught Up!</div>
                                                 <div className="empty-state-description">
-                                                    Students will appear here once they complete physical verification
+                                                    No students pending review at the moment
                                                 </div>
                                             </td>
                                         </tr>
@@ -156,7 +149,7 @@ const AdminPVStudentsPage = () => {
                                                     <td>{index + 1}</td>
                                                     <td>
                                                         <Link
-                                                            to={`/admin/decision/${s.studentId}`}
+                                                            to={`/admin/view/${s.studentId}`}
                                                             className="student-id-link"
                                                             onClick={(e) => e.stopPropagation()}
                                                         >
@@ -165,31 +158,27 @@ const AdminPVStudentsPage = () => {
                                                     </td>
                                                     <td className="font-semibold">{s.name}</td>
                                                     <td>{s.district}</td>
-                                                    <td>{getStatusBadge(s.sentiment)}</td>
-                                                    <td className="text-tertiary">{s.volunteer_email || 'N/A'}</td>
                                                 </tr>
                                                 {expandedRow === s.studentId && (
                                                     <tr className="accordion-row">
-                                                        <td colSpan="6">
+                                                        <td colSpan="4">
                                                             <div className="accordion-content animate-slideDown">
                                                                 <div className="detail-grid">
+                                                                    <div className="detail-item">
+                                                                        <div className="detail-label">Elements Observed</div>
+                                                                        <div className="detail-value">{s.elementsSummary || 'N/A'}</div>
+                                                                    </div>
+                                                                    <div className="detail-item">
+                                                                        <div className="detail-label">Volunteer Comment</div>
+                                                                        <div className="detail-value">{s.comment || 'N/A'}</div>
+                                                                    </div>
                                                                     <div className="detail-item">
                                                                         <div className="detail-label">Sentiment Score</div>
                                                                         <div className="detail-value">{s.sentiment_text}%</div>
                                                                     </div>
                                                                     <div className="detail-item">
-                                                                        <div className="detail-label">Verification Date</div>
-                                                                        <div className="detail-value">
-                                                                            {s.verificationDate ? new Date(s.verificationDate).toLocaleDateString() : 'N/A'}
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="detail-item">
-                                                                        <div className="detail-label">Student Status</div>
-                                                                        <div className="detail-value">{s.student_status || 'Pending Review'}</div>
-                                                                    </div>
-                                                                    <div className="detail-item">
                                                                         <Link
-                                                                            to={`/admin/decision/${s.studentId}`}
+                                                                            to={`/admin/view/${s.studentId}`}
                                                                             className="btn btn-primary btn-sm"
                                                                         >
                                                                             View Full Details & Decide →
@@ -213,4 +202,4 @@ const AdminPVStudentsPage = () => {
     );
 };
 
-export default AdminPVStudentsPage;
+export default AdminPendingReviewsPage;

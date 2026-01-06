@@ -190,6 +190,12 @@ def get_student_details(student_id):
         # Get audio URL
         audio_url = pv.get('audio_url') if pv else None
         
+        # Get VI Interview Details (for completed view)
+        vi_details = fetchone_dict(
+            "SELECT * FROM VirtualInterview WHERE studentId = %s AND volunteerId = %s",
+            (student_id, volunteer_id)
+        )
+        
         return jsonify({
             'success': True,
             'student': student,
@@ -199,7 +205,8 @@ def get_student_details(student_id):
             'marks12': marks12,
             'images': images_data,
             'collective_analysis': collective_analysis,
-            'audio_url': audio_url
+            'audio_url': audio_url,
+            'vi_details': vi_details
         })
         
     except Exception as e:

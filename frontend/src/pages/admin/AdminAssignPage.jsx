@@ -1,44 +1,33 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import adminService from '../../services/adminService';
+import { useNavigate } from 'react-router-dom';
+import { Home, Users, Clock, CheckCircle, Search } from 'lucide-react';
 import authService from '../../services/authService';
+import adminService from '../../services/adminService';
 import logo from '../../assets/logo_icon.jpg';
 import './AdminAssignPage.css';
 
 const AdminAssignPage = () => {
-    const [students, setStudents] = useState([]);
-    const [statistics, setStatistics] = useState({ total_assigned: 0, completed: 0, pending: 0 });
-    const [loading, setLoading] = useState(true);
-    const [expandedRow, setExpandedRow] = useState(null);
     const navigate = useNavigate();
+    const user = JSON.parse(localStorage.getItem('user'));
+    const [stats, setStats] = useState({ total_assigned: 0, completed: 0, pending: 0 });
+    const [activeTab, setActiveTab] = useState('overview');
 
     useEffect(() => {
-        loadStudents();
-        const interval = setInterval(loadStudents, 10000); // Auto-refresh every 10s
-        return () => clearInterval(interval);
-    }, []);
+        if (!user || (user.role !== 'admin' && user.role !== 'pv_admin')) {
+            navigate('/login');
+            return;
+        }
+        loadStats();
+    }, [navigate, user]);
 
-    const loadStudents = async () => {
+    const loadStats = async () => {
         try {
-            const [pendingData, statsData] = await Promise.all([
-                adminService.getPendingStudents(),
-                adminService.getPVStatistics()
-            ]);
-
-            if (pendingData.students) {
-                setStudents(pendingData.students);
-            }
-            if (statsData.statistics) {
-                setStatistics(statsData.statistics);
+            const response = await adminService.getPVStatistics();
+            if (response.statistics) {
+                setStats(response.statistics);
             }
         } catch (error) {
-            console.error("Failed to load students:", error);
-            if (error.response && error.response.status === 401) {
-                authService.logout();
-                navigate('/login');
-            }
-        } finally {
-            setLoading(false);
+            console.error("Error loading stats:", error);
         }
     };
 
@@ -47,143 +36,106 @@ const AdminAssignPage = () => {
         navigate('/login');
     };
 
-    const toggleRow = (studentId) => {
-        setExpandedRow(expandedRow === studentId ? null : studentId);
-    };
+    const renderContent = () => {
+        switch (activeTab) {
+            case 'overview':
+            default:
+                return (
+                    <div className="tab-content fadeIn">
+                        <div className="section-header-row">
+                            <h3>Dashboard Overview</h3>
+                            <p className="section-subtitle">Physical Verification Administration</p>
+                        </div>
 
-    const getStatusClass = (status) => {
-        switch (status) {
-            case 'SELECT': return 'select';
-            case 'REJECT': return 'reject';
-            case 'ON HOLD': return 'hold';
-            default: return 'pending';
+                        {/* Stats Grid */}
+                        <div className="stats-grid-3">
+                            <div className="stat-card total-card">
+                                <div className="stat-value">{stats.total_assigned}</div>
+                                <div className="stat-label">Total Assigned</div>
+                            </div>
+                            <div className="stat-card pending-card">
+                                <div className="stat-value">{stats.pending}</div>
+                                <div className="stat-label">Pending Verification</div>
+                            </div>
+                            <div className="stat-card completed-card">
+                                <div className="stat-value">{stats.completed}</div>
+                                <div className="stat-label">Completed</div>
+                            </div>
+                        </div>
+
+                        {/* Quick Actions Grid */}
+                        <h4 className="section-title">Quick Actions</h4>
+                        <div className="action-grid-3">
+                            <div className="action-card-modern" onClick={() => navigate('/admin/assign-pv')}>
+                                <div className="action-icon">📋</div>
+                                <h3>Assign Volunteers</h3>
+                                <p>Assign students to PV volunteers</p>
+                            </div>
+                            <div className="action-card-modern" onClick={() => navigate('/admin/reviews')}>
+                                <div className="action-icon"><Search size={24} /></div>
+                                <h3>Pending Reviews</h3>
+                                <p>Review verified student reports</p>
+                            </div>
+                            <div className="action-card-modern" onClick={() => navigate('/admin/pv-students')}>
+                                <div className="action-icon"><CheckCircle size={24} /></div>
+                                <h3>Completed PV</h3>
+                                <p>View verification history</p>
+                            </div>
+                        </div>
+                    </div>
+                );
         }
     };
 
+    if (!user) return null;
+
     return (
-        <div className="admin-assign-page">
-            <header className="header-vertical">
-                <button onClick={handleLogout} className="logout-btn-right">
-                    LOGOUT
-                </button>
-                <img src={logo} alt="Logo" className="header-logo-center" />
-                <div className="header-title">Admin Panel - Verified Students</div>
-            </header>
+        <div className="admin-layout">
+            {/* Sidebar Navigation */}
+            <nav className="side-nav">
+                <div className="nav-logo">
+                    <img src={logo} alt="Matram Logo" className="header-logo-center" />
+                    <span>PV Admin Panel</span>
+                </div>
 
-            <div className="assigned-container">
-                {/* Navigation Buttons */}
-                <div className="nav-buttons-container">
+                <div className="nav-links">
                     <button
+                        className={`nav-item ${activeTab === 'overview' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('overview')}
+                    >
+                        <span className="icon"><Home size={18} /></span> Overview
+                    </button>
+                    <button
+                        className="nav-item"
                         onClick={() => navigate('/admin/assign-pv')}
-                        className="nav-btn assign-pv-btn"
                     >
-                        📋 Assign PV Volunteers
+                        <span className="icon"><Users size={18} /></span> Assign Volunteers
                     </button>
                     <button
-                        onClick={() => navigate('/admin/pv-students')}
-                        className="nav-btn completed-pv-btn"
+                        className="nav-item"
+                        onClick={() => navigate('/admin/reviews')}
                     >
-                        ✅ View Completed PV
+                        <span className="icon"><Clock size={18} /></span> Pending Reviews
+                    </button>
+                    <button
+                        className="nav-item"
+                        onClick={() => navigate('/admin/pv-students')}
+                    >
+                        <span className="icon"><CheckCircle size={18} /></span> Completed PV
                     </button>
                 </div>
 
-                {/* Statistics Cards */}
-                <div className="stats-container">
-                    <div className="stat-card assigned">
-                        <div className="stat-icon">👥</div>
-                        <div className="stat-content">
-                            <div className="stat-value">{statistics.total_assigned}</div>
-                            <div className="stat-label">PV Assigned</div>
-                        </div>
-                    </div>
-                    <div className="stat-card completed">
-                        <div className="stat-icon">✅</div>
-                        <div className="stat-content">
-                            <div className="stat-value">{statistics.completed}</div>
-                            <div className="stat-label">Completed</div>
-                        </div>
-                    </div>
-                    <div className="stat-card pending">
-                        <div className="stat-icon">⏳</div>
-                        <div className="stat-content">
-                            <div className="stat-value">{statistics.pending}</div>
-                            <div className="stat-label">Pending</div>
-                        </div>
-                    </div>
+                <div className="nav-footer">
+                    <button onClick={handleLogout} className="logout-btn">
+                        Sign Out
+                    </button>
                 </div>
+            </nav>
 
-                <h2 className="page-title">Students Pending Review ({students.length})</h2>
-
-                <div className="table-wrapper">
-                    <table className="custom-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Student ID</th>
-                                <th>Name</th>
-                                <th>District</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {loading ? (
-                                <tr>
-                                    <td colSpan="4" style={{ textAlign: 'center', padding: '30px' }}>Loading...</td>
-                                </tr>
-                            ) : students.length === 0 ? (
-                                <tr>
-                                    <td colSpan="4" style={{ textAlign: 'center', padding: '30px' }}>No pending students found.</td>
-                                </tr>
-                            ) : (
-                                students.map((s, index) => (
-                                    <React.Fragment key={s.studentId}>
-                                        <tr onClick={() => toggleRow(s.studentId)} style={{ cursor: 'pointer' }}>
-                                            <td>{index + 1}</td>
-                                            <td>
-                                                <Link
-                                                    to={`/admin/view/${s.studentId}`}
-                                                    className="clickable-id"
-                                                    onClick={(e) => e.stopPropagation()}
-                                                >
-                                                    {s.studentId}
-                                                </Link>
-                                            </td>
-                                            <td>{s.name}</td>
-                                            <td>{s.district}</td>
-                                        </tr>
-                                        {expandedRow === s.studentId && (
-                                            <tr className="accordion-row">
-                                                <td colSpan="4">
-                                                    <div className="accordion-content">
-                                                        <div className="accordion-grid">
-                                                            <div className="detail-item">
-                                                                <div className="detail-label">Elements Observed</div>
-                                                                <div className="detail-value">{s.elementsSummary || 'N/A'}</div>
-                                                            </div>
-                                                            <div className="detail-item">
-                                                                <div className="detail-label">Volunteer Comment</div>
-                                                                <div className="detail-value">{s.comment || 'N/A'}</div>
-                                                            </div>
-                                                            <div className="detail-item">
-                                                                <div className="detail-label">Sentiment Score</div>
-                                                                <div className="detail-value">{s.sentiment_text}%</div>
-                                                            </div>
-                                                            <div className="detail-item" style={{ display: 'flex', alignItems: 'end' }}>
-                                                                <Link to={`/admin/view/${s.studentId}`} className="submit-btn" style={{ padding: '8px 16px', fontSize: '13px', width: 'auto' }}>
-                                                                    View Full Details & Decide →
-                                                                </Link>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        )}
-                                    </React.Fragment>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            {/* Main Content Area */}
+            <main className="main-content">
+                {renderContent()}
+            </main>
         </div>
     );
 };

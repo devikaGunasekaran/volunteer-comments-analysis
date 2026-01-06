@@ -564,6 +564,39 @@ def interview_decision(student_id):
 # PHYSICAL VERIFICATION WORKFLOW ENDPOINTS
 # =====================================================
 
+
+@admin_bp.route("/api/completed-tv-students")
+def api_completed_tv_students():
+    """Get all students with completed TeleVerification (VERIFIED or REJECTED)"""
+    if 'role' not in session or session.get('role') != 'admin':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        rows = fetchall_dict("""
+            SELECT 
+                s.studentId,
+                s.name,
+                s.district,
+                s.phone,
+                s.email,
+                s.gender,
+                tv.status as tv_status,
+                tv.verificationDate as tv_date,
+                tv.comments as tv_comments,
+                v.email as volunteer_email,
+                v.name as volunteer_name
+            FROM Student s
+            INNER JOIN TeleVerification tv ON s.studentId = tv.studentId
+            LEFT JOIN Volunteer v ON tv.volunteerId = v.volunteerId
+            WHERE tv.status IN ('VERIFIED', 'REJECTED')
+            ORDER BY tv.verificationDate DESC
+        """)
+        return jsonify({'students': rows})
+    except Exception as e:
+        print(f"Error in api_completed_tv_students: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
 @admin_bp.route("/api/tv-selected-students")
 def api_tv_selected_students():
     """Get students from TeleVerification with status='SELECTED' ready for PV assignment"""
@@ -777,6 +810,44 @@ def api_pv_statistics():
         
     except Exception as e:
         print(f"Error fetching PV statistics: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@admin_bp.route("/api/tv-statistics")
+def api_tv_statistics():
+    """Get TV statistics for admin dashboard"""
+    if 'role' not in session or session.get('role') != 'admin':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        # Total Assigned (All rows in TeleVerification)
+        total_assigned = fetchone_dict("""
+            SELECT COUNT(*) as count FROM TeleVerification
+        """)
+        
+        # Completed (Verified or Rejected)
+        completed = fetchone_dict("""
+            SELECT COUNT(*) as count 
+            FROM TeleVerification 
+            WHERE status IN ('VERIFIED', 'REJECTED')
+        """)
+        
+        # Pending (Assigned but not completed)
+        pending = fetchone_dict("""
+            SELECT COUNT(*) as count 
+            FROM TeleVerification 
+            WHERE status NOT IN ('VERIFIED', 'REJECTED') OR status IS NULL
+        """)
+        
+        return jsonify({
+            'statistics': {
+                'total_assigned': total_assigned['count'] or 0,
+                'completed': completed['count'] or 0,
+                'pending': pending['count'] or 0
+            }
+        })
+    except Exception as e:
+        print(f"Error in api_tv_statistics: {e}")
         return jsonify({'error': str(e)}), 500
 
 

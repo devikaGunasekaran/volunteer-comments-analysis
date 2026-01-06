@@ -75,12 +75,12 @@ def api_assigned_students():
 
     cursor = conn.cursor(dictionary=True)
     
-    # Get pending students (status IS NULL)
+    # Get pending students (status IS NULL or ASSIGNED or PROCESSING)
     query = """
         SELECT s.studentId, s.name AS studentName, s.phone AS phoneNumber, s.district, pv.status
         FROM PhysicalVerification pv
         JOIN Student s ON pv.studentId = s.studentId
-        WHERE pv.volunteerId = %s AND pv.status IS NULL
+        WHERE pv.volunteerId = %s AND (pv.status IS NULL OR pv.status = 'ASSIGNED' OR pv.status = 'PROCESSING')
     """
     cursor.execute(query, (volunteerId,))
     students = cursor.fetchall()

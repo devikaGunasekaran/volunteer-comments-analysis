@@ -1,0 +1,255 @@
+/* ========================================
+   DESIGN TOKENS & THEME VARIABLES
+   ======================================== */
+
+:root {
+    /* ===== Primary Colors ===== */
+    --primary-orange: #FF6F00;
+    --primary-orange-light: #FF9800;
+    --primary-orange-dark: #E65100;
+
+    /* ===== Status Colors ===== */
+    --success-green: #10B981;
+    --success-green-light: #34D399;
+    --warning-amber: #F59E0B;
+    --warning-amber-light: #FBBF24;
+    --danger-red: #EF4444;
+    --danger-red-light: #F87171;
+    --info-blue: #3B82F6;
+    --info-blue-light: #60A5FA;
+
+    /* ===== Neutral Colors ===== */
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF;
+    --gray-500: #6B7280;
+    --gray-600: #4B5563;
+    --gray-700: #374151;
+    --gray-800: #1F2937;
+    --gray-900: #111827;
+
+    /* ===== Background Colors ===== */
+    --bg-primary: #F7FAFC;
+    --bg-secondary: #EDF2F7;
+    --bg-white: #FFFFFF;
+    --bg-card: #FFFFFF;
+
+    /* ===== Text Colors ===== */
+    --text-primary: #1A202C;
+    --text-secondary: #4A5568;
+    --text-tertiary: #718096;
+    --text-muted: #A0AEC0;
+
+    /* ===== Border Colors ===== */
+    --border-light: #E2E8F0;
+    --border-medium: #CBD5E0;
+    --border-dark: #A0AEC0;
+
+    /* ===== Gradients ===== */
+    --gradient-primary: linear-gradient(135deg, #FF6F00 0%, #FF9800 100%);
+    --gradient-success: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+    --gradient-info: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+    --gradient-warning: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);
+    --gradient-danger: linear-gradient(135deg, #EF4444 0%, #F87171 100%);
+    --gradient-purple: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+    /* ===== Typography ===== */
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+
+    /* Font Weights */
+    --fw-regular: 400;
+    --fw-medium: 500;
+    --fw-semibold: 600;
+    --fw-bold: 700;
+
+    /* Font Sizes */
+    --fs-xs: 11px;
+    --fs-sm: 13px;
+    --fs-base: 14px;
+    --fs-md: 15px;
+    --fs-lg: 16px;
+    --fs-xl: 18px;
+    --fs-2xl: 20px;
+    --fs-3xl: 24px;
+    --fs-4xl: 28px;
+    --fs-5xl: 32px;
+    --fs-6xl: 36px;
+
+    /* Line Heights */
+    --lh-tight: 1.2;
+    --lh-normal: 1.5;
+    --lh-relaxed: 1.6;
+
+    /* Letter Spacing */
+    --ls-tight: -0.5px;
+    --ls-normal: 0;
+    --ls-wide: 0.5px;
+    --ls-wider: 1px;
+
+    /* ===== Spacing ===== */
+    --spacing-xs: 8px;
+    --spacing-sm: 12px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-2xl: 48px;
+    --spacing-3xl: 64px;
+
+    /* ===== Border Radius ===== */
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-2xl: 20px;
+    --radius-full: 9999px;
+
+    /* ===== Shadows ===== */
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+    --shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.15);
+    --shadow-2xl: 0 20px 48px rgba(0, 0, 0, 0.2);
+
+    /* Colored Shadows */
+    --shadow-orange: 0 4px 12px rgba(255, 111, 0, 0.3);
+    --shadow-orange-lg: 0 8px 24px rgba(255, 111, 0, 0.4);
+    --shadow-green: 0 4px 12px rgba(16, 185, 129, 0.3);
+    --shadow-blue: 0 4px 12px rgba(59, 130, 246, 0.3);
+    --shadow-red: 0 4px 12px rgba(239, 68, 68, 0.3);
+
+    /* ===== Transitions ===== */
+    --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* ===== Z-Index ===== */
+    --z-dropdown: 1000;
+    --z-sticky: 1020;
+    --z-fixed: 1030;
+    --z-modal-backdrop: 1040;
+    --z-modal: 1050;
+    --z-popover: 1060;
+    --z-tooltip: 1070;
+}
+
+/* ===== Global Resets ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    font-size: var(--fs-base);
+    line-height: var(--lh-normal);
+    color: var(--text-primary);
+    background: var(--bg-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== Typography Utilities ===== */
+.text-xs {
+    font-size: var(--fs-xs);
+}
+
+.text-sm {
+    font-size: var(--fs-sm);
+}
+
+.text-base {
+    font-size: var(--fs-base);
+}
+
+.text-lg {
+    font-size: var(--fs-lg);
+}
+
+.text-xl {
+    font-size: var(--fs-xl);
+}
+
+.text-2xl {
+    font-size: var(--fs-2xl);
+}
+
+.text-3xl {
+    font-size: var(--fs-3xl);
+}
+
+.font-regular {
+    font-weight: var(--fw-regular);
+}
+
+.font-medium {
+    font-weight: var(--fw-medium);
+}
+
+.font-semibold {
+    font-weight: var(--fw-semibold);
+}
+
+.font-bold {
+    font-weight: var(--fw-bold);
+}
+
+.text-primary {
+    color: var(--text-primary);
+}
+
+.text-secondary {
+    color: var(--text-secondary);
+}
+
+.text-tertiary {
+    color: var(--text-tertiary);
+}
+
+.text-muted {
+    color: var(--text-muted);
+}
+
+/* ===== Spacing Utilities ===== */
+.m-xs {
+    margin: var(--spacing-xs);
+}
+
+.m-sm {
+    margin: var(--spacing-sm);
+}
+
+.m-md {
+    margin: var(--spacing-md);
+}
+
+.m-lg {
+    margin: var(--spacing-lg);
+}
+
+.m-xl {
+    margin: var(--spacing-xl);
+}
+
+.p-xs {
+    padding: var(--spacing-xs);
+}
+
+.p-sm {
+    padding: var(--spacing-sm);
+}
+
+.p-md {
+    padding: var(--spacing-md);
+}
+
+.p-lg {
+    padding: var(--spacing-lg);
+}
+
+.p-xl {
+    padding: var(--spacing-xl);
+}

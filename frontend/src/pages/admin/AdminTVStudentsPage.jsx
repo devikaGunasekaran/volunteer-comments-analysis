@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Home, Users, FileText, CheckCircle, Clock } from 'lucide-react';
+import { Home, Users, Video, FileText } from 'lucide-react';
 import adminService from '../../services/adminService';
 import authService from '../../services/authService';
 import logo from '../../assets/logo_icon.jpg';
-import './AdminPVStudentsPage.css';
+import './AdminTVStudentsPage.css';
 
-const AdminPVStudentsPage = () => {
+const AdminTVStudentsPage = () => {
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [expandedRow, setExpandedRow] = useState(null);
@@ -14,13 +14,13 @@ const AdminPVStudentsPage = () => {
 
     useEffect(() => {
         loadStudents();
-        const interval = setInterval(loadStudents, 10000); // Auto-refresh every 10s
+        const interval = setInterval(loadStudents, 30000);
         return () => clearInterval(interval);
     }, []);
 
     const loadStudents = async () => {
         try {
-            const data = await adminService.getCompletedPVStudents();
+            const data = await adminService.getCompletedTVStudents();
             if (data.students) {
                 setStudents(data.students);
             }
@@ -46,9 +46,8 @@ const AdminPVStudentsPage = () => {
 
     const getStatusBadge = (status) => {
         const statusMap = {
-            'SELECT': { label: 'Recommended', class: 'badge-success' },
-            'REJECT': { label: 'Not Recommended', class: 'badge-danger' },
-            'ON HOLD': { label: 'On Hold', class: 'badge-warning' }
+            'VERIFIED': { label: 'Verified', class: 'badge-success' },
+            'REJECTED': { label: 'Rejected', class: 'badge-danger' },
         };
         const statusInfo = statusMap[status] || { label: status, class: 'badge-gray' };
         return <span className={`badge ${statusInfo.class}`}>{statusInfo.label}</span>;
@@ -56,64 +55,42 @@ const AdminPVStudentsPage = () => {
 
     return (
         <div className="admin-layout animate-fadeIn">
-            {/* Sidebar Navigation */}
             <nav className="side-nav">
                 <div className="nav-logo">
                     <img src={logo} alt="Matram Logo" className="header-logo-center" />
-                    <span>PV Admin Panel</span>
+                    <span>TV Admin Panel</span>
                 </div>
-
                 <div className="nav-links">
-                    <button
-                        className="nav-item"
-                        onClick={() => navigate('/admin/dashboard')}
-                    >
+                    <button className="nav-item" onClick={() => navigate('/admin/tv-dashboard')}>
                         <span className="icon"><Home size={18} /></span> Overview
                     </button>
-                    <button
-                        className="nav-item"
-                        onClick={() => navigate('/admin/assign')}
-                    >
+                    <button className="nav-item" onClick={() => navigate('/admin/tv-assignment')}>
                         <span className="icon"><Users size={18} /></span> Assign Volunteers
                     </button>
-                    <button
-                        className="nav-item"
-                        onClick={() => navigate('/admin/reviews')}
-                    >
-                        <span className="icon"><Clock size={18} /></span> Pending Reviews
+                    <button className="nav-item active" onClick={() => { }}>
+                        <span className="icon"><Video size={18} /></span> Completed TV
                     </button>
-                    <button
-                        className="nav-item active"
-                        onClick={() => { }}
-                    >
-                        <span className="icon"><CheckCircle size={18} /></span> Completed PV
+                    <button className="nav-item" onClick={() => navigate('/admin/tv-reports')}>
+                        <span className="icon"><FileText size={18} /></span> Review Reports
                     </button>
                 </div>
-
                 <div className="nav-footer">
-                    <button onClick={handleLogout} className="logout-btn">
-                        Sign Out
-                    </button>
+                    <button onClick={handleLogout} className="logout-btn">Sign Out</button>
                 </div>
             </nav>
 
-            {/* Main Content */}
             <main className="main-content">
                 <div className="page-container">
-                    {/* Page Header */}
                     <div className="page-header animate-slideUp">
                         <div className="header-text">
-                            <h1 className="page-title">Completed Physical Verifications</h1>
-                            <p className="page-subtitle">
-                                Students who have completed PV and are ready for final decision
-                            </p>
+                            <h1 className="page-title">Completed TeleVerifications</h1>
+                            <p className="page-subtitle">Students who have completed TV interviews</p>
                         </div>
                         <div className="header-badge">
                             <span className="badge badge-primary">{students.length} Students</span>
                         </div>
                     </div>
 
-                    {/* Students Table */}
                     <div className="card animate-slideUp stagger-1">
                         <div className="table-container">
                             <table className="table">
@@ -123,7 +100,7 @@ const AdminPVStudentsPage = () => {
                                         <th>Student ID</th>
                                         <th>Name</th>
                                         <th>District</th>
-                                        <th>PV Status</th>
+                                        <th>TV Status</th>
                                         <th>Volunteer</th>
                                     </tr>
                                 </thead>
@@ -138,35 +115,27 @@ const AdminPVStudentsPage = () => {
                                     ) : students.length === 0 ? (
                                         <tr>
                                             <td colSpan="6" className="empty-state">
-                                                <div className="empty-state-icon">📋</div>
-                                                <div className="empty-state-title">No Completed PV Students</div>
+                                                <div className="empty-state-icon">📹</div>
+                                                <div className="empty-state-title">No Completed TV Students</div>
                                                 <div className="empty-state-description">
-                                                    Students will appear here once they complete physical verification
+                                                    Students will appear here once they complete televerification
                                                 </div>
                                             </td>
                                         </tr>
                                     ) : (
                                         students.map((s, index) => (
                                             <React.Fragment key={s.studentId}>
-                                                <tr
-                                                    onClick={() => toggleRow(s.studentId)}
-                                                    className="hover-lift-sm"
-                                                    style={{ cursor: 'pointer' }}
-                                                >
+                                                <tr onClick={() => toggleRow(s.studentId)} className="hover-lift-sm" style={{ cursor: 'pointer' }}>
                                                     <td>{index + 1}</td>
                                                     <td>
-                                                        <Link
-                                                            to={`/admin/decision/${s.studentId}`}
-                                                            className="student-id-link"
-                                                            onClick={(e) => e.stopPropagation()}
-                                                        >
+                                                        <Link to={`/admin/tv-report/${s.studentId}`} className="student-id-link" onClick={(e) => e.stopPropagation()}>
                                                             {s.studentId}
                                                         </Link>
                                                     </td>
                                                     <td className="font-semibold">{s.name}</td>
                                                     <td>{s.district}</td>
-                                                    <td>{getStatusBadge(s.sentiment)}</td>
-                                                    <td className="text-tertiary">{s.volunteer_email || 'N/A'}</td>
+                                                    <td>{getStatusBadge(s.tv_status)}</td>
+                                                    <td className="text-tertiary">{s.volunteer_name || s.volunteer_email || 'N/A'}</td>
                                                 </tr>
                                                 {expandedRow === s.studentId && (
                                                     <tr className="accordion-row">
@@ -174,25 +143,18 @@ const AdminPVStudentsPage = () => {
                                                             <div className="accordion-content animate-slideDown">
                                                                 <div className="detail-grid">
                                                                     <div className="detail-item">
-                                                                        <div className="detail-label">Sentiment Score</div>
-                                                                        <div className="detail-value">{s.sentiment_text}%</div>
-                                                                    </div>
-                                                                    <div className="detail-item">
                                                                         <div className="detail-label">Verification Date</div>
                                                                         <div className="detail-value">
-                                                                            {s.verificationDate ? new Date(s.verificationDate).toLocaleDateString() : 'N/A'}
+                                                                            {s.tv_date ? new Date(s.tv_date).toLocaleDateString() : 'N/A'}
                                                                         </div>
                                                                     </div>
                                                                     <div className="detail-item">
-                                                                        <div className="detail-label">Student Status</div>
-                                                                        <div className="detail-value">{s.student_status || 'Pending Review'}</div>
+                                                                        <div className="detail-label">Comments</div>
+                                                                        <div className="detail-value">{s.tv_comments || 'No comments'}</div>
                                                                     </div>
                                                                     <div className="detail-item">
-                                                                        <Link
-                                                                            to={`/admin/decision/${s.studentId}`}
-                                                                            className="btn btn-primary btn-sm"
-                                                                        >
-                                                                            View Full Details & Decide →
+                                                                        <Link to={`/admin/tv-report/${s.studentId}`} className="btn btn-primary btn-sm">
+                                                                            View Report Details →
                                                                         </Link>
                                                                     </div>
                                                                 </div>
@@ -213,4 +175,4 @@ const AdminPVStudentsPage = () => {
     );
 };
 
-export default AdminPVStudentsPage;
+export default AdminTVStudentsPage;

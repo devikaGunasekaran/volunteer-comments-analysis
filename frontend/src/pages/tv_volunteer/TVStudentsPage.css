@@ -1,32 +1,182 @@
-/* TVStudentsPage.css - Matching StudentsAssignPage style exactly */
-@import '../volunteer/StudentsAssignPage.css';
+/* TV Volunteer Dashboard Layout */
+/* Reusing standard sidebar layout classes */
 
-/* Remove blue overrides and match orange theme */
-.header-title-center {
+/* Sidebar and layout styles are now inherited from components.css */
+
+
+.section-header-row {
+    margin-bottom: 32px;
+}
+
+.section-header-row h3 {
+    font-size: 28px;
+    margin: 0 0 8px 0;
+    color: #1A202C;
+}
+
+.section-subtitle {
+    color: #718096;
+    margin: 0;
+    font-size: 16px;
+}
+
+/* Stats Grid */
+.stats-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    background: white;
+    padding: 32px 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+}
+
+.stat-value {
+    font-size: 42px;
+    font-weight: 800;
+    margin-bottom: 8px;
     color: #2D3748;
 }
 
-/* These are not needed anymore as we want to match the imported orange style */
-/* If the base CSS has blue or if we want to ensure orange: */
+.stat-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #718096;
+    text-transform: uppercase;
+}
 
-thead {
-    /* Base CSS usually has orange, but let's be explicit if needed */
-    background: linear-gradient(135deg, #FFF5E6 0%, #FFE8CC 100%);
+/* Colors */
+.total-card {
+    border-bottom: 4px solid #F6AD55;
+}
+
+.pending-card {
+    border-bottom: 4px solid #F6E05E;
+}
+
+.completed-card {
+    border-bottom: 4px solid #48BB78;
+}
+
+/* Action Grid */
+.section-title {
+    margin-bottom: 24px;
+    color: #4A5568;
+    font-size: 18px;
+}
+
+.action-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+.action-card-modern {
+    background: white;
+    padding: 32px;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid #E2E8F0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.action-card-modern:hover {
+    transform: translateY(-4px);
+    border-color: #FF6F00;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.action-icon {
+    font-size: 32px;
+    margin-bottom: 16px;
+    padding: 12px;
+    background: #FFF5E6;
+    border-radius: 12px;
+}
+
+.action-card-modern h3 {
+    font-size: 18px;
+    margin: 0 0 8px 0;
+    color: #2D3748;
+}
+
+.action-card-modern p {
+    margin: 0;
+    color: #718096;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Table Styles - Adapted for new layout */
+.table-wrapper {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 24px;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid #EDF2F7;
 }
 
 th {
-    border-bottom: 2px solid #FF9800;
+    font-weight: 600;
+    color: #718096;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+}
+
+td {
+    color: #2D3748;
 }
 
 .student-id-link {
     color: #FF6F00;
+    font-weight: 600;
+    text-decoration: none;
 }
 
 .student-id-link:hover {
-    background: #FFF5E6;
-    color: #FF9800;
+    text-decoration: underline;
 }
 
-.student-id-link::before {
-    background: #FF9800;
+/* Animation */
+.fadeIn {
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

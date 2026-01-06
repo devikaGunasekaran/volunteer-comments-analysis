@@ -1,8 +1,6 @@
 /* PV Form Page Styling */
 .pv-form-page {
-    min-height: 100vh;
-    background: #eef0f4;
-    padding-bottom: 40px;
+    width: 100%;
     animation: fadeIn 0.5s ease-out;
 }
 
@@ -379,4 +377,3 @@ textarea {
         padding: 16px;
     }
 }
-

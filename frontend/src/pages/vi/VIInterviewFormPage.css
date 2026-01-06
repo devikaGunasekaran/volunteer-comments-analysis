@@ -377,7 +377,7 @@
 
 .radio-option.hold-option:has(input:checked) {
     border-color: #FF6F00;
-    background: #e3f2fd;
+    background: #FFF3E0;
 }
 
 .radio-text {

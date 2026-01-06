@@ -1,3 +1,5 @@
+@import './TVAdminDashboard.css';
+
 /* TV Assignment Page - Styled to match PV Admin Page */
 
 .admin-assign-page {
@@ -6,32 +8,29 @@
     font-family: 'Inter', sans-serif;
 }
 
-.header-with-logout {
+/* Header Vertical Style */
+.header-vertical {
     background: white;
-    padding: 20px 32px;
-    position: relative;
+    padding: 22px 20px;
     border-bottom: 2px solid #E2E8F0;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.header-center-content {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    gap: 12px;
+    position: relative;
+    z-index: 100;
 }
 
 .header-logo-center {
     height: 48px;
+    margin: 0 auto 6px auto;
+    display: block;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
-.header-title-center {
+.header-title {
     font-weight: 700;
     font-size: 1.5rem;
     color: #1e293b;
@@ -39,48 +38,51 @@
     letter-spacing: -0.5px;
 }
 
-.header-right-nav {
+/* Orange Logout Button */
+.logout-btn-right {
     position: absolute;
-    top: 50%;
-    right: 32px;
-    transform: translateY(-50%);
-    display: flex;
-    gap: 1.5rem;
+    top: 16px;
+    right: 24px;
+    background: #FF6F00;
+    border: none;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 8px 18px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
 }
 
-.nav-link {
-    text-decoration: none;
-    color: #64748b;
-    font-weight: 600;
-    font-size: 0.95rem;
-    transition: color 0.2s;
+.logout-btn-right:hover {
+    background: #FF9800;
+    transform: translateY(-1px);
 }
 
-.nav-link:hover {
-    color: #FF6E00;
+.search-controls-container {
+    margin-bottom: 2rem;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
 }
 
-.header-left-search {
-    position: absolute;
-    top: 50%;
-    left: 32px;
-    transform: translateY(-50%);
-}
-
-.student-search-input {
-    padding: 10px 16px;
+.student-search-input-large {
+    width: 100%;
+    padding: 12px 20px;
     border: 2px solid #E2E8F0;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    width: 300px;
-    transition: all 0.2s;
-    outline: none;
+    border-radius: 10px;
+    font-size: 1.1rem;
     color: #475569;
+    outline: none;
+    transition: all 0.2s;
 }
 
-.student-search-input:focus {
+.student-search-input-large:focus {
     border-color: #FF9800;
-    box-shadow: 0 0 0 3px rgba(255, 111, 0, 0.1);
+    box-shadow: 0 0 0 4px rgba(255, 111, 0, 0.1);
 }
 
 .assigned-container {
@@ -106,7 +108,8 @@
     flex-direction: column;
     gap: 0.5rem;
     flex: 1;
-    max-width: 400px;
+    max-width: 100%;
+    /* Allow full width */
 }
 
 .control-group label {
@@ -135,7 +138,8 @@
 /* Searchable Select Styles */
 .searchable-select-container {
     position: relative;
-    max-width: 450px;
+    max-width: 100%;
+    /* Allow full width */
 }
 
 .searchable-select {
@@ -144,14 +148,18 @@
 
 .search-input {
     width: 100%;
-    padding: 0.85rem 1rem;
+    padding: 1.2rem 1.5rem;
+    /* Increased padding */
     border: 2px solid #edf2f7;
-    border-radius: 10px;
-    font-size: 1rem;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    /* Increased font size */
     background-color: #f8fafc;
     color: #1a202c;
     transition: all 0.3s ease;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+    min-width: 350px;
+    /* Ensure it's wide enough */
 }
 
 .search-input:focus {
@@ -227,7 +235,8 @@
     background: linear-gradient(135deg, #FF6F00 0%, #FF9100 100%);
     color: white;
     border: none;
-    padding: 0.85rem 2.5rem;
+    padding: 1rem 2.5rem;
+    /* Increased padding */
     border-radius: 8px;
     font-weight: 700;
     cursor: pointer;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import viVolunteerService from '../../services/viVolunteerService';
 import authService from '../../services/authService';
 import logo from '../../assets/logo_icon.jpg';
@@ -116,7 +116,11 @@ const VICompletedInterviewsPage = () => {
                                         <React.Fragment key={interview.viId}>
                                             <tr>
                                                 <td>{index + 1}</td>
-                                                <td className="student-id">{interview.studentId}</td>
+                                                <td className="student-id">
+                                                    <Link to={`/vi/student/${interview.studentId}`} className="id-link">
+                                                        {interview.studentId}
+                                                    </Link>
+                                                </td>
                                                 <td>{interview.student_name}</td>
                                                 <td>{interview.district}</td>
                                                 <td>
@@ -130,12 +134,7 @@ const VICompletedInterviewsPage = () => {
                                                         {getRecommendationText(interview.overallRecommendation)}
                                                     </span>
                                                 </td>
-                                                <td>
 
-                                                    <span className={`status-badge ${getStatusBadgeClass(interview.status)}`}>
-                                                        {interview.status}
-                                                    </span>
-                                                </td>
                                                 <td>
 
                                                     <button

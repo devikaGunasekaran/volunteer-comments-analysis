@@ -14,12 +14,14 @@ select:focus {
     box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.1);
 }
 
-.submit-btn {
-    background: linear-gradient(135deg, #FF9800 0%, #FF6F00 100%);
+.pv-form-page .submit-btn {
+    background: #FF6F00 !important;
     box-shadow: 0 4px 6px rgba(255, 152, 0, 0.2);
+    color: white;
 }
 
-.submit-btn:hover:not(:disabled) {
+.pv-form-page .submit-btn:hover:not(:disabled) {
+    background: #FF9800 !important;
     box-shadow: 0 6px 12px rgba(255, 152, 0, 0.3);
 }
 

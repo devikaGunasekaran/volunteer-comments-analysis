@@ -47,200 +47,242 @@ const SuperadminSelectedStudentsPage = () => {
     const rejectedCount = students.filter(s => s.finalDecision === 'REJECTED').length;
 
     return (
-        <div className="superadmin-selected-students-page">
-            <header className="header-vertical">
-                <button onClick={handleLogout} className="logout-btn-right">
-                    LOGOUT
-                </button>
-                <img src={logo} alt="Logo" className="header-logo-center" />
-                <div className="header-title">Final Scholarship Decisions</div>
-            </header>
+        <div className="superadmin-layout">
+            {/* Sidebar Navigation */}
+            <nav className="side-nav">
+                <div className="nav-logo">
+                    <img src={logo} alt="Matram Logo" className="header-logo-center" />
+                    <span>Matram Admin Panel</span>
+                </div>
 
-            <div className="container">
-                <div className="page-header">
-                    <h2>All Final Decisions</h2>
+                <div className="nav-links">
                     <button
+                        className="nav-item"
                         onClick={() => navigate('/superadmin/dashboard')}
-                        className="back-btn"
                     >
-                        ← Back to Dashboard
+                        <span className="icon">🏠</span> Overview
+                    </button>
+                    <button
+                        className="nav-item"
+                        onClick={() => navigate('/superadmin/vi-students')}
+                    >
+                        <span className="icon">📹</span> Virtual Interview
+                    </button>
+                    <button
+                        className="nav-item"
+                        onClick={() => navigate('/superadmin/real-interview-students')}
+                    >
+                        <span className="icon">🎯</span> Real Interview
+                    </button>
+                    <button
+                        className="nav-item active"
+                        onClick={() => navigate('/superadmin/selected-students')}
+                    >
+                        <span className="icon">🎓</span> Final Selection
+                    </button>
+                    <button
+                        className="nav-item"
+                        onClick={() => navigate('/superadmin/analytics')}
+                    >
+                        <span className="icon">📊</span> Analytics
                     </button>
                 </div>
 
-                <div className="filter-stats">
-                    <button
-                        className={`filter-btn ${filter === 'ALL' ? 'active' : ''}`}
-                        onClick={() => setFilter('ALL')}
-                    >
-                        All ({students.length})
-                    </button>
-                    <button
-                        className={`filter-btn selected ${filter === 'SELECTED' ? 'active' : ''}`}
-                        onClick={() => setFilter('SELECTED')}
-                    >
-                        ✅ Selected ({selectedCount})
-                    </button>
-                    <button
-                        className={`filter-btn rejected ${filter === 'REJECTED' ? 'active' : ''}`}
-                        onClick={() => setFilter('REJECTED')}
-                    >
-                        ❌ Rejected ({rejectedCount})
+                <div className="nav-footer">
+                    <button onClick={handleLogout} className="logout-btn">
+                        Sign Out
                     </button>
                 </div>
+            </nav>
 
-                {loading ? (
-                    <div className="loading-container">
-                        <div className="loading-spinner">Loading...</div>
+            <main className="main-content">
+                <div className="superadmin-selected-students-content">
+                    <div className="page-header">
+                        <h2>All Final Decisions</h2>
+                        <button
+                            onClick={() => navigate('/superadmin/dashboard')}
+                            className="back-btn"
+                        >
+                            ← Back to Dashboard
+                        </button>
                     </div>
-                ) : (
-                    <div className="decisions-container">
-                        {filteredStudents.length === 0 ? (
-                            <div className="no-data">
-                                No {filter.toLowerCase()} decisions found
-                            </div>
-                        ) : (
-                            <table className="decisions-table">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Student ID</th>
-                                        <th>Name</th>
-                                        <th>District</th>
-                                        <th>Final Decision</th>
-                                        <th>Decision Date</th>
-                                        <th>Decided By</th>
-                                        <th>Details</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {filteredStudents.map((student, index) => (
-                                        <React.Fragment key={student.studentId}>
-                                            <tr>
-                                                <td>{index + 1}</td>
-                                                <td
-                                                    className="student-id clickable"
-                                                    onClick={() => navigate(`/superadmin/student-profile/${student.studentId}`)}
-                                                    title="Click to view complete profile"
-                                                >
-                                                    {student.studentId}
-                                                </td>
-                                                <td>{student.name}</td>
-                                                <td>{student.district}</td>
-                                                <td>
-                                                    <span className={`decision-badge ${student.finalDecision?.toLowerCase()}`}>
-                                                        {student.finalDecision === 'SELECTED' ? '✅ SELECTED' : '❌ REJECTED'}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    {student.finalDecisionDate
-                                                        ? new Date(student.finalDecisionDate).toLocaleString()
-                                                        : 'N/A'}
-                                                </td>
-                                                <td>{student.finalDecisionBy || 'N/A'}</td>
-                                                <td>
-                                                    <button
-                                                        className="details-btn"
-                                                        onClick={() => toggleRow(student.studentId)}
+
+                    <div className="filter-stats">
+                        <button
+                            className={`filter-btn ${filter === 'ALL' ? 'active' : ''}`}
+                            onClick={() => setFilter('ALL')}
+                        >
+                            All ({students.length})
+                        </button>
+                        <button
+                            className={`filter-btn selected ${filter === 'SELECTED' ? 'active' : ''}`}
+                            onClick={() => setFilter('SELECTED')}
+                        >
+                            ✅ Selected ({selectedCount})
+                        </button>
+                        <button
+                            className={`filter-btn rejected ${filter === 'REJECTED' ? 'active' : ''}`}
+                            onClick={() => setFilter('REJECTED')}
+                        >
+                            ❌ Rejected ({rejectedCount})
+                        </button>
+                    </div>
+
+                    {loading ? (
+                        <div className="loading-container">
+                            <div className="loading-spinner">Loading...</div>
+                        </div>
+                    ) : (
+                        <div className="decisions-container">
+                            {filteredStudents.length === 0 ? (
+                                <div className="no-data">
+                                    No {filter.toLowerCase()} decisions found
+                                </div>
+                            ) : (
+                                <table className="decisions-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Student ID</th>
+                                            <th>Name</th>
+                                            <th>District</th>
+                                            <th>Final Decision</th>
+                                            <th>Decision Date</th>
+                                            <th>Decided By</th>
+                                            <th>Details</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {filteredStudents.map((student, index) => (
+                                            <React.Fragment key={student.studentId}>
+                                                <tr>
+                                                    <td>{index + 1}</td>
+                                                    <td
+                                                        className="student-id clickable"
+                                                        onClick={() => navigate(`/superadmin/student-profile/${student.studentId}`)}
+                                                        title="Click to view complete profile"
                                                     >
-                                                        {expandedRow === student.studentId ? '▲ Hide' : '▼ Show'}
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                            {expandedRow === student.studentId && (
-                                                <tr className="expanded-row">
-                                                    <td colSpan="8">
-                                                        <div className="details-panel">
-                                                            <div className="detail-section">
-                                                                <h4>Final Decision Remarks</h4>
-                                                                <p>{student.finalRemarks || 'No remarks provided'}</p>
-                                                            </div>
-
-                                                            <div className="detail-grid">
-                                                                <div className="detail-item">
-                                                                    <label>VI Recommendation:</label>
-                                                                    <span className="recommendation-badge">
-                                                                        {student.vi_recommendation || 'N/A'}
-                                                                    </span>
-                                                                </div>
-                                                                <div className="detail-item">
-                                                                    <label>RI Recommendation:</label>
-                                                                    <span className="recommendation-badge">
-                                                                        {student.ri_recommendation || 'N/A'}
-                                                                    </span>
-                                                                </div>
-                                                                <div className="detail-item">
-                                                                    <label>Phone:</label>
-                                                                    <span>{student.phone || 'N/A'}</span>
-                                                                </div>
-                                                                <div className="detail-item">
-                                                                    <label>Email:</label>
-                                                                    <span>{student.email || 'N/A'}</span>
-                                                                </div>
-                                                            </div>
-
-                                                            <div className="action-buttons" style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
-                                                                <button
-                                                                    className="edit-educational-btn"
-                                                                    onClick={() => navigate('/superadmin/educational-details', {
-                                                                        state: {
-                                                                            student: {
-                                                                                studentId: student.studentId,
-                                                                                name: student.name,
-                                                                                district: student.district
-                                                                            }
-                                                                        }
-                                                                    })}
-                                                                    style={{
-                                                                        padding: '10px 20px',
-                                                                        backgroundColor: '#4CAF50',
-                                                                        color: 'white',
-                                                                        border: 'none',
-                                                                        borderRadius: '5px',
-                                                                        cursor: 'pointer',
-                                                                        fontSize: '14px',
-                                                                        fontWeight: '500'
-                                                                    }}
-                                                                >
-                                                                    📝 Edit Educational Details
-                                                                </button>
-                                                                <button
-                                                                    className="view-profile-btn"
-                                                                    onClick={() => navigate(`/superadmin/student-profile/${student.studentId}`)}
-                                                                    style={{
-                                                                        padding: '10px 20px',
-                                                                        backgroundColor: '#2196F3',
-                                                                        color: 'white',
-                                                                        border: 'none',
-                                                                        borderRadius: '5px',
-                                                                        cursor: 'pointer',
-                                                                        fontSize: '14px',
-                                                                        fontWeight: '500'
-                                                                    }}
-                                                                >
-                                                                    👤 View Full Profile
-                                                                </button>
-                                                            </div>
-
-                                                            {student.ri_remarks && (
-                                                                <div className="detail-section">
-                                                                    <h4>RI Interview Remarks</h4>
-                                                                    <p>{student.ri_remarks}</p>
-                                                                </div>
-                                                            )}
-                                                        </div>
+                                                        {student.studentId}
+                                                    </td>
+                                                    <td>{student.name}</td>
+                                                    <td>{student.district}</td>
+                                                    <td>
+                                                        <span className={`decision-badge ${student.finalDecision?.toLowerCase()}`}>
+                                                            {student.finalDecision === 'SELECTED' ? '✅ SELECTED' : '❌ REJECTED'}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        {student.finalDecisionDate
+                                                            ? new Date(student.finalDecisionDate).toLocaleString()
+                                                            : 'N/A'}
+                                                    </td>
+                                                    <td>{student.finalDecisionBy || 'N/A'}</td>
+                                                    <td>
+                                                        <button
+                                                            className="details-btn"
+                                                            onClick={() => toggleRow(student.studentId)}
+                                                        >
+                                                            {expandedRow === student.studentId ? '▲ Hide' : '▼ Show'}
+                                                        </button>
                                                     </td>
                                                 </tr>
-                                            )}
-                                        </React.Fragment>
-                                    ))}
-                                </tbody>
-                            </table>
-                        )}
-                    </div>
-                )}
-            </div>
+                                                {expandedRow === student.studentId && (
+                                                    <tr className="expanded-row">
+                                                        <td colSpan="8">
+                                                            <div className="details-panel">
+                                                                <div className="detail-section">
+                                                                    <h4>Final Decision Remarks</h4>
+                                                                    <p>{student.finalRemarks || 'No remarks provided'}</p>
+                                                                </div>
+
+                                                                <div className="detail-grid">
+                                                                    <div className="detail-item">
+                                                                        <label>VI Recommendation:</label>
+                                                                        <span className="recommendation-badge">
+                                                                            {student.vi_recommendation || 'N/A'}
+                                                                        </span>
+                                                                    </div>
+                                                                    <div className="detail-item">
+                                                                        <label>RI Recommendation:</label>
+                                                                        <span className="recommendation-badge">
+                                                                            {student.ri_recommendation || 'N/A'}
+                                                                        </span>
+                                                                    </div>
+                                                                    <div className="detail-item">
+                                                                        <label>Phone:</label>
+                                                                        <span>{student.phone || 'N/A'}</span>
+                                                                    </div>
+                                                                    <div className="detail-item">
+                                                                        <label>Email:</label>
+                                                                        <span>{student.email || 'N/A'}</span>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div className="action-buttons" style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
+                                                                    <button
+                                                                        className="edit-educational-btn"
+                                                                        onClick={() => navigate('/superadmin/educational-details', {
+                                                                            state: {
+                                                                                student: {
+                                                                                    studentId: student.studentId,
+                                                                                    name: student.name,
+                                                                                    district: student.district
+                                                                                }
+                                                                            }
+                                                                        })}
+                                                                        style={{
+                                                                            padding: '10px 20px',
+                                                                            backgroundColor: '#4CAF50',
+                                                                            color: 'white',
+                                                                            border: 'none',
+                                                                            borderRadius: '5px',
+                                                                            cursor: 'pointer',
+                                                                            fontSize: '14px',
+                                                                            fontWeight: '500'
+                                                                        }}
+                                                                    >
+                                                                        📝 Edit Educational Details
+                                                                    </button>
+                                                                    <button
+                                                                        className="view-profile-btn"
+                                                                        onClick={() => navigate(`/superadmin/student-profile/${student.studentId}`)}
+                                                                        style={{
+                                                                            padding: '10px 20px',
+                                                                            backgroundColor: '#2196F3',
+                                                                            color: 'white',
+                                                                            border: 'none',
+                                                                            borderRadius: '5px',
+                                                                            cursor: 'pointer',
+                                                                            fontSize: '14px',
+                                                                            fontWeight: '500'
+                                                                        }}
+                                                                    >
+                                                                        👤 View Full Profile
+                                                                    </button>
+                                                                </div>
+
+                                                                {student.ri_remarks && (
+                                                                    <div className="detail-section">
+                                                                        <h4>RI Interview Remarks</h4>
+                                                                        <p>{student.ri_remarks}</p>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </React.Fragment>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            )}
+                        </div>
+                    )}
+                </div>
+            </main>
         </div>
     );
 };
+
 
 export default SuperadminSelectedStudentsPage;

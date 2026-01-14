@@ -43,7 +43,7 @@ def admin_assign():
                 pv.elementsSummary,
                 pv.sentiment_text,
                 pv.status AS pv_status
-            FROM student s
+            FROM Student s
             INNER JOIN PhysicalVerification pv 
                 ON s.studentId = pv.studentId
             WHERE 
@@ -76,7 +76,7 @@ def admin_decision(student_id):
         cursor = conn.cursor(dictionary=True, buffered=True)
 
         # Fetch student row
-        cursor.execute("SELECT * FROM student WHERE studentId = %s", (student_id,))
+        cursor.execute("SELECT * FROM Student WHERE studentId = %s", (student_id,))
         student = cursor.fetchone()
 
         # Fetch physical verification row
@@ -255,7 +255,7 @@ def api_admin_pending_students():
             pv.elementsSummary,
             pv.sentiment_text,
             pv.status AS pv_status
-        FROM student s
+        FROM Student s
         INNER JOIN PhysicalVerification pv 
             ON s.studentId = pv.studentId
         WHERE 
@@ -277,7 +277,7 @@ def api_admin_student_details(student_id):
         cursor = conn.cursor(dictionary=True, buffered=True)
 
         # Fetch student row
-        cursor.execute("SELECT * FROM student WHERE studentId = %s", (student_id,))
+        cursor.execute("SELECT * FROM Student WHERE studentId = %s", (student_id,))
         student = cursor.fetchone()
 
         # Fetch physical verification row
@@ -313,7 +313,7 @@ def api_admin_student_details(student_id):
         image_rows = cursor.fetchall()
         
         # Fetch 10th marks
-        cursor.execute("SELECT * FROM marks_10th WHERE studentId = %s", (student_id,))
+        cursor.execute("SELECT * FROM Marks_10th WHERE studentId = %s", (student_id,))
         marks10_row = cursor.fetchone()
         marks10 = None
         if marks10_row:
@@ -327,7 +327,7 @@ def api_admin_student_details(student_id):
             }
         
         # Fetch 12th marks
-        cursor.execute("SELECT * FROM marks_12th WHERE studentId = %s", (student_id,))
+        cursor.execute("SELECT * FROM Marks_12th WHERE studentId = %s", (student_id,))
         marks12_row = cursor.fetchone()
         marks12 = None
         if marks12_row:
@@ -441,7 +441,7 @@ def final_status_update(student_id):
         selected_flag = 1 if admin_status in ['APPROVED', 'SELECT'] else 0
         
         cursor.execute("""
-            UPDATE student 
+            UPDATE Student 
             SET status = %s,
                 selected = %s,
                 admin_remarks = %s
@@ -567,8 +567,8 @@ def interview_decision(student_id):
 
 @admin_bp.route("/api/completed-tv-students")
 def api_completed_tv_students():
-    """Get all students with completed TeleVerification (VERIFIED or REJECTED)"""
-    if 'role' not in session or session.get('role') != 'admin':
+    """Get all students where TV Admin has completed their review (approved to PV or rejected)"""
+    if 'role' not in session or session.get('role') not in ['admin', 'tv_admin']:
         return jsonify({'error': 'Unauthorized'}), 401
     
     try:
@@ -580,6 +580,8 @@ def api_completed_tv_students():
                 s.phone,
                 s.email,
                 s.gender,
+                s.status as final_status,
+                s.admin_remarks,
                 tv.status as tv_status,
                 tv.verificationDate as tv_date,
                 tv.comments as tv_comments,
@@ -588,7 +590,8 @@ def api_completed_tv_students():
             FROM Student s
             INNER JOIN TeleVerification tv ON s.studentId = tv.studentId
             LEFT JOIN Volunteer v ON tv.volunteerId = v.volunteerId
-            WHERE tv.status IN ('VERIFIED', 'REJECTED')
+            WHERE s.status IN ('PV', 'REJECTED')
+            AND tv.status = 'VERIFIED'
             ORDER BY tv.verificationDate DESC
         """)
         return jsonify({'students': rows})
@@ -642,9 +645,9 @@ def get_unassigned_tv_students():
     
     query = """
         SELECT studentId, name, district, phone 
-        FROM student 
-        WHERE (status = 'TV' OR status IS NULL)
-        AND studentId NOT IN (SELECT studentId FROM televerification)
+        FROM Student 
+        WHERE (status = 'TV' OR status IS NULL OR status = '' OR status = 'PENDING')
+        AND studentId NOT IN (SELECT studentId FROM TeleVerification)
     """
     students = fetchall_dict(query)
     return jsonify({'students': students})
@@ -655,7 +658,7 @@ def get_tv_volunteers():
     if 'role' not in session or session.get('role') not in ['admin', 'tv_admin']:
         return jsonify({'error': 'Unauthorized'}), 401
     
-    query = "SELECT volunteerId, name, email FROM volunteer WHERE role = 'tv'"
+    query = "SELECT volunteerId, name, email FROM Volunteer WHERE role = 'tv'"
     volunteers = fetchall_dict(query)
     return jsonify({'volunteers': volunteers})
 
@@ -665,7 +668,7 @@ def get_pv_volunteers():
     if 'role' not in session or session.get('role') not in ['admin', 'tv_admin']:
         return jsonify({'error': 'Unauthorized'}), 401
     
-    query = "SELECT volunteerId, name, email FROM volunteer WHERE role = 'pv'"
+    query = "SELECT volunteerId, name, email FROM Volunteer WHERE role = 'pv'"
     volunteers = fetchall_dict(query)
     return jsonify({'volunteers': volunteers})
 
@@ -690,17 +693,17 @@ def assign_tv():
         cursor = conn.cursor()
         for sid in studentIds:
             # Check if already exists (prevent duplicate assignments)
-            cursor.execute("SELECT teleId FROM televerification WHERE studentId = %s", (sid,))
+            cursor.execute("SELECT teleId FROM TeleVerification WHERE studentId = %s", (sid,))
             if cursor.fetchone():
                 continue
                 
             cursor.execute("""
-                INSERT INTO televerification (studentId, volunteerId, status, comments, verificationDate)
+                INSERT INTO TeleVerification (studentId, volunteerId, status, comments, verificationDate)
                 VALUES (%s, %s, %s, %s, NOW())
             """, (sid, volunteerId, 'ASSIGNED', 'Assigned by Admin'))
             
             # Update student status to 'TV' if it was NULL (Application Received state)
-            cursor.execute("UPDATE student SET status = 'TV' WHERE studentId = %s AND status IS NULL", (sid,))
+            cursor.execute("UPDATE Student SET status = 'TV' WHERE studentId = %s AND status IS NULL", (sid,))
         
         conn.commit()
         cursor.close()
@@ -751,7 +754,7 @@ def assign_pv():
             """, (studentId, volunteerId, 'ASSIGNED'))
         
         # Update student status to indicate PV assignment
-        cursor.execute("UPDATE student SET status = 'PV' WHERE studentId = %s", (studentId,))
+        cursor.execute("UPDATE Student SET status = 'PV' WHERE studentId = %s", (studentId,))
         
         conn.commit()
         cursor.close()
@@ -816,7 +819,7 @@ def api_pv_statistics():
 @admin_bp.route("/api/tv-statistics")
 def api_tv_statistics():
     """Get TV statistics for admin dashboard"""
-    if 'role' not in session or session.get('role') != 'admin':
+    if 'role' not in session or session.get('role') not in ['admin', 'tv_admin']:
         return jsonify({'error': 'Unauthorized'}), 401
     
     try:
@@ -825,25 +828,27 @@ def api_tv_statistics():
             SELECT COUNT(*) as count FROM TeleVerification
         """)
         
-        # Completed (Verified or Rejected)
-        completed = fetchone_dict("""
-            SELECT COUNT(*) as count 
-            FROM TeleVerification 
-            WHERE status IN ('VERIFIED', 'REJECTED')
-        """)
-        
-        # Pending (Assigned but not completed)
+        # Pending Approval (VERIFIED status - awaiting TV Admin approval)
         pending = fetchone_dict("""
             SELECT COUNT(*) as count 
             FROM TeleVerification 
-            WHERE status NOT IN ('VERIFIED', 'REJECTED') OR status IS NULL
+            WHERE status = 'VERIFIED'
+        """)
+        
+        # Completed (Approved to PV or Rejected by TV Admin)
+        # These are students where admin has made a decision
+        completed = fetchone_dict("""
+            SELECT COUNT(*) as count 
+            FROM Student 
+            WHERE status IN ('PV', 'REJECTED') 
+            AND studentId IN (SELECT studentId FROM TeleVerification)
         """)
         
         return jsonify({
             'statistics': {
                 'total_assigned': total_assigned['count'] or 0,
-                'completed': completed['count'] or 0,
-                'pending': pending['count'] or 0
+                'pending': pending['count'] or 0,
+                'completed': completed['count'] or 0
             }
         })
     except Exception as e:
@@ -922,37 +927,6 @@ def api_assign_pv_volunteer():
         return jsonify({'error': str(e)}), 500
 
 
-@admin_bp.route("/api/completed-pv-students")
-def api_completed_pv_students():
-    """Get students with completed physical verification"""
-    if 'role' not in session or session.get('role') != 'admin':
-        return jsonify({'error': 'Unauthorized'}), 401
-    
-    try:
-        rows = fetchall_dict("""
-            SELECT 
-                s.studentId,
-                s.name,
-                s.district,
-                s.phone,
-                s.status as student_status,
-                pv.status as pv_status,
-                pv.sentiment,
-                pv.sentiment_text,
-                pv.verificationDate,
-                v.volunteerId,
-                v.email as volunteer_email
-            FROM Student s
-            INNER JOIN PhysicalVerification pv ON s.studentId = pv.studentId
-            LEFT JOIN Volunteer v ON pv.volunteerId = v.volunteerId
-            WHERE pv.status IS NOT NULL AND pv.status NOT IN ('ASSIGNED', 'PROCESSING')
-            ORDER BY pv.verificationDate DESC
-        """)
-        return jsonify({'students': rows})
-    except Exception as e:
-        print(f"Error in api_completed_pv_students: {e}")
-        return jsonify({'error': str(e)}), 500
-
 @admin_bp.route("/api/submitted-tv-reports")
 def get_submitted_tv_reports():
     """Fetch students with submitted TV reports for admin review"""
@@ -968,9 +942,9 @@ def get_submitted_tv_reports():
             tv.status as tvStatus,
             tv.comments as tvComments,
             tv.verificationDate
-        FROM student s
-        JOIN televerification tv ON s.studentId = tv.studentId
-        JOIN volunteer v ON tv.volunteerId = v.volunteerId
+        FROM Student s
+        JOIN TeleVerification tv ON s.studentId = tv.studentId
+        JOIN Volunteer v ON tv.volunteerId = v.volunteerId
         WHERE tv.status IN ('VERIFIED', 'REJECTED')
         AND s.status = 'TV'
     """
@@ -998,7 +972,7 @@ def review_tv_submission():
         target_status = 'PV' if decision == 'SELECT' else 'REJECTED'
         
         cursor.execute("""
-            UPDATE student 
+            UPDATE Student 
             SET status = %s, admin_remarks = %s 
             WHERE studentId = %s
         """, (target_status, remarks, studentId))
@@ -1010,4 +984,113 @@ def review_tv_submission():
     except Exception as e:
         print(e)
 
+        return jsonify({'error': str(e)}), 500# Add these endpoints to admin.py after line 634
+
+@admin_bp.route("/api/pv-pending-reviews")
+def api_pv_pending_reviews():
+    """Get students with completed PV (AI processed) awaiting admin review"""
+    if 'role' not in session or session.get('role') not in ['admin', 'pv_admin']:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        rows = fetchall_dict("""
+            SELECT 
+                s.studentId,
+                s.name,
+                s.district,
+                s.phone,
+                s.email,
+                pv.status as pv_recommendation,
+                pv.sentiment as ai_decision,
+                pv.sentiment_text as ai_score,
+                pv.comment,
+                pv.elementsSummary,
+                pv.voice_comments,
+                pv.verificationDate,
+                v.email as volunteer_email,
+                v.name as volunteer_name
+            FROM Student s
+            INNER JOIN PhysicalVerification pv ON s.studentId = pv.studentId
+            LEFT JOIN Volunteer v ON pv.volunteerId = v.volunteerId
+            WHERE s.status = 'PV_COMPLETED'
+            AND pv.status IN ('SELECT', 'REJECT', 'ON HOLD', 'SELECT_FOR_SCHOLARSHIP')
+            ORDER BY pv.verificationDate DESC
+        """)
+        print(f"✅ PV Pending Reviews: Found {len(rows)} students")
+        for row in rows:
+            print(f"  - {row.get('studentId')}: {row.get('name')}")
+        return jsonify({'students': rows})
+    except Exception as e:
+        print(f"❌ Error in api_pv_pending_reviews: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@admin_bp.route("/api/review-pv-submission", methods=['POST'])
+def review_pv_submission():
+    """Admin decision on PV submission (move to VI or Reject)"""
+    if 'role' not in session or session.get('role') not in ['admin', 'pv_admin']:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    data = request.json
+    studentId = data.get('studentId')
+    decision = data.get('decision')  # 'SELECT' (moves to VI) or 'REJECT'
+    remarks = data.get('remarks', '')
+    
+    if not studentId or not decision:
+        return jsonify({'error': 'Missing studentId or decision'}), 400
+    
+    conn = get_db_connection()
+    try:
+        cursor = conn.cursor()
+        
+        # Determine target status based on decision
+        target_status = 'VI' if decision == 'SELECT' else 'REJECTED'
+        
+        cursor.execute("""
+            UPDATE Student 
+            SET status = %s, admin_remarks = %s 
+            WHERE studentId = %s
+        """, (target_status, remarks, studentId))
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({'success': True, 'message': f'Student moved to {target_status}'})
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 500
+
+@admin_bp.route('/api/completed-pv-students')
+def api_completed_pv_students():
+    '''Get students where PV Admin has completed their review (approved to VI or rejected)'''
+    if 'role' not in session or session.get('role') not in ['admin', 'pv_admin']:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        rows = fetchall_dict('''
+            SELECT 
+                s.studentId,
+                s.name,
+                s.district,
+                s.phone,
+                s.email,
+                s.status as final_status,
+                s.admin_remarks,
+                pv.status as pv_recommendation,
+                pv.sentiment as ai_decision,
+                pv.sentiment_text as ai_score,
+                pv.comment,
+                pv.verificationDate,
+                v.email as volunteer_email,
+                v.name as volunteer_name
+            FROM Student s
+            INNER JOIN PhysicalVerification pv ON s.studentId = pv.studentId
+            LEFT JOIN Volunteer v ON pv.volunteerId = v.volunteerId
+            WHERE s.status IN ('VI', 'REJECTED', 'APPROVED', 'TV', 'RI', 'SELECTED', 'COMPLETED','TV_COMPLETED','RI_COMPLETED')
+            AND pv.status IN ('SELECT', 'REJECT', 'ON HOLD', 'SELECT_FOR_SCHOLARSHIP')
+            ORDER BY pv.verificationDate DESC
+        ''')
+        return jsonify({'students': rows})
+    except Exception as e:
+        print(f'Error in api_completed_pv_students: {e}')
         return jsonify({'error': str(e)}), 500

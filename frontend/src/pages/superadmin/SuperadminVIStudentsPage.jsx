@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Home, Video, Target, GraduationCap, BarChart2, ArrowLeft, ClipboardList } from 'lucide-react';
 import superadminService from '../../services/superadminService';
 import authService from '../../services/authService';
 import logo from '../../assets/logo_icon.jpg';
-import './SuperadminVIStudentsPage.css';
+import './SuperadminFinalSelectionPage.css';
 
 const SuperadminVIStudentsPage = () => {
     const [interviews, setInterviews] = useState([]);
@@ -66,148 +67,178 @@ const SuperadminVIStudentsPage = () => {
     };
 
     return (
-        <div className="superadmin-vi-students-page">
-            <header className="header-vertical">
-                <button onClick={handleLogout} className="logout-btn-right">
-                    LOGOUT
-                </button>
-                <img src={logo} alt="Logo" className="header-logo-center" />
-                <div className="header-title">Completed Virtual Interviews</div>
-            </header>
-
-            <div className="container">
-                <div className="page-header">
-                    <h2>Completed Virtual Interviews</h2>
-                    <button
-                        onClick={() => navigate('/superadmin/dashboard')}
-                        className="back-btn"
-                    >
-                        ← Back to Dashboard
+        <div className="admin-layout">
+            <nav className="side-nav">
+                <div className="nav-logo">
+                    <img src={logo} alt="Matram Logo" className="header-logo-center" />
+                    <span>Matram Admin Panel</span>
+                </div>
+                <div className="nav-links">
+                    <button className="nav-item" onClick={() => navigate('/superadmin/dashboard')}>
+                        <span className="icon"><Home size={18} /></span> Overview
+                    </button>
+                    <button className="nav-item active" onClick={() => navigate('/superadmin/vi-students')}>
+                        <span className="icon"><Video size={18} /></span> Virtual Interview
+                    </button>
+                    <button className="nav-item" onClick={() => navigate('/superadmin/real-interview-students')}>
+                        <span className="icon"><Target size={18} /></span> Real Interview
+                    </button>
+                    <button className="nav-item" onClick={() => navigate('/superadmin/final-selection')}>
+                        <span className="icon"><GraduationCap size={18} /></span> Final Selection
+                    </button>
+                    <button className="nav-item" onClick={() => navigate('/superadmin/analytics')}>
+                        <span className="icon"><BarChart2 size={18} /></span> Analytics
                     </button>
                 </div>
+                <div className="nav-footer">
+                    <button onClick={handleLogout} className="logout-btn">
+                        Sign Out
+                    </button>
+                </div>
+            </nav>
 
-                {loading ? (
-                    <div className="loading-container">
-                        <div className="loading-spinner">Loading...</div>
-                    </div>
-                ) : (
-                    <div className="interviews-container">
-                        {interviews.length === 0 ? (
+            <main className="main-content">
+                <div className="superadmin-final-selection-page">
+                    <div className="container">
+                        <div className="page-header">
+                            <h2>Completed Virtual Interviews</h2>
+                            <button
+                                onClick={() => navigate('/superadmin/dashboard')}
+                                className="back-btn"
+                            >
+                                <ArrowLeft size={18} style={{ marginRight: 8 }} /> Back to Dashboard
+                            </button>
+                        </div>
+
+                        {loading ? (
+                            <div className="loading-container">
+                                <div className="loading-spinner">Loading...</div>
+                            </div>
+                        ) : interviews.length === 0 ? (
                             <div className="no-data">
                                 No completed interviews found
                             </div>
                         ) : (
-                            <table className="interviews-table">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Student ID</th>
-                                        <th>Student Name</th>
-                                        <th>District</th>
-                                        <th>VI Volunteer</th>
-                                        <th>Interview Date</th>
-                                        <th>Status</th>
-                                        <th>Recommendation</th>
-                                        <th>Scores</th>
-                                        <th>Details</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {interviews.map((interview, index) => (
-                                        <React.Fragment key={interview.viId}>
-                                            <tr>
-                                                <td>{index + 1}</td>
-                                                <td className="student-id">{interview.studentId}</td>
-                                                <td>{interview.student_name}</td>
-                                                <td>{interview.district}</td>
-                                                <td>
-                                                    <div className="volunteer-info">
-                                                        <div className="volunteer-name">
-                                                            {interview.volunteer_name || interview.volunteerId}
-                                                        </div>
-                                                        <div className="volunteer-email">
-                                                            {interview.volunteer_email}
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    {interview.interviewDate
-                                                        ? new Date(interview.interviewDate).toLocaleString()
-                                                        : 'N/A'
-                                                    }
-                                                </td>
-                                                <td>
-                                                    <span className={`status-badge ${getStatusBadgeClass(interview.status)}`}>
-                                                        {interview.status}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <span className={`recommendation-badge ${getRecommendationBadgeClass(interview.overallRecommendation)}`}>
-                                                        {interview.overallRecommendation || 'N/A'}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <div className="scores">
-                                                        <div>Tech: {interview.technicalScore || 'N/A'}</div>
-                                                        <div>Comm: {interview.communicationScore || 'N/A'}</div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <button
-                                                        className="details-btn"
-                                                        onClick={() => toggleRow(interview.viId)}
+                            <div className="table-container">
+                                <table className="students-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Student ID</th>
+                                            <th>Student Name</th>
+                                            <th>District</th>
+                                            <th>VI Volunteer</th>
+                                            <th>Interview Date</th>
+                                            <th>Recommendation</th>
+                                            <th>Status</th>
+                                            <th>Details</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {interviews.map((interview, index) => (
+                                            <React.Fragment key={interview.viId}>
+                                                <tr
+                                                    onClick={() => toggleRow(interview.viId)}
+                                                    className="clickable-row"
+                                                >
+                                                    <td>{index + 1}</td>
+                                                    <td
+                                                        className="student-id clickable-id"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            navigate(`/superadmin/student-profile/${interview.studentId}`);
+                                                        }}
+                                                        title="View Student Profile"
                                                     >
-                                                        {expandedRow === interview.viId ? '▲ Hide' : '▼ Show'}
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                            {expandedRow === interview.viId && (
-                                                <tr className="expanded-row">
-                                                    <td colSpan="10">
-                                                        <div className="details-panel">
-                                                            <div className="detail-section">
-                                                                <h4>Interview Comments</h4>
-                                                                <p>{interview.comments || 'No comments provided'}</p>
+                                                        {interview.studentId}
+                                                    </td>
+                                                    <td>{interview.student_name}</td>
+                                                    <td>{interview.district}</td>
+                                                    <td>
+                                                        <div className="volunteer-info">
+                                                            <div className="volunteer-name">
+                                                                {interview.volunteer_name || interview.volunteerId}
                                                             </div>
-
-                                                            <div className="detail-grid">
-                                                                <div className="detail-item">
-                                                                    <label>Technical Score:</label>
-                                                                    <span className="score-value">
-                                                                        {interview.technicalScore || 'N/A'}/100
-                                                                    </span>
-                                                                </div>
-                                                                <div className="detail-item">
-                                                                    <label>Communication Score:</label>
-                                                                    <span className="score-value">
-                                                                        {interview.communicationScore || 'N/A'}/100
-                                                                    </span>
-                                                                </div>
-                                                                <div className="detail-item">
-                                                                    <label>Overall Recommendation:</label>
-                                                                    <span className={`recommendation-badge ${getRecommendationBadgeClass(interview.overallRecommendation)}`}>
-                                                                        {interview.overallRecommendation || 'N/A'}
-                                                                    </span>
-                                                                </div>
-                                                                <div className="detail-item">
-                                                                    <label>Status:</label>
-                                                                    <span className={`status-badge ${getStatusBadgeClass(interview.status)}`}>
-                                                                        {interview.status}
-                                                                    </span>
-                                                                </div>
+                                                            <div className="volunteer-email">
+                                                                {interview.volunteer_email}
                                                             </div>
                                                         </div>
                                                     </td>
+                                                    <td>
+                                                        {interview.interviewDate
+                                                            ? new Date(interview.interviewDate).toLocaleString()
+                                                            : 'N/A'
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        <span className={`recommendation-badge ${getRecommendationBadgeClass(interview.overallRecommendation)}`}>
+                                                            {interview.overallRecommendation || 'N/A'}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span className={`status-badge ${getStatusBadgeClass(interview.status)}`}>
+                                                            {interview.status}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <button
+                                                            className="details-btn"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                toggleRow(interview.viId);
+                                                            }}
+                                                        >
+                                                            {expandedRow === interview.viId ? '▲ Hide' : '▼ Show'}
+                                                        </button>
+                                                    </td>
                                                 </tr>
-                                            )}
-                                        </React.Fragment>
-                                    ))}
-                                </tbody>
-                            </table>
+                                                {expandedRow === interview.viId && (
+                                                    <tr className="expanded-row">
+                                                        <td colSpan="9">
+                                                            <div className="details-panel">
+                                                                <h3 className="journey-title">Virtual Interview Details</h3>
+
+                                                                <div className="journey-section">
+                                                                    <h4><ClipboardList size={16} style={{ marginRight: 5, verticalAlign: 'middle' }} /> Interview Information</h4>
+                                                                    <div className="detail-grid">
+                                                                        <div className="detail-item">
+                                                                            <label>Overall Recommendation:</label>
+                                                                            <span className={`recommendation-badge ${getRecommendationBadgeClass(interview.overallRecommendation)}`}>
+                                                                                {interview.overallRecommendation || 'N/A'}
+                                                                            </span>
+                                                                        </div>
+                                                                        <div className="detail-item">
+                                                                            <label>Status:</label>
+                                                                            <span className={`status-badge ${getStatusBadgeClass(interview.status)}`}>
+                                                                                {interview.status}
+                                                                            </span>
+                                                                        </div>
+                                                                        <div className="detail-item">
+                                                                            <label>Interview Date:</label>
+                                                                            <span>{interview.interviewDate ? new Date(interview.interviewDate).toLocaleString() : 'N/A'}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div className="journey-section">
+                                                                    <h4>Comments</h4>
+                                                                    <div className="comments-box">
+                                                                        <p>{interview.comments || 'No comments provided'}</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </React.Fragment>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         )}
                     </div>
-                )}
-            </div>
+                </div>
+            </main>
         </div>
     );
 };

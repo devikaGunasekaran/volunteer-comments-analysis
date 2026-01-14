@@ -47,10 +47,26 @@ const AdminPVStudentsPage = () => {
     const getStatusBadge = (status) => {
         const statusMap = {
             'SELECT': { label: 'Recommended', class: 'badge-success' },
+            'RECOMMENDED': { label: 'Recommended', class: 'badge-success' },
             'REJECT': { label: 'Not Recommended', class: 'badge-danger' },
+            'DO NOT SELECT': { label: 'Do Not Select', class: 'badge-danger' },
             'ON HOLD': { label: 'On Hold', class: 'badge-warning' }
         };
         const statusInfo = statusMap[status] || { label: status, class: 'badge-gray' };
+        return <span className={`badge ${statusInfo.class}`}>{statusInfo.label}</span>;
+    };
+
+    const getAdminStatusBadge = (status) => {
+        const statusMap = {
+            'VI': { label: 'Selected', class: 'badge-success' },
+            'APPROVED': { label: 'Selected', class: 'badge-success' },
+            'REJECTED': { label: 'Rejected', class: 'badge-danger' },
+            'TV': { label: 'Selected (TV)', class: 'badge-success' },
+            'RI': { label: 'Selected (RI)', class: 'badge-success' },
+            'SELECTED': { label: 'Selected', class: 'badge-success' },
+            'COMPLETED': { label: 'Completed', class: 'badge-info' }
+        };
+        const statusInfo = statusMap[status] || { label: status || 'Pending', class: 'badge-gray' };
         return <span className={`badge ${statusInfo.class}`}>{statusInfo.label}</span>;
     };
 
@@ -123,22 +139,23 @@ const AdminPVStudentsPage = () => {
                                         <th>Student ID</th>
                                         <th>Name</th>
                                         <th>District</th>
-                                        <th>PV Status</th>
+                                        <th>Volunteer Rec</th>
+                                        <th>Admin Status</th>
                                         <th>Volunteer</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {loading ? (
                                         <tr>
-                                            <td colSpan="6" className="empty-state">
+                                            <td colSpan="7" className="empty-state">
                                                 <div className="spinner"></div>
                                                 <p>Loading students...</p>
                                             </td>
                                         </tr>
                                     ) : students.length === 0 ? (
                                         <tr>
-                                            <td colSpan="6" className="empty-state">
-                                                <div className="empty-state-icon">📋</div>
+                                            <td colSpan="7" className="empty-state">
+                                                <div className="empty-state-icon" style={{ display: 'flex', justifyContent: 'center' }}><FileText size={48} color="#9CA3AF" /></div>
                                                 <div className="empty-state-title">No Completed PV Students</div>
                                                 <div className="empty-state-description">
                                                     Students will appear here once they complete physical verification
@@ -156,7 +173,7 @@ const AdminPVStudentsPage = () => {
                                                     <td>{index + 1}</td>
                                                     <td>
                                                         <Link
-                                                            to={`/admin/decision/${s.studentId}`}
+                                                            to={`/admin/view/${s.studentId}`}
                                                             className="student-id-link"
                                                             onClick={(e) => e.stopPropagation()}
                                                         >
@@ -165,17 +182,18 @@ const AdminPVStudentsPage = () => {
                                                     </td>
                                                     <td className="font-semibold">{s.name}</td>
                                                     <td>{s.district}</td>
-                                                    <td>{getStatusBadge(s.sentiment)}</td>
+                                                    <td>{getStatusBadge(s.pv_recommendation)}</td>
+                                                    <td>{getAdminStatusBadge(s.final_status)}</td>
                                                     <td className="text-tertiary">{s.volunteer_email || 'N/A'}</td>
                                                 </tr>
                                                 {expandedRow === s.studentId && (
                                                     <tr className="accordion-row">
-                                                        <td colSpan="6">
+                                                        <td colSpan="7">
                                                             <div className="accordion-content animate-slideDown">
                                                                 <div className="detail-grid">
                                                                     <div className="detail-item">
-                                                                        <div className="detail-label">Sentiment Score</div>
-                                                                        <div className="detail-value">{s.sentiment_text}%</div>
+                                                                        <div className="detail-label">AI Score</div>
+                                                                        <div className="detail-value">{s.ai_score || 'N/A'}</div>
                                                                     </div>
                                                                     <div className="detail-item">
                                                                         <div className="detail-label">Verification Date</div>
@@ -184,15 +202,15 @@ const AdminPVStudentsPage = () => {
                                                                         </div>
                                                                     </div>
                                                                     <div className="detail-item">
-                                                                        <div className="detail-label">Student Status</div>
-                                                                        <div className="detail-value">{s.student_status || 'Pending Review'}</div>
+                                                                        <div className="detail-label">Admin Remarks</div>
+                                                                        <div className="detail-value">{s.admin_remarks || 'None'}</div>
                                                                     </div>
                                                                     <div className="detail-item">
                                                                         <Link
-                                                                            to={`/admin/decision/${s.studentId}`}
-                                                                            className="btn btn-primary btn-sm"
+                                                                            to={`/admin/view/${s.studentId}`}
+                                                                            className="btn btn-primary btn-sm" style={{ backgroundColor: '#FF6F00', color: 'white' }}
                                                                         >
-                                                                            View Full Details & Decide →
+                                                                            View Full Details →
                                                                         </Link>
                                                                     </div>
                                                                 </div>

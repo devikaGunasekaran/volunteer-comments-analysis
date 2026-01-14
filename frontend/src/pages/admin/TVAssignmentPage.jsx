@@ -1,21 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Home, Users, Video, FileText } from 'lucide-react';
+import { Home, Users, CheckCircle, FileText, Search } from 'lucide-react';
 import adminService from '../../services/adminService';
+import authService from '../../services/authService';
 import logo from '../../assets/logo_icon.jpg';
-import './TVAssignmentPage.css';
+import './AdminAssignPVPage.css';
 
 const TVAssignmentPage = () => {
     const [students, setStudents] = useState([]);
     const [volunteers, setVolunteers] = useState([]);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [showDropdown, setShowDropdown] = useState(false);
-    const [selectedStudents, setSelectedStudents] = useState([]);
-    const [selectedVolunteer, setSelectedVolunteer] = useState('');
-    const [studentSearchTerm, setStudentSearchTerm] = useState('');
     const [loading, setLoading] = useState(true);
-    const dropdownRef = useRef(null);
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [selectedStudent, setSelectedStudent] = useState(null);
+    const [selectedVolunteer, setSelectedVolunteer] = useState('');
+    const [searchEmail, setSearchEmail] = useState('');
+    const [assigning, setAssigning] = useState(false);
+    const [message, setMessage] = useState({ type: '', text: '' });
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -24,76 +23,90 @@ const TVAssignmentPage = () => {
             navigate('/login');
             return;
         }
-        fetchData();
+        loadData();
     }, [navigate]);
 
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setShowDropdown(false);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
-
-    const fetchData = async () => {
+    const loadData = async () => {
         setLoading(true);
         try {
-            const [studentRes, volunteerRes] = await Promise.all([
+            const [studentsData, volunteersData] = await Promise.all([
                 adminService.getUnassignedTVStudents(),
                 adminService.getTVVolunteers()
             ]);
-            setStudents(studentRes.students || []);
-            setVolunteers(volunteerRes.volunteers || []);
+
+            if (studentsData.students) {
+                setStudents(studentsData.students);
+            }
+            if (volunteersData.volunteers) {
+                setVolunteers(volunteersData.volunteers);
+            }
         } catch (error) {
             console.error('Error fetching data:', error);
-            alert('Failed to load data');
+            if (error.response && error.response.status === 401) {
+                authService.logout();
+                navigate('/login');
+            }
         } finally {
             setLoading(false);
         }
     };
 
-    const toggleStudentSelection = (studentId) => {
-        setSelectedStudents(prev =>
-            prev.includes(studentId)
-                ? prev.filter(id => id !== studentId)
-                : [...prev, studentId]
-        );
+    const handleLogout = () => {
+        authService.logout();
+        navigate('/login');
     };
 
-    const filteredStudents = students.filter(student =>
-        student.name.toLowerCase().includes(studentSearchTerm.toLowerCase()) ||
-        student.studentId.toLowerCase().includes(studentSearchTerm.toLowerCase()) ||
-        (student.district && student.district.toLowerCase().includes(studentSearchTerm.toLowerCase()))
-    );
+    const openAssignModal = (student) => {
+        setSelectedStudent(student);
+        setSelectedVolunteer('');
+        setSearchEmail('');
+        setMessage({ type: '', text: '' });
+    };
+
+    const closeAssignModal = () => {
+        setSelectedStudent(null);
+        setSelectedVolunteer('');
+        setSearchEmail('');
+        setMessage({ type: '', text: '' });
+    };
 
     const handleAssign = async () => {
-        if (selectedStudents.length === 0 || !selectedVolunteer) {
-            alert('Please select at least one student and a volunteer');
+        if (!selectedStudent || !selectedVolunteer) {
+            setMessage({ type: 'error', text: 'Please select a volunteer' });
             return;
         }
 
-        setIsSubmitting(true);
+        setAssigning(true);
+        setMessage({ type: '', text: '' });
+
         try {
-            const result = await adminService.assignTV(selectedStudents, selectedVolunteer);
+            const result = await adminService.assignTV([selectedStudent.studentId], selectedVolunteer);
+
             if (result.success) {
-                alert('Students assigned successfully!');
-                setSelectedStudents([]);
-                setSelectedVolunteer('');
-                fetchData(); // Refresh list
-            } else {
-                alert('Assignment failed: ' + result.error);
+                setMessage({ type: 'success', text: result.message || 'Volunteer assigned successfully!' });
+                setTimeout(() => {
+                    closeAssignModal();
+                    loadData(); // Reload data to show updated assignments
+                }, 1500);
             }
         } catch (error) {
-            console.error('Assignment error:', error);
-            alert('Error during assignment');
+            console.error('Assignment failed:', error);
+            setMessage({
+                type: 'error',
+                text: error.response?.data?.error || 'Failed to assign volunteer'
+            });
         } finally {
-            setIsSubmitting(false);
+            setAssigning(false);
         }
     };
 
-    if (loading) return <div className="loading">Loading...</div>;
+    const filteredVolunteers = volunteers.filter(v =>
+        v.email?.toLowerCase().includes(searchEmail.toLowerCase()) ||
+        v.name?.toLowerCase().includes(searchEmail.toLowerCase())
+    );
+
+    const assignedStudents = students.filter(s => s.assigned_volunteer_id);
+    const unassignedStudents = students.filter(s => !s.assigned_volunteer_id);
 
     return (
         <div className="admin-layout">
@@ -115,24 +128,24 @@ const TVAssignmentPage = () => {
                         className="nav-item active"
                         onClick={() => { }}
                     >
-                        <span className="icon"><Users size={18} /></span> Assign Students
+                        <span className="icon"><Users size={18} /></span> Assign Volunteers
                     </button>
                     <button
                         className="nav-item"
                         onClick={() => navigate('/admin/tv-reports')}
                     >
-                        <span className="icon"><FileText size={18} /></span> Reports Review
+                        <span className="icon"><FileText size={18} /></span> Pending Approvals
                     </button>
                     <button
                         className="nav-item"
                         onClick={() => navigate('/admin/tv-students')}
                     >
-                        <span className="icon"><Video size={18} /></span> Completed TV
+                        <span className="icon"><CheckCircle size={18} /></span> Completed TV
                     </button>
                 </div>
 
                 <div className="nav-footer">
-                    <button onClick={() => navigate('/login')} className="logout-btn">
+                    <button onClick={handleLogout} className="logout-btn">
                         Sign Out
                     </button>
                 </div>
@@ -140,125 +153,173 @@ const TVAssignmentPage = () => {
 
             {/* Main Content Area */}
             <main className="main-content">
-                <div className="admin-assign-page">
+                <div className="admin-assign-pv-page">
                     <div className="section-header-row">
-                        <h3>TV Assignment</h3>
-                        <p className="section-subtitle">Assign students to Televerification Volunteers</p>
+                        <h3>Assign TV Volunteers</h3>
+                        <p className="section-subtitle">Manage student-volunteer assignments for Televerification</p>
                     </div>
 
-                    <div className="assigned-container" style={{ margin: 0, maxWidth: '100%', padding: 0 }}>
-                        <div className="search-controls-container">
-                            <input
-                                type="text"
-                                placeholder="Search Student (Name, ID, District)..."
-                                value={studentSearchTerm}
-                                onChange={(e) => setStudentSearchTerm(e.target.value)}
-                                className="student-search-input-large"
-                            />
+                    <div className="assign-container">
+                        {/* Unassigned Students Section */}
+                        <div className="section-card">
+                            <h3 className="section-title">Students Awaiting Assignment ({unassignedStudents.length})</h3>
+                            <div className="table-wrapper">
+                                {loading ? (
+                                    <div className="empty-state">Loading...</div>
+                                ) : unassignedStudents.length === 0 ? (
+                                    <div className="empty-state">All students have been assigned!</div>
+                                ) : (
+                                    <table className="custom-table">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Student ID</th>
+                                                <th>Name</th>
+                                                <th>District</th>
+                                                <th>Phone</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {unassignedStudents.map((student, index) => (
+                                                <tr key={student.studentId}>
+                                                    <td>{index + 1}</td>
+                                                    <td className="student-id">{student.studentId}</td>
+                                                    <td>{student.name}</td>
+                                                    <td>{student.district}</td>
+                                                    <td>{student.phone || 'N/A'}</td>
+                                                    <td>
+                                                        <button
+                                                            className="assign-btn"
+                                                            onClick={() => openAssignModal(student)}
+                                                        >
+                                                            Assign Volunteer
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                )}
+                            </div>
                         </div>
-                        <div className="assignment-controls">
-                            <div className="control-group searchable-select-container" ref={dropdownRef}>
-                                <label>Assign Selected to:</label>
-                                <div className="searchable-select">
-                                    <input
-                                        type="text"
-                                        placeholder="Search Volunteer (Name/Email)..."
-                                        value={searchTerm}
-                                        onChange={(e) => {
-                                            setSearchTerm(e.target.value);
-                                            setShowDropdown(true);
-                                        }}
-                                        onFocus={() => setShowDropdown(true)}
-                                        className="search-input"
-                                    />
-                                    {showDropdown && (
-                                        <div className="dropdown-list">
-                                            {volunteers
-                                                .filter(v =>
-                                                    (v.volunteerId && v.volunteerId.toLowerCase().includes(searchTerm.toLowerCase())) ||
-                                                    (v.name && v.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-                                                    (v.email && v.email.toLowerCase().includes(searchTerm.toLowerCase()))
-                                                )
-                                                .map(v => (
-                                                    <div
-                                                        key={v.volunteerId}
-                                                        className={`dropdown-item ${selectedVolunteer === v.volunteerId ? 'selected' : ''}`}
-                                                        onClick={() => {
-                                                            setSelectedVolunteer(v.volunteerId);
-                                                            setSearchTerm(`${v.name} (${v.email || v.volunteerId})`);
-                                                            setShowDropdown(false);
-                                                        }}
-                                                    >
-                                                        {v.name} ({v.email || v.volunteerId})
-                                                    </div>
-                                                ))
-                                            }
-                                            {volunteers.filter(v =>
-                                                (v.volunteerId && v.volunteerId.toLowerCase().includes(searchTerm.toLowerCase())) ||
-                                                (v.name && v.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-                                                (v.email && v.email.toLowerCase().includes(searchTerm.toLowerCase()))
-                                            ).length === 0 && (
-                                                    <div className="no-results">No volunteers found</div>
-                                                )}
+
+                        {/* Assigned Students Section */}
+                        <div className="section-card">
+                            <h3 className="section-title">Already Assigned Students ({assignedStudents.length})</h3>
+                            <div className="table-wrapper">
+                                {assignedStudents.length === 0 ? (
+                                    <div className="empty-state">No students assigned yet</div>
+                                ) : (
+                                    <table className="custom-table">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Student ID</th>
+                                                <th>Name</th>
+                                                <th>District</th>
+                                                <th>Assigned Volunteer</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {assignedStudents.map((student, index) => (
+                                                <tr key={student.studentId}>
+                                                    <td>{index + 1}</td>
+                                                    <td className="student-id">{student.studentId}</td>
+                                                    <td>{student.name}</td>
+                                                    <td>{student.district}</td>
+                                                    <td>
+                                                        <span className="volunteer-badge">
+                                                            {student.volunteer_email || student.assigned_volunteer_id}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <button
+                                                            className="reassign-btn"
+                                                            onClick={() => openAssignModal(student)}
+                                                        >
+                                                            Reassign
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Assignment Modal */}
+                    {selectedStudent && (
+                        <div className="modal-overlay" onClick={closeAssignModal}>
+                            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                                <div className="modal-header">
+                                    <h3>Assign TV Volunteer to {selectedStudent.name}</h3>
+                                    <button className="close-btn" onClick={closeAssignModal}>×</button>
+                                </div>
+
+                                <div className="modal-body">
+                                    <div className="student-info">
+                                        <p><strong>Student ID:</strong> {selectedStudent.studentId}</p>
+                                        <p><strong>District:</strong> {selectedStudent.district}</p>
+                                    </div>
+
+                                    {message.text && (
+                                        <div className={`message ${message.type}`}>
+                                            {message.text}
                                         </div>
                                     )}
+
+                                    {/* Search Input */}
+                                    <div className="search-container">
+                                        <input
+                                            type="text"
+                                            placeholder="Search volunteer by name or email..."
+                                            value={searchEmail}
+                                            onChange={(e) => setSearchEmail(e.target.value)}
+                                            className="search-input"
+                                            autoFocus
+                                        />
+                                    </div>
+
+                                    {/* Volunteer List */}
+                                    <div className="volunteer-list-container">
+                                        {filteredVolunteers.length === 0 ? (
+                                            <div className="empty-state" style={{ padding: '20px', border: 'none' }}>
+                                                No volunteers found matching "{searchEmail}"
+                                            </div>
+                                        ) : (
+                                            filteredVolunteers.map(volunteer => (
+                                                <div
+                                                    key={volunteer.volunteerId}
+                                                    className={`volunteer-item ${selectedVolunteer === volunteer.volunteerId ? 'selected' : ''}`}
+                                                    onClick={() => setSelectedVolunteer(volunteer.volunteerId)}
+                                                >
+                                                    <div className="volunteer-info">
+                                                        <span className="volunteer-email">{volunteer.email || volunteer.name}</span>
+                                                        <span className="volunteer-id-badge">ID: {volunteer.volunteerId}</span>
+                                                    </div>
+                                                    <div className="check-icon">✓</div>
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+
+                                    <div className="modal-footer">
+                                        <button
+                                            className="assign-submit-btn"
+                                            onClick={handleAssign}
+                                            disabled={assigning || !selectedVolunteer}
+                                        >
+                                            {assigning ? 'Assigning...' : 'Assign Selected Volunteer'}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            <button
-                                className="assign-btn"
-                                onClick={handleAssign}
-                                disabled={isSubmitting || selectedStudents.length === 0 || !selectedVolunteer}
-                            >
-                                {isSubmitting ? 'Assigning...' : `Assign ${selectedStudents.length} Students`}
-                            </button>
                         </div>
-
-                        <div className="table-wrapper">
-                            <h2 className="page-title">Unassigned TV Students</h2>
-                            {filteredStudents.length === 0 ? (
-                                <p className="no-data">No unassigned students found in TV status matching your search.</p>
-                            ) : (
-                                <table className="custom-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Select</th>
-                                            <th>ID</th>
-                                            <th>Name</th>
-                                            <th>Stage</th>
-                                            <th>District</th>
-                                            <th>Phone</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {filteredStudents.map(s => (
-                                            <tr
-                                                key={s.studentId}
-                                                className={selectedStudents.includes(s.studentId) ? 'selected' : ''}
-                                                onClick={() => toggleStudentSelection(s.studentId)}
-                                            >
-                                                <td>
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={selectedStudents.includes(s.studentId)}
-                                                        onChange={() => { }} // Handled by tr onClick
-                                                    />
-                                                </td>
-                                                <td>{s.studentId}</td>
-                                                <td>{s.name}</td>
-                                                <td>
-                                                    <span className={`stage-badge ${s.status === 'TV' ? 'tv' : 'new'}`}>
-                                                        {s.status === 'TV' ? 'TV Pending' : 'New Application'}
-                                                    </span>
-                                                </td>
-                                                <td>{s.district}</td>
-                                                <td>{s.phone}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            )}
-                        </div>
-                    </div>
+                    )}
                 </div>
             </main>
         </div>

@@ -12,8 +12,10 @@ def pv_process(text_comment, audio_path, image_paths=None, is_tanglish=False):
 
     # Map graph output → what app.py expect
     return {
-        "english_comment": result.get("english_from_tanglish", ""),
-        "voice_text": result.get("english_from_audio", ""),
+        "english_comment": result.get("english_from_tanglish", ""),  # Combined/main comment
+        "voice_text": result.get("english_from_audio", ""),  # Combined/main voice
+        "text_translation": result.get("english_from_tanglish", ""),  # Text comment translation only
+        "audio_translation": result.get("english_from_audio", ""),  # Audio translation only
         "summary": result.get("summary", []),
         "decision": result.get("decision", ""),
         "score": result.get("score", 0.0),

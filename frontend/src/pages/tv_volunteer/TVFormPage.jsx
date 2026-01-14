@@ -115,7 +115,7 @@ Volunteer Suggestion: ${formData.suggestion}
 
             {/* Main Content Area */}
             <main className="main-content">
-                <div className="pv-form-page-content"> {/* Inner wrapper for form content */}
+                <div className="pv-form-page"> {/* Inner wrapper for form content matching CSS */}
                     <div className="page-header">
                         <h2>Televerification Form</h2>
                         <button

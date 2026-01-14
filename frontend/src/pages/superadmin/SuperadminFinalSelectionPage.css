@@ -229,3 +229,84 @@
 .recommendation-badge.ri {
     background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
 }
+
+.clickable-row {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.clickable-row:hover {
+    background-color: #f7fafc;
+}
+
+.student-id {
+    color: #000000;
+    font-weight: 600;
+}
+
+.clickable-id {
+    cursor: pointer;
+}
+
+.clickable-id:hover {
+    text-decoration: underline;
+    color: #333;
+}
+
+/* Recommendation Badges - Matching Final Selection Style */
+.recommendation-badge {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 13px;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.recommendation-badge.strong-yes,
+.recommendation-badge.selected {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: white;
+}
+
+.recommendation-badge.yes {
+    background: linear-gradient(135deg, #9ae6b4 0%, #68d391 100%);
+    color: #22543d;
+}
+
+.recommendation-badge.maybe {
+    background: linear-gradient(135deg, #fbd38d 0%, #f6ad55 100%);
+    color: #744210;
+}
+
+.recommendation-badge.no,
+.recommendation-badge.rejected {
+    background: linear-gradient(135deg, #fc8181 0%, #f56565 100%);
+    color: white;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: 12px;
+    display: inline-block;
+}
+
+.status-badge.completed {
+    background: linear-gradient(135deg, #bee3f8 0%, #90cdf4 100%);
+    color: #2c5282;
+}
+
+.status-badge.recommended {
+    background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%);
+    color: #22543d;
+}
+
+.status-badge.not-recommended {
+    background: linear-gradient(135deg, #fed7d7 0%, #fc8181 100%);
+    color: #742a2a;
+}

@@ -111,6 +111,27 @@ const volunteerService = {
         }
     },
 
+    async saveDraft(data) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/save-draft`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+            if (!response.ok) {
+                throw new Error('Failed to save draft');
+            }
+            const responseData = await response.json();
+            return { success: true, ...responseData };
+        } catch (error) {
+            console.error('Save draft error:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
     async submitPV(data) {
         try {
             const response = await fetch(`${API_BASE_URL}/api/submit-pv`, {
@@ -128,6 +149,85 @@ const volunteerService = {
             return { success: true, ...responseData };
         } catch (error) {
             console.error('Submit PV error:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    async finalUploadBatch(formData) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/final-upload-batch`, {
+                method: 'POST',
+                credentials: 'include',
+                body: formData, // Do NOT set Content-Type header for FormData
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to upload images');
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('Final upload error:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    async getPvImages(studentId) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/get-pv-images/${studentId}`, {
+                credentials: 'include'
+            });
+            if (!response.ok) {
+                throw new Error('Failed to fetch images');
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('Get images error:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    /**
+     * OCR Handwriting (Agent 7)
+     * @param {FormData} formData - FormData with 'image' file
+     * @returns {Promise} OCR result with extracted text
+     */
+    async ocrHandwriting(formData) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/ocr-handwriting`, {
+                method: 'POST',
+                credentials: 'include',
+                body: formData,
+            });
+            if (!response.ok) {
+                throw new Error('Failed to perform OCR');
+            }
+            const data = await response.json();
+            return { success: true, ...data };
+        } catch (error) {
+            console.error('OCR error:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    /**
+     * Enhance Image (Agent 6)
+     * @param {FormData} formData - FormData with 'image' file
+     * @returns {Promise} Enhancement result with enhanced image
+     */
+    async enhanceImage(formData) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/enhance-image`, {
+                method: 'POST',
+                credentials: 'include',
+                body: formData,
+            });
+            if (!response.ok) {
+                throw new Error('Failed to enhance image');
+            }
+            const data = await response.json();
+            return { success: true, ...data };
+        } catch (error) {
+            console.error('Image enhancement error:', error);
             return { success: false, error: error.message };
         }
     },

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { Home, Video, Target, GraduationCap, BarChart2, Save, X } from 'lucide-react';
 import educationalService from '../../services/educationalService';
 import authService from '../../services/authService';
 import logo from '../../assets/logo_icon.jpg';
@@ -106,152 +107,177 @@ const EducationalDetailsFormPage = () => {
     }
 
     return (
-        <div className="educational-details-page">
-            <header className="header-vertical">
-                <button onClick={handleLogout} className="logout-btn-right">
-                    LOGOUT
-                </button>
-                <img src={logo} alt="Logo" className="header-logo-center" />
-                <div className="header-title">Educational Details Form</div>
-            </header>
+        <div className="admin-layout">
+            <nav className="side-nav">
+                <div className="nav-logo">
+                    <img src={logo} alt="Matram Logo" className="header-logo-center" />
+                    <span>Matram Admin Panel</span>
+                </div>
+                <div className="nav-links">
+                    <button className="nav-item" onClick={() => navigate('/superadmin/dashboard')}>
+                        <span className="icon"><Home size={18} /></span> Overview
+                    </button>
+                    <button className="nav-item" onClick={() => navigate('/superadmin/vi-students')}>
+                        <span className="icon"><Video size={18} /></span> Virtual Interview
+                    </button>
+                    <button className="nav-item" onClick={() => navigate('/superadmin/real-interview-students')}>
+                        <span className="icon"><Target size={18} /></span> Real Interview
+                    </button>
+                    <button className="nav-item active" onClick={() => navigate('/superadmin/selected-students')}>
+                        <span className="icon"><GraduationCap size={18} /></span> Final Selection
+                    </button>
+                    <button className="nav-item" onClick={() => navigate('/superadmin/analytics')}>
+                        <span className="icon"><BarChart2 size={18} /></span> Analytics
+                    </button>
+                </div>
+                <div className="nav-footer">
+                    <button onClick={handleLogout} className="logout-btn">
+                        Sign Out
+                    </button>
+                </div>
+            </nav>
 
-            <div className="container">
-                <div className="form-card">
-                    <div className="student-info-banner">
-                        <h2>🎓 Student Educational Information</h2>
-                        <div className="student-basic-info">
-                            <div className="info-item">
-                                <label>Student ID:</label>
-                                <span>{student.studentId}</span>
+            <main className="main-content">
+                <div className="educational-details-page">
+                    <div className="container">
+                        <div className="form-card">
+                            <div className="student-info-banner">
+                                <h2>🎓 Student Educational Information</h2>
+                                <div className="student-basic-info">
+                                    <div className="info-item">
+                                        <label>Student ID:</label>
+                                        <span>{student.studentId}</span>
+                                    </div>
+                                    <div className="info-item">
+                                        <label>Name:</label>
+                                        <span>{student.name}</span>
+                                    </div>
+                                    <div className="info-item">
+                                        <label>District:</label>
+                                        <span>{student.district}</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="info-item">
-                                <label>Name:</label>
-                                <span>{student.name}</span>
-                            </div>
-                            <div className="info-item">
-                                <label>District:</label>
-                                <span>{student.district}</span>
-                            </div>
+
+                            {loading ? (
+                                <div className="loading-container">
+                                    <div className="loading-spinner">Loading...</div>
+                                </div>
+                            ) : (
+                                <form onSubmit={handleSubmit} className="educational-form">
+                                    <div className="form-group">
+                                        <label className="required">College Name</label>
+                                        <input
+                                            type="text"
+                                            name="collegeName"
+                                            value={formData.collegeName}
+                                            onChange={handleChange}
+                                            placeholder="Enter college name"
+                                            className="form-input"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="form-row">
+                                        <div className="form-group">
+                                            <label className="required">Degree</label>
+                                            <select
+                                                name="degree"
+                                                value={formData.degree}
+                                                onChange={handleChange}
+                                                className="form-input"
+                                                required
+                                            >
+                                                <option value="">Select Degree</option>
+                                                <option value="B.Tech">B.Tech</option>
+                                                <option value="B.E">B.E</option>
+                                                <option value="B.Sc">B.Sc</option>
+                                                <option value="B.A">B.A</option>
+                                                <option value="B.Com">B.Com</option>
+                                                <option value="BBA">BBA</option>
+                                                <option value="BCA">BCA</option>
+                                                <option value="M.Tech">M.Tech</option>
+                                                <option value="M.Sc">M.Sc</option>
+                                                <option value="M.A">M.A</option>
+                                                <option value="MBA">MBA</option>
+                                                <option value="MCA">MCA</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label className="required">Stream</label>
+                                            <select
+                                                name="stream"
+                                                value={formData.stream}
+                                                onChange={handleChange}
+                                                className="form-input"
+                                                required
+                                            >
+                                                <option value="">Select Stream</option>
+                                                <option value="Engineering">Engineering</option>
+                                                <option value="Arts">Arts</option>
+                                                <option value="Science">Science</option>
+                                                <option value="Commerce">Commerce</option>
+                                                <option value="Management">Management</option>
+                                                <option value="Computer Applications">Computer Applications</option>
+                                                <option value="Medicine">Medicine</option>
+                                                <option value="Law">Law</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label className="required">Branch / Specialization</label>
+                                        <input
+                                            type="text"
+                                            name="branch"
+                                            value={formData.branch}
+                                            onChange={handleChange}
+                                            placeholder="e.g., Civil, Mechanical, AIDS, Computer Science"
+                                            className="form-input"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label className="required">Year of Passing</label>
+                                        <input
+                                            type="number"
+                                            name="yearOfPassing"
+                                            value={formData.yearOfPassing}
+                                            onChange={handleChange}
+                                            placeholder="Enter year (e.g., 2024)"
+                                            className="form-input"
+                                            min="1950"
+                                            max="2050"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="form-actions">
+                                        <button
+                                            type="button"
+                                            onClick={() => navigate('/superadmin/selected-students')}
+                                            className="cancel-btn"
+                                        >
+                                            <X size={16} style={{ marginRight: 6 }} /> Cancel
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            className="submit-btn"
+                                            disabled={submitting}
+                                        >
+                                            <Save size={16} style={{ marginRight: 6 }} /> {submitting ? 'Saving...' : 'Save Educational Details'}
+                                        </button>
+                                    </div>
+                                </form>
+                            )}
                         </div>
                     </div>
-
-                    {loading ? (
-                        <div className="loading-container">
-                            <div className="loading-spinner">Loading...</div>
-                        </div>
-                    ) : (
-                        <form onSubmit={handleSubmit} className="educational-form">
-                            <div className="form-group">
-                                <label className="required">College Name</label>
-                                <input
-                                    type="text"
-                                    name="collegeName"
-                                    value={formData.collegeName}
-                                    onChange={handleChange}
-                                    placeholder="Enter college name"
-                                    className="form-input"
-                                    required
-                                />
-                            </div>
-
-                            <div className="form-row">
-                                <div className="form-group">
-                                    <label className="required">Degree</label>
-                                    <select
-                                        name="degree"
-                                        value={formData.degree}
-                                        onChange={handleChange}
-                                        className="form-input"
-                                        required
-                                    >
-                                        <option value="">Select Degree</option>
-                                        <option value="B.Tech">B.Tech</option>
-                                        <option value="B.E">B.E</option>
-                                        <option value="B.Sc">B.Sc</option>
-                                        <option value="B.A">B.A</option>
-                                        <option value="B.Com">B.Com</option>
-                                        <option value="BBA">BBA</option>
-                                        <option value="BCA">BCA</option>
-                                        <option value="M.Tech">M.Tech</option>
-                                        <option value="M.Sc">M.Sc</option>
-                                        <option value="M.A">M.A</option>
-                                        <option value="MBA">MBA</option>
-                                        <option value="MCA">MCA</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                </div>
-
-                                <div className="form-group">
-                                    <label className="required">Stream</label>
-                                    <select
-                                        name="stream"
-                                        value={formData.stream}
-                                        onChange={handleChange}
-                                        className="form-input"
-                                        required
-                                    >
-                                        <option value="">Select Stream</option>
-                                        <option value="Engineering">Engineering</option>
-                                        <option value="Arts">Arts</option>
-                                        <option value="Science">Science</option>
-                                        <option value="Commerce">Commerce</option>
-                                        <option value="Management">Management</option>
-                                        <option value="Computer Applications">Computer Applications</option>
-                                        <option value="Medicine">Medicine</option>
-                                        <option value="Law">Law</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div className="form-group">
-                                <label className="required">Branch / Specialization</label>
-                                <input
-                                    type="text"
-                                    name="branch"
-                                    value={formData.branch}
-                                    onChange={handleChange}
-                                    placeholder="e.g., Civil, Mechanical, AIDS, Computer Science"
-                                    className="form-input"
-                                    required
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label className="required">Year of Passing</label>
-                                <input
-                                    type="number"
-                                    name="yearOfPassing"
-                                    value={formData.yearOfPassing}
-                                    onChange={handleChange}
-                                    placeholder="Enter year (e.g., 2024)"
-                                    className="form-input"
-                                    min="1950"
-                                    max="2050"
-                                    required
-                                />
-                            </div>
-
-                            <div className="form-actions">
-                                <button
-                                    type="button"
-                                    onClick={() => navigate('/superadmin/final-selection')}
-                                    className="cancel-btn"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="submit-btn"
-                                    disabled={submitting}
-                                >
-                                    {submitting ? 'Saving...' : 'Save Educational Details'}
-                                </button>
-                            </div>
-                        </form>
-                    )}
                 </div>
-            </div>
+            </main>
         </div>
     );
 };

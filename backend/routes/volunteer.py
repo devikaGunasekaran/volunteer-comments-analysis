@@ -16,6 +16,7 @@ import time
 import json
 import datetime
 from io import BytesIO
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 volunteer_bp = Blueprint('volunteer', __name__)
 
@@ -234,86 +235,6 @@ def batch_quality_check():
     return jsonify({"results": results})
 
 
-@volunteer_bp.route("/api/final-upload-batch", methods=["POST"])
-def final_upload_batch():
-    """Upload accepted images from batch quality check (parallel S3 uploads)"""
-    studentId = request.form.get("studentId")
-    files = request.files.getlist("images")
-
-    if not studentId or not files:
-        return jsonify({"error": "studentId and images required"}), 400
-
-    if len(files) < MIN_IMAGES_REQUIRED:
-        return jsonify({
-            "error": f"Minimum {MIN_IMAGES_REQUIRED} images required"
-        }), 400
-
-    try:
-        from concurrent.futures import ThreadPoolExecutor, as_completed
-
-        # Prepare image data
-        image_data = []
-        for file in files:
-            image_bytes = file.read()
-            timestamp = int(time.time() * 1000)
-            key = f"uploads/{studentId}/{timestamp}_{file.filename}"
-            image_data.append({
-                'bytes': image_bytes,
-                'key': key,
-                'filename': file.filename
-            })
-
-        # Parallel S3 upload function
-        def upload_to_s3(data):
-            try:
-                s3.upload_fileobj(BytesIO(data['bytes']), BUCKET, data['key'])
-                return {'success': True, 'key': data['key']}
-            except Exception as e:
-                return {'success': False, 'error': str(e), 'filename': data['filename']}
-
-        # Upload all images in parallel
-        uploaded_keys = []
-        with ThreadPoolExecutor(max_workers=4) as executor:
-            futures = [executor.submit(upload_to_s3, data) for data in image_data]
-            
-            for future in as_completed(futures):
-                result = future.result()
-                if result['success']:
-                    uploaded_keys.append(result['key'])
-                else:
-                    print(f"❌ S3 upload failed for {result['filename']}: {result['error']}")
-
-        # Insert into database (batch insert)
-        if uploaded_keys:
-            conn = get_db_connection()
-            cursor = conn.cursor()
-            
-            try:
-                insert_values = [(studentId, key) for key in uploaded_keys]
-                cursor.executemany("""
-                    INSERT INTO FinalImages (studentId, imageUrl)
-                    VALUES (%s, %s)
-                """, insert_values)
-                
-                conn.commit()
-                cursor.close()
-                conn.close()
-                
-                print(f"✅ Uploaded {len(uploaded_keys)} images in parallel")
-                return jsonify({"success": True, "uploaded": len(uploaded_keys)})
-                
-            except Exception as e:
-                conn.rollback()
-                cursor.close()
-                conn.close()
-                print(f"❌ Database error: {e}")
-                return jsonify({"error": f"Database error: {str(e)}"}), 500
-        else:
-            return jsonify({"error": "No images were uploaded successfully"}), 500
-
-    except Exception as e:
-        print(f"❌ Error in final_upload_batch: {e}")
-        return jsonify({"error": str(e)}), 500
 
 
 @volunteer_bp.route("/api/final-upload", methods=["POST"])
@@ -485,7 +406,7 @@ def run_pv_ai_pipeline(data, student_id, volunteer_id, recommendation):
             if not conn:
                 raise Exception("Database connection failed")
             cursor = conn.cursor()
-            cursor.execute("SELECT imageUrl FROM FinalImages WHERE studentId=%s", (student_id,))
+            cursor.execute("SELECT COALESCE(imageKey, imageUrl) FROM FinalImages WHERE studentId=%s", (student_id,))
             rows = cursor.fetchall()
             cursor.close()
             conn.close()
@@ -519,6 +440,8 @@ def run_pv_ai_pipeline(data, student_id, volunteer_id, recommendation):
 
         english_comment = result.get("english_comment", "")
         voice_text = result.get("voice_text", "")
+        text_translation = result.get("text_translation", "")  # Text comment → English
+        audio_translation = result.get("audio_translation", "")  # Audio → English
         summary_list = result.get("summary", [])
         decision = result.get("decision", "ON HOLD")
         score = float(result.get("score", 0.0))
@@ -580,7 +503,10 @@ def run_pv_ai_pipeline(data, student_id, volunteer_id, recommendation):
         cursor.execute("""
             UPDATE PhysicalVerification
             SET 
+                original_comment=%s,
                 comment=%s,
+                text_translation=%s,
+                audio_translation=%s,
                 elementsSummary=%s,
                 sentiment=%s,
                 sentiment_text=%s,
@@ -590,7 +516,10 @@ def run_pv_ai_pipeline(data, student_id, volunteer_id, recommendation):
                 verificationDate=NOW()
             WHERE studentId=%s AND volunteerId=%s
         """, (
-            english_comment,
+            text_comment,  # Original volunteer input (Tanglish/English/any)
+            english_comment,  # AI-translated English (combined)
+            text_translation,  # Text comment → English only
+            audio_translation,  # Audio → English only
             final_summary_text,
             decision,
             score,
@@ -600,6 +529,13 @@ def run_pv_ai_pipeline(data, student_id, volunteer_id, recommendation):
             student_id,
             volunteer_id
         ))
+        
+        # Update Student status to PV_COMPLETED so they appear in admin review queue
+        cursor.execute("""
+            UPDATE Student
+            SET status = 'PV_COMPLETED'
+            WHERE studentId = %s
+        """, (student_id,))
 
         conn.commit()
         cursor.close()
@@ -631,6 +567,127 @@ def run_pv_ai_pipeline(data, student_id, volunteer_id, recommendation):
     except Exception as e:
         print("❌ ASYNC AI PIPELINE ERROR:", e)
         traceback.print_exc()
+
+
+# =====================================================
+# S3 IMAGE UPLOAD ENDPOINTS
+# =====================================================
+
+@volunteer_bp.route("/api/final-upload-batch", methods=["POST"])
+def final_upload_batch():
+    """
+    Upload accepted PV images to S3 in parallel (ThreadPoolExecutor)
+    and save keys to FinalImages table.
+    """
+    try:
+        student_id = request.form.get("studentId")
+        images = request.files.getlist("images")
+
+        if not student_id or not images:
+            return jsonify({"success": False, "error": "Missing studentId or images"}), 400
+
+        print(f"🚀 Starting parallel upload for Student {student_id} ({len(images)} images)")
+        
+        uploaded_count = 0
+        s3 = get_s3_client()
+        bucket_name = Config.AWS_BUCKET
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        def upload_single_image(image_file):
+            try:
+                # Generate unique filename
+                filename = f"{student_id}_{int(time.time())}_{image_file.filename}"
+                # Reset file pointer
+                image_file.seek(0)
+                
+                # Upload to S3
+                s3.upload_fileobj(
+                    image_file,
+                    bucket_name,
+                    filename,
+                    ExtraArgs={'ContentType': image_file.content_type}
+                )
+                
+                return {"success": True, "key": filename}
+            except Exception as e:
+                print(f"❌ S3 Upload Error: {e}")
+                return {"success": False, "error": str(e)}
+
+        # Use ThreadPoolExecutor for parallel uploads
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            future_to_image = {executor.submit(upload_single_image, img): img for img in images}
+            
+            for future in as_completed(future_to_image):
+                result = future.result()
+                if result["success"]:
+                    # Save to DB
+                    # Check if key already exists to avoid dupes (unlikely with timestamp but good practice)
+                    cursor.execute("SELECT 1 FROM FinalImages WHERE imageKey = %s", (result["key"],))
+                    if not cursor.fetchone():
+                        cursor.execute("""
+                            INSERT INTO FinalImages (studentId, imageKey, uploadDate)
+                            VALUES (%s, %s, NOW())
+                        """, (student_id, result["key"]))
+                        uploaded_count += 1
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        print(f"✅ Successfully uploaded {uploaded_count}/{len(images)} images to S3")
+        return jsonify({"success": True, "uploaded": uploaded_count})
+
+    except Exception as e:
+        print(f"❌ Error in /final-upload-batch: {e}")
+        traceback.print_exc()
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@volunteer_bp.route("/api/get-pv-images/<student_id>")
+def get_pv_images(student_id):
+    """Get list of uploaded images for a student (Draft loading)"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        # Get image keys
+        cursor.execute("""
+            SELECT imageKey, uploadDate 
+            FROM FinalImages 
+            WHERE studentId = %s
+            ORDER BY uploadDate DESC
+        """, (student_id,))
+        images = cursor.fetchall()
+        
+        cursor.close()
+        conn.close()
+        
+        # Generate presigned URLs
+        s3 = get_s3_client()
+        image_list = []
+        
+        for img in images:
+            try:
+                url = s3.generate_presigned_url(
+                    'get_object',
+                    Params={'Bucket': Config.AWS_BUCKET, 'Key': img['imageKey']},
+                    ExpiresIn=3600  # 1 hour
+                )
+                image_list.append({
+                    "key": img['imageKey'],
+                    "url": url,
+                    "date": img['uploadDate']
+                })
+            except Exception as e:
+                print(f"Error generating url for {img['imageKey']}: {e}")
+                
+        return jsonify({"success": True, "images": image_list})
+
+    except Exception as e:
+        print(f"❌ Error in /get-pv-images: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
 @volunteer_bp.route("/api/submit-pv", methods=["POST"])
@@ -682,6 +739,73 @@ def submit_pv():
     except Exception as e:
         print("❌ Error in /submit-pv:", e)
         traceback.print_exc()
+        return jsonify({" success": False, "message": str(e)}), 500
+
+
+@volunteer_bp.route("/api/save-draft", methods=["POST"])
+def save_draft():
+    """Save PV draft - Phase 1 (on-site at student's house)"""
+    try:
+        data = request.json
+        student_id = data.get("studentId")
+        volunteer_id = session.get("volunteerId")
+
+        if not student_id or not volunteer_id:
+            return jsonify({"success": False, "message": "Missing IDs"}), 400
+
+        # Verify images are uploaded
+        conn = get_db_connection()
+        if not conn:
+            raise Exception("Database connection failed")
+        cursor = conn.cursor()
+
+        # Check if images exist in FinalImages
+        cursor.execute("""
+            SELECT COUNT(*) as count 
+            FROM FinalImages 
+            WHERE studentId = %s
+        """, (student_id,))
+        
+        result = cursor.fetchone()
+        image_count = result[0] if result else 0
+
+        if image_count < MIN_IMAGES_REQUIRED:
+            cursor.close()
+            conn.close()
+            return jsonify({
+                "success": False, 
+                "message": f"Must upload at least {MIN_IMAGES_REQUIRED} images before saving draft"
+            }), 400
+
+        # Save draft with DRAFT status
+        cursor.execute("""
+            UPDATE PhysicalVerification
+            SET 
+                propertyType=%s,
+                whatYouSaw=%s,
+                status='DRAFT',
+                verificationDate=NOW()
+            WHERE studentId=%s AND volunteerId=%s
+        """, (
+            data.get("propertyType", ""),
+            data.get("whatYouSaw", ""),
+            student_id,
+            volunteer_id
+        ))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return jsonify({
+            "success": True, 
+            "message": "Draft saved! You can complete the form later.",
+            "status": "DRAFT"
+        })
+
+    except Exception as e:
+        print("❌ Error in /save-draft:", e)
+        traceback.print_exc()
         return jsonify({"success": False, "message": str(e)}), 500
 
 
@@ -701,3 +825,91 @@ def api_pv_status(student_id):
     if not row:
         return jsonify({'exists': False, 'pv': None})
     return jsonify({'exists': True, 'pv': row})
+
+
+# =====================================================
+# NEW AGENT ENDPOINTS
+# =====================================================
+
+@volunteer_bp.route("/api/enhance-image", methods=["POST"])
+def enhance_image():
+    """
+    Agent 6: Image Enhancement Endpoint
+    Enhance poor-quality image using OpenCV + Gemini validation
+    """
+    try:
+        if 'image' not in request.files:
+            return jsonify({"success": False, "error": "No image provided"}), 400
+        
+        from backend.services.ai_service import agent_image_enhancement
+        
+        image_file = request.files['image']
+        image_bytes = image_file.read()
+        
+        # Call Agent 6
+        result = agent_image_enhancement(image_bytes)
+        
+        if result["success"]:
+            # Encode enhanced image to base64
+            enhanced_base64 = base64.b64encode(result["enhanced_image"]).decode('utf-8')
+            
+            return jsonify({
+                "success": True,
+                "status": result["quality_status"],
+                "enhanced_image": f"data:image/jpeg;base64,{enhanced_base64}",
+                "message": "Image enhanced successfully" if result["quality_status"] == "GOOD" else "Enhancement completed but quality still poor",
+                "agent": result["agent"]
+            })
+        else:
+            return jsonify({
+                "success": False,
+                "status": "BAD",
+                "reason": result.get("error", "Enhancement failed"),
+                "message": "Unable to enhance image"
+            }), 500
+            
+    except Exception as e:
+        print(f"❌ Error in /api/enhance-image: {e}")
+        traceback.print_exc()
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@volunteer_bp.route("/api/ocr-handwriting", methods=["POST"])
+def ocr_handwriting():
+    """
+    Agent 7: Handwriting OCR Endpoint
+    Extract text from handwritten Tanglish documents using Gemini
+    """
+    try:
+        if 'image' not in request.files:
+            return jsonify({"success": False, "error": "No image provided"}), 400
+        
+        from backend.services.ai_service import agent_handwriting_ocr
+        
+        image_file = request.files['image']
+        image_bytes = image_file.read()
+        
+        # Call Agent 7
+        result = agent_handwriting_ocr(image_bytes)
+        
+        if result["success"]:
+            return jsonify({
+                "success": True,
+                "text": result["text"],
+                "language": result["language"],
+                "composition": result["composition"],
+                "confidence": result["confidence"],
+                "method": result["method"],
+                "agent": result["agent"]
+            })
+        else:
+            return jsonify({
+                "success": False,
+                "error": result.get("error", "OCR failed"),
+                "agent": result.get("agent", "Agent 7")
+            }), 500
+            
+    except Exception as e:
+        print(f"❌ Error in /api/ocr-handwriting: {e}")
+        traceback.print_exc()
+        return jsonify({"success": False, "error": str(e)}), 500

@@ -24,3 +24,7 @@ numpy==1.26.4
 # RAG Dependencies
 chromadb==0.4.22
 sentence-transformers==2.2.2
+
+# Image Enhancement (Agent 6)
+opencv-python==4.8.1.78
+Pillow==10.1.0

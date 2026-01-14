@@ -83,6 +83,18 @@ const adminService = {
     // Get TV statistics for admin dashboard
     async getTVStatistics() {
         return api.get('/admin/api/tv-statistics');
+    },
+
+    // --- PV Review Workflow ---
+
+    // Get students with completed PV awaiting admin review
+    async getPVPendingReviews() {
+        return api.get('/admin/api/pv-pending-reviews');
+    },
+
+    // Admin decision on PV review (approve to VI or reject)
+    async reviewPVSubmission(studentId, decision, remarks = '') {
+        return api.post('/admin/api/review-pv-submission', { studentId, decision, remarks });
     }
 };
 

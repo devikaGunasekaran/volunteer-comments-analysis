@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Home, Users, Video, FileText } from 'lucide-react';
+import { Home, Users, CheckCircle, FileText } from 'lucide-react';
 import authService from '../../services/authService';
 import adminService from '../../services/adminService';
 import logo from '../../assets/logo_icon.jpg';
@@ -67,17 +67,17 @@ const TVAdminDashboard = () => {
                         <h4 className="section-title">Quick Actions</h4>
                         <div className="action-grid-3">
                             <div className="action-card-modern" onClick={() => navigate('/admin/tv-assignment')}>
-                                <div className="action-icon">📋</div>
+                                <div className="action-icon"><Users size={32} /></div>
                                 <h3>Assign Students</h3>
                                 <p>Assign students to TV volunteers</p>
                             </div>
                             <div className="action-card-modern" onClick={() => navigate('/admin/tv-reports')}>
-                                <div className="action-icon">✔️</div>
-                                <h3>Reports Review</h3>
-                                <p>Review submitted TV reports</p>
+                                <div className="action-icon"><FileText size={32} /></div>
+                                <h3>Pending Approvals</h3>
+                                <p>Approve TV verifications for PV</p>
                             </div>
                             <div className="action-card-modern" onClick={() => navigate('/admin/tv-students')}>
-                                <div className="action-icon">✅</div>
+                                <div className="action-icon"><CheckCircle size={32} /></div>
                                 <h3>Completed TV</h3>
                                 <p>View verification history</p>
                             </div>
@@ -115,13 +115,13 @@ const TVAdminDashboard = () => {
                         className="nav-item"
                         onClick={() => navigate('/admin/tv-reports')}
                     >
-                        <span className="icon"><FileText size={18} /></span> Reports Review
+                        <span className="icon"><FileText size={18} /></span> Pending Approvals
                     </button>
                     <button
                         className="nav-item"
                         onClick={() => navigate('/admin/tv-students')}
                     >
-                        <span className="icon"><Video size={18} /></span> Completed TV
+                        <span className="icon"><CheckCircle size={18} /></span> Completed TV
                     </button>
                 </div>
 

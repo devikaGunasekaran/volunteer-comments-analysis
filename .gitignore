@@ -25,6 +25,7 @@ wheels/
 
 # Environment variables
 .env
+backend/credentials/
 
 # IDE
 .vscode/
@@ -50,10 +51,6 @@ database_dump_*.sql
 
 # Logs
 *.log
-
-# React frontend
-frontend/node_modules/
-frontend/build/
 
 # React frontend
 frontend/node_modules/

@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+    Home, Video, Target, GraduationCap, BarChart2,
+    ClipboardList, CheckCircle, Users, FileText
+} from 'lucide-react';
 import superadminService from '../../services/superadminService';
 import realInterviewService from '../../services/realInterviewService';
 import authService from '../../services/authService';
@@ -78,7 +82,7 @@ const SuperadminDashboardPage = () => {
                 return (
                     <div className="tab-content fadeIn">
                         <div className="section-header-row">
-                            <h3>📹 Virtual Interview Management</h3>
+                            <h3><Video size={24} style={{ marginRight: 10, verticalAlign: 'middle' }} /> Virtual Interview Management</h3>
                             <p className="section-subtitle">Manage assignments and review VI status</p>
                         </div>
                         <div className="stats-grid-3">
@@ -97,10 +101,10 @@ const SuperadminDashboardPage = () => {
                         </div>
                         <div className="action-row">
                             <button onClick={() => navigate('/superadmin/assign-vi')} className="action-button primary">
-                                📋 Assign New VIs
+                                <ClipboardList size={18} style={{ marginRight: 8 }} /> Assign New VIs
                             </button>
                             <button onClick={() => navigate('/superadmin/vi-students')} className="action-button secondary">
-                                ✅ View Completed VIs
+                                <CheckCircle size={18} style={{ marginRight: 8 }} /> View Completed VIs
                             </button>
                         </div>
                     </div>
@@ -109,7 +113,7 @@ const SuperadminDashboardPage = () => {
                 return (
                     <div className="tab-content fadeIn">
                         <div className="section-header-row">
-                            <h3>🎯 Real Interview Management</h3>
+                            <h3><Target size={24} style={{ marginRight: 10, verticalAlign: 'middle' }} /> Real Interview Management</h3>
                             <p className="section-subtitle">Coordinate in-person interviews</p>
                         </div>
                         <div className="stats-grid-3">
@@ -128,10 +132,10 @@ const SuperadminDashboardPage = () => {
                         </div>
                         <div className="action-row">
                             <button onClick={() => navigate('/superadmin/assign-real-interview')} className="action-button primary">
-                                🎯 Assign RI Volunteers
+                                <Users size={18} style={{ marginRight: 8 }} /> Assign RI Volunteers
                             </button>
                             <button onClick={() => navigate('/superadmin/real-interview-students')} className="action-button secondary">
-                                🏆 View RI History
+                                <FileText size={18} style={{ marginRight: 8 }} /> View RI History
                             </button>
                         </div>
                     </div>
@@ -140,7 +144,7 @@ const SuperadminDashboardPage = () => {
                 return (
                     <div className="tab-content fadeIn">
                         <div className="section-header-row">
-                            <h3>🎓 Final Scholarship Selection</h3>
+                            <h3><GraduationCap size={24} style={{ marginRight: 10, verticalAlign: 'middle' }} /> Final Scholarship Selection</h3>
                             <p className="section-subtitle">Make final decisions for scholarships</p>
                         </div>
                         <div className="stats-grid-3">
@@ -159,10 +163,10 @@ const SuperadminDashboardPage = () => {
                         </div>
                         <div className="action-row">
                             <button onClick={() => navigate('/superadmin/final-selection')} className="action-button primary">
-                                🎓 Make Decisions
+                                <GraduationCap size={18} style={{ marginRight: 8 }} /> Make Decisions
                             </button>
                             <button onClick={() => navigate('/superadmin/selected-students')} className="action-button secondary">
-                                📊 All Decisions
+                                <BarChart2 size={18} style={{ marginRight: 8 }} /> All Decisions
                             </button>
                         </div>
                     </div>
@@ -171,11 +175,11 @@ const SuperadminDashboardPage = () => {
                 return (
                     <div className="tab-content fadeIn">
                         <div className="section-header-row">
-                            <h3>📊 Analytics & Reports</h3>
+                            <h3><BarChart2 size={24} style={{ marginRight: 10, verticalAlign: 'middle' }} /> Analytics & Reports</h3>
                             <p className="section-subtitle">Deep dive into application data and AI insights</p>
                         </div>
                         <div className="analytics-placeholder-card">
-                            <div className="placeholder-icon">📊</div>
+                            <div className="placeholder-icon"><BarChart2 size={64} strokeWidth={1} /></div>
                             <h4>Full Analytics Dashboard</h4>
                             <p>View detailed visualizations, AI vs Manual comparisons, and application trends.</p>
                             <button onClick={() => navigate('/superadmin/analytics')} className="action-button primary mt-4">
@@ -193,28 +197,28 @@ const SuperadminDashboardPage = () => {
                         </div>
                         <div className="overview-grid">
                             <div className="overview-card vi-overview" onClick={() => setActiveTab('vi')}>
-                                <div className="ov-icon">📹</div>
+                                <div className="ov-icon"><Video size={36} color="#805AD5" /></div>
                                 <div className="ov-info">
                                     <h4>Virtual Interview</h4>
                                     <span>{stats.unassignedVI} Pending</span>
                                 </div>
                             </div>
                             <div className="overview-card ri-overview" onClick={() => setActiveTab('ri')}>
-                                <div className="ov-icon">🎯</div>
+                                <div className="ov-icon"><Target size={36} color="#3182CE" /></div>
                                 <div className="ov-info">
                                     <h4>Real Interview</h4>
                                     <span>{stats.eligibleRI} Eligible</span>
                                 </div>
                             </div>
                             <div className="overview-card final-overview" onClick={() => setActiveTab('final')}>
-                                <div className="ov-icon">🎓</div>
+                                <div className="ov-icon"><GraduationCap size={36} color="#38A169" /></div>
                                 <div className="ov-info">
                                     <h4>Selection</h4>
                                     <span>{stats.pendingFinal} To Review</span>
                                 </div>
                             </div>
                             <div className="overview-card analytics-overview" onClick={() => setActiveTab('analytics')}>
-                                <div className="ov-icon">📊</div>
+                                <div className="ov-icon"><BarChart2 size={36} color="#ED8936" /></div>
                                 <div className="ov-info">
                                     <h4>Analytics</h4>
                                     <span>View Reports</span>
@@ -240,37 +244,40 @@ const SuperadminDashboardPage = () => {
                         className={`nav-item ${activeTab === 'overview' ? 'active' : ''}`}
                         onClick={() => setActiveTab('overview')}
                     >
-                        <span className="icon">🏠</span> Overview
+                        <span className="icon"><Home size={18} /></span> Overview
                     </button>
                     <button
                         className={`nav-item ${activeTab === 'vi' ? 'active' : ''}`}
                         onClick={() => setActiveTab('vi')}
                     >
-                        <span className="icon">📹</span> Virtual Interview
+                        <span className="icon"><Video size={18} /></span> Virtual Interview
                     </button>
                     <button
                         className={`nav-item ${activeTab === 'ri' ? 'active' : ''}`}
                         onClick={() => setActiveTab('ri')}
                     >
-                        <span className="icon">🎯</span> Real Interview
+                        <span className="icon"><Target size={18} /></span> Real Interview
                     </button>
                     <button
                         className={`nav-item ${activeTab === 'final' ? 'active' : ''}`}
                         onClick={() => setActiveTab('final')}
                     >
-                        <span className="icon">🎓</span> Final Selection
+                        <span className="icon"><GraduationCap size={18} /></span> Final Selection
                     </button>
                     <button
                         className={`nav-item ${activeTab === 'analytics' ? 'active' : ''}`}
                         onClick={() => setActiveTab('analytics')}
                     >
-                        <span className="icon">📊</span> Analytics
+                        <span className="icon"><BarChart2 size={18} /></span> Analytics
                     </button>
                 </div>
 
                 <div className="nav-footer">
-                    <button onClick={() => navigate('/admin/assign')} className="back-admin-btn">
-                        Back to PV Admin
+                    <button onClick={() => {
+                        authService.logout();
+                        navigate('/login');
+                    }} className="back-admin-btn">
+                        Sign Out
                     </button>
                 </div>
             </nav>

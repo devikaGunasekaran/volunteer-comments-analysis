@@ -16,6 +16,7 @@ const AdminViewPage = () => {
     const [decision, setDecision] = useState('');
     const [remarks, setRemarks] = useState('');
     const [submitting, setSubmitting] = useState(false);
+    const [showTranslationDetails, setShowTranslationDetails] = useState(false);  // Toggle for translation breakdown
 
     useEffect(() => {
         loadData();
@@ -226,9 +227,84 @@ const AdminViewPage = () => {
 
                         {/* 3. Volunteer Comment - Separate Section */}
                         <div className="section-box">
-                            <div className="section-title">Volunteer Comment</div>
+                            <div className="section-title">Volunteer Comment (AI Translated to English)</div>
                             <div className="input-style-box">{pv?.comment || 'No comment available.'}</div>
                         </div>
+
+                        {/* 3b. Original Volunteer Input - Tanglish/English */}
+                        {pv?.original_comment && (
+                            <div className="section-box" style={{ backgroundColor: '#FFF9E6', borderLeft: '4px solid #FFB800' }}>
+                                <div className="section-title" style={{ color: '#B8860B' }}>
+                                    📝 Original Volunteer Input (Tanglish/English)
+                                </div>
+                                <div className="input-style-box" style={{ backgroundColor: '#FFFEF7', fontStyle: 'italic', color: '#555' }}>
+                                    {pv.original_comment}
+                                </div>
+                                <div style={{ marginTop: '8px', fontSize: '12px', color: '#888', fontStyle: 'italic' }}>
+                                    ℹ️ This is the volunteer's original input before AI translation
+                                </div>
+                            </div>
+                        )}
+
+                        {/* 3c. Translation Breakdown - Toggle Button */}
+                        {(pv?.text_translation || pv?.audio_translation) && (
+                            <div className="section-box" style={{ backgroundColor: '#F0F9FF', borderLeft: '4px solid #3B82F6' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                                    <div className="section-title" style={{ margin: 0, color: '#1E40AF' }}>
+                                        🔍 Translation Breakdown
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowTranslationDetails(!showTranslationDetails)}
+                                        style={{
+                                            padding: '8px 16px',
+                                            backgroundColor: showTranslationDetails ? '#3B82F6' : '#E0F2FE',
+                                            color: showTranslationDetails ? 'white' : '#1E40AF',
+                                            border: 'none',
+                                            borderRadius: '6px',
+                                            cursor: 'pointer',
+                                            fontSize: '13px',
+                                            fontWeight: '500',
+                                            transition: 'all 0.2s'
+                                        }}
+                                    >
+                                        {showTranslationDetails ? '▼ Hide Details' : '▶ Show Details'}
+                                    </button>
+                                </div>
+
+                                {showTranslationDetails && (
+                                    <div style={{ marginTop: '16px' }}>
+                                        {/* Text Comment Translation */}
+                                        {pv.text_translation && (
+                                            <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: '#DBEAFE', borderRadius: '6px' }}>
+                                                <div style={{ fontSize: '13px', fontWeight: '600', color: '#1E40AF', marginBottom: '8px' }}>
+                                                    📝 Text Comment → English:
+                                                </div>
+                                                <div style={{ fontSize: '14px', color: '#1E3A8A', lineHeight: '1.6' }}>
+                                                    {pv.text_translation}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Audio Translation */}
+                                        {pv.audio_translation && (
+                                            <div style={{ padding: '12px', backgroundColor: '#DBEAFE', borderRadius: '6px' }}>
+                                                <div style={{ fontSize: '13px', fontWeight: '600', color: '#1E40AF', marginBottom: '8px' }}>
+                                                    🎤 Audio → English:
+                                                </div>
+                                                <div style={{ fontSize: '14px', color: '#1E3A8A', lineHeight: '1.6' }}>
+                                                    {pv.audio_translation}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <div style={{ marginTop: '12px', fontSize: '12px', color: '#64748B', fontStyle: 'italic' }}>
+                                            ℹ️ These are individual AI translations before merging
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
 
                         {/* 4. PV Report */}
                         <div className="section-box">

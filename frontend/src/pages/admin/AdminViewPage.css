@@ -184,21 +184,22 @@
 .summary-point {
     color: #5A4A1F;
     font-size: 15px;
-    line-height: 1.8;
+    line-height: 1.6;
     margin-bottom: 12px;
-    padding-left: 24px;
-    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
     font-weight: 500;
 }
 
 .summary-point::before {
     content: "•";
-    position: absolute;
-    left: 0;
     color: #FF9800;
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 700;
-    line-height: 1.8;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: -3px;
 }
 
 .summary-point:last-child {
@@ -378,18 +379,19 @@
 
 .bullet-point {
     margin-bottom: 8px;
-    padding-left: 20px;
-    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
 }
 
 .bullet-point::before {
     content: "•";
     color: #ED8936;
     font-weight: bold;
-    position: absolute;
-    left: 0;
-    font-size: 18px;
+    font-size: 24px;
     line-height: 1;
+    flex-shrink: 0;
+    margin-top: -3px;
 }
 
 /* Decision Box */
@@ -509,4 +511,32 @@ audio {
         opacity: 1;
         transform: scale(1);
     }
+}
+
+/* AI Summary and House Analysis Bullet Points - Using upstream definitions */
+.ai-summary-points {
+    background: #F7FAFC;
+    padding: 16px;
+    border-radius: 8px;
+}
+
+.analysis-card {
+    background: #F7FAFC;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 20px;
+}
+
+.analysis-header {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2D3748;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.analysis-content {
+    margin-top: 12px;
 }

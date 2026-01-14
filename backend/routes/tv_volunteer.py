@@ -77,10 +77,10 @@ def submit_verification():
         if existing_record:
             update_query = """
                 UPDATE televerification 
-                SET status=%s, comments=%s, verificationDate=NOW()
+                SET status='VERIFIED', comments=%s, verificationDate=NOW()
                 WHERE studentId=%s AND volunteerId=%s
             """
-            cursor.execute(update_query, (status, comments, studentId, volunteerId))
+            cursor.execute(update_query, (comments, studentId, volunteerId))
             with open('tv_debug.log', 'a') as f:
                 f.write(f"DEBUG: Updated row count: {cursor.rowcount}\n")
         else:
@@ -89,14 +89,14 @@ def submit_verification():
             # Fallback: create if missing (though strictly they should be assigned first)
             insert_query = """
                 INSERT INTO televerification (studentId, volunteerId, status, comments, verificationDate)
-                VALUES (%s, %s, %s, %s, NOW())
+                VALUES (%s, %s, 'VERIFIED', %s, NOW())
             """
-            cursor.execute(insert_query, (studentId, volunteerId, status, comments))
+            cursor.execute(insert_query, (studentId, volunteerId, comments))
             
         conn.commit()
         cursor.close()
         conn.close()
-        return jsonify({'success': True, 'message': 'Verification submitted'})
+        return jsonify({'success': True, 'message': 'Verification submitted successfully. Awaiting TV Admin approval.'})
         
     except Exception as e:
         with open('tv_debug.log', 'a') as f:

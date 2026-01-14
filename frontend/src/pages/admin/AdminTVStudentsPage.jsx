@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Home, Users, Video, FileText } from 'lucide-react';
+import { Home, Users, CheckCircle, FileText } from 'lucide-react';
 import adminService from '../../services/adminService';
 import authService from '../../services/authService';
 import logo from '../../assets/logo_icon.jpg';
@@ -68,10 +68,10 @@ const AdminTVStudentsPage = () => {
                         <span className="icon"><Users size={18} /></span> Assign Volunteers
                     </button>
                     <button className="nav-item active" onClick={() => { }}>
-                        <span className="icon"><Video size={18} /></span> Completed TV
+                        <span className="icon"><CheckCircle size={18} /></span> Completed TV
                     </button>
                     <button className="nav-item" onClick={() => navigate('/admin/tv-reports')}>
-                        <span className="icon"><FileText size={18} /></span> Review Reports
+                        <span className="icon"><FileText size={18} /></span> Pending Approvals
                     </button>
                 </div>
                 <div className="nav-footer">
@@ -115,7 +115,7 @@ const AdminTVStudentsPage = () => {
                                     ) : students.length === 0 ? (
                                         <tr>
                                             <td colSpan="6" className="empty-state">
-                                                <div className="empty-state-icon">📹</div>
+                                                <div className="empty-state-icon" style={{ display: 'flex', justifyContent: 'center' }}><CheckCircle size={48} color="#FF6F00" /></div>
                                                 <div className="empty-state-title">No Completed TV Students</div>
                                                 <div className="empty-state-description">
                                                     Students will appear here once they complete televerification

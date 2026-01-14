@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Home, Users, Clock, CheckCircle } from 'lucide-react';
+import { Home, Users, Clock, CheckCircle, Search } from 'lucide-react';
 import adminService from '../../services/adminService';
 import authService from '../../services/authService';
 import logo from '../../assets/logo_icon.jpg';
@@ -145,6 +145,7 @@ const AdminAssignPVPage = () => {
                     >
                         <span className="icon"><CheckCircle size={18} /></span> Completed PV
                     </button>
+
                 </div>
 
                 <div className="nav-footer">
@@ -152,40 +153,17 @@ const AdminAssignPVPage = () => {
                         Sign Out
                     </button>
                 </div>
-            </nav>
+            </nav >
 
             {/* Main Content Area */}
-            <main className="main-content">
+            < main className="main-content" >
                 <div className="admin-assign-pv-page">
                     <div className="section-header-row">
                         <h3>Assign PV Volunteers</h3>
                         <p className="section-subtitle">Manage student-volunteer assignments</p>
                     </div>
 
-                    {/* Statistics Cards */}
-                    <div className="stats-container">
-                        <div className="stat-card assigned">
-                            <div className="stat-icon">👥</div>
-                            <div className="stat-content">
-                                <div className="stat-value">{statistics.total_assigned}</div>
-                                <div className="stat-label">PV Assigned</div>
-                            </div>
-                        </div>
-                        <div className="stat-card completed">
-                            <div className="stat-icon">✅</div>
-                            <div className="stat-content">
-                                <div className="stat-value">{statistics.completed}</div>
-                                <div className="stat-label">Completed</div>
-                            </div>
-                        </div>
-                        <div className="stat-card pending">
-                            <div className="stat-icon">⏳</div>
-                            <div className="stat-content">
-                                <div className="stat-value">{statistics.pending}</div>
-                                <div className="stat-label">Pending</div>
-                            </div>
-                        </div>
-                    </div>
+
 
                     <div className="assign-container">
 
@@ -303,7 +281,6 @@ const AdminAssignPVPage = () => {
 
                                     {/* Search Input */}
                                     <div className="search-container">
-                                        <span className="search-icon-overlay">🔍</span>
                                         <input
                                             type="text"
                                             placeholder="Search volunteer by name or email..."
@@ -351,8 +328,8 @@ const AdminAssignPVPage = () => {
                         </div>
                     )}
                 </div>
-            </main>
-        </div>
+            </main >
+        </div >
     );
 };
 

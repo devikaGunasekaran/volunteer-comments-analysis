@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Home, ClipboardList, CheckCircle } from 'lucide-react';
 import viVolunteerService from '../../services/viVolunteerService';
 import authService from '../../services/authService';
 import logo from '../../assets/logo_icon.jpg';
@@ -89,19 +90,19 @@ const VIInterviewFormPage = () => {
                         className="nav-item"
                         onClick={() => navigate('/vi/dashboard')}
                     >
-                        <span className="icon">🏠</span> Overview
+                        <span className="icon"><Home size={18} /></span> Overview
                     </button>
                     <button
                         className="nav-item"
                         onClick={() => navigate('/vi/assigned')}
                     >
-                        <span className="icon">📋</span> My Assignments
+                        <span className="icon"><ClipboardList size={18} /></span> My Assignments
                     </button>
                     <button
                         className="nav-item"
                         onClick={() => navigate('/vi/completed')}
                     >
-                        <span className="icon">✅</span> Completed Interviews
+                        <span className="icon"><CheckCircle size={18} /></span> Completed Interviews
                     </button>
                 </div>
 
@@ -361,7 +362,7 @@ const VIInterviewFormPage = () => {
                                             checked={recommendation === 'SELECT'}
                                             onChange={(e) => setRecommendation(e.target.value)}
                                         />
-                                        <span className="radio-text">✅ SELECT</span>
+                                        <span className="radio-text"><CheckCircle size={16} style={{ verticalAlign: 'middle', marginRight: 4 }} /> SELECT</span>
                                     </label>
                                     <label className="radio-option reject-option">
                                         <input

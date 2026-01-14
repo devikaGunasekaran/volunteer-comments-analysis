@@ -67,7 +67,7 @@ const AdminAssignPage = () => {
                         <h4 className="section-title">Quick Actions</h4>
                         <div className="action-grid-3">
                             <div className="action-card-modern" onClick={() => navigate('/admin/assign-pv')}>
-                                <div className="action-icon">📋</div>
+                                <div className="action-icon"><Users size={24} /></div>
                                 <h3>Assign Volunteers</h3>
                                 <p>Assign students to PV volunteers</p>
                             </div>

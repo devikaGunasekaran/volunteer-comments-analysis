@@ -2,7 +2,6 @@
 from langgraph.graph import StateGraph, END
 from typing import TypedDict, Optional
 
-
 class PVState(TypedDict, total=False):
     text_comment: str
     audio_path: Optional[str]
@@ -125,17 +124,17 @@ builder = StateGraph(PVState)
 builder.add_node("Tanglish", node_tanglish_to_english)
 builder.add_node("Audio", node_audio_to_english)
 builder.add_node("Merge", node_merge)
-builder.add_node("RAGRetrieval", node_rag_retrieval)  # NEW: RAG node
+builder.add_node("RAGRetrieval", node_rag_retrieval)  # RAG node
 builder.add_node("MasterAnalysis", node_master_analysis)
 builder.add_node("HouseAnalysis", node_house_analysis)
 
 builder.set_entry_point("Tanglish")
 
-# Updated flow: Tanglish → Audio → Merge → RAG → MasterAnalysis → HouseAnalysis → END
+# Sequential flow: Tanglish → Audio → Merge → RAG → MasterAnalysis → HouseAnalysis → END
 builder.add_edge("Tanglish", "Audio")
 builder.add_edge("Audio", "Merge")
-builder.add_edge("Merge", "RAGRetrieval")  # NEW: Add RAG after merge
-builder.add_edge("RAGRetrieval", "MasterAnalysis")  # NEW: RAG before analysis
+builder.add_edge("Merge", "RAGRetrieval")
+builder.add_edge("RAGRetrieval", "MasterAnalysis")
 builder.add_edge("MasterAnalysis", "HouseAnalysis")
 builder.add_edge("HouseAnalysis", END)
 

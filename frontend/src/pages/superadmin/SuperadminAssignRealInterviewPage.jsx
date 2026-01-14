@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Home, Video, Target, GraduationCap, BarChart2, ClipboardList, ArrowLeft } from 'lucide-react';
 import realInterviewService from '../../services/realInterviewService';
 import authService from '../../services/authService';
 import logo from '../../assets/logo_icon.jpg';
@@ -81,205 +82,245 @@ const SuperadminAssignRealInterviewPage = () => {
     const assignedStudents = students.filter(s => s.assigned_ri_volunteer_id);
 
     return (
-        <div className="superadmin-assign-ri-page">
-            <header className="header-vertical">
-                <button onClick={handleLogout} className="logout-btn-right">
-                    LOGOUT
-                </button>
-                <img src={logo} alt="Logo" className="header-logo-center" />
-                <div className="header-title">Assign Real Interview Volunteers</div>
-            </header>
-
-            <div className="container">
-                <div className="page-header">
-                    <h2>Real Interview Assignment</h2>
-                    <div className="header-actions">
-                        <button
-                            onClick={() => navigate('/superadmin/real-interview-students')}
-                            className="view-completed-btn"
-                        >
-                            📋 View Completed RIs
-                        </button>
-                        <button
-                            onClick={() => navigate('/superadmin/dashboard')}
-                            className="back-btn"
-                        >
-                            ← Back to Dashboard
-                        </button>
-                    </div>
+        <div className="admin-layout">
+            <nav className="side-nav">
+                <div className="nav-logo">
+                    <img src={logo} alt="Matram Logo" className="header-logo-center" />
+                    <span>Matram Admin Panel</span>
                 </div>
+                <div className="nav-links">
+                    <button className="nav-item" onClick={() => navigate('/superadmin/dashboard')}>
+                        <span className="icon"><Home size={18} /></span> Overview
+                    </button>
+                    <button className="nav-item" onClick={() => navigate('/superadmin/dashboard')}>
+                        <span className="icon"><Video size={18} /></span> Virtual Interview
+                    </button>
+                    <button className="nav-item active" onClick={() => { }}>
+                        <span className="icon"><Target size={18} /></span> Real Interview
+                    </button>
+                    <button className="nav-item" onClick={() => navigate('/superadmin/dashboard')}>
+                        <span className="icon"><GraduationCap size={18} /></span> Final Selection
+                    </button>
+                    <button className="nav-item" onClick={() => navigate('/superadmin/analytics')}>
+                        <span className="icon"><BarChart2 size={18} /></span> Analytics
+                    </button>
+                </div>
+                <div className="nav-footer">
+                    <button onClick={handleLogout} className="logout-btn">
+                        Sign Out
+                    </button>
+                </div>
+            </nav>
 
-                {loading ? (
-                    <div className="loading-container">
-                        <div className="loading-spinner">Loading...</div>
-                    </div>
-                ) : (
-                    <>
-                        {/* Unassigned Students */}
-                        <div className="section-card">
-                            <h3 className="section-title">
-                                Students Awaiting RI Assignment ({unassignedStudents.length})
-                            </h3>
-                            {unassignedStudents.length === 0 ? (
-                                <div className="no-data">All VI-selected students have been assigned!</div>
-                            ) : (
-                                <div className="table-container">
-                                    <table className="students-table">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Student ID</th>
-                                                <th>Name</th>
-                                                <th>District</th>
-                                                <th>VI Volunteer</th>
-                                                <th>VI Date</th>
-                                                <th>VI Recommendation</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {unassignedStudents.map((student, index) => (
-                                                <tr key={student.studentId}>
-                                                    <td>{index + 1}</td>
-                                                    <td className="student-id">{student.studentId}</td>
-                                                    <td>{student.name}</td>
-                                                    <td>{student.district}</td>
-                                                    <td>
-                                                        <div className="volunteer-info">
-                                                            <div className="volunteer-name">{student.vi_volunteer_name}</div>
-                                                            <div className="volunteer-email">{student.vi_volunteer_email}</div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        {student.vi_date
-                                                            ? new Date(student.vi_date).toLocaleDateString()
-                                                            : 'N/A'}
-                                                    </td>
-                                                    <td>
-                                                        <span className="recommendation-badge">
-                                                            {student.vi_recommendation || 'YES'}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <button
-                                                            className="assign-btn"
-                                                            onClick={() => openAssignModal(student)}
-                                                        >
-                                                            Assign RI Volunteer
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            )}
-                        </div>
+            <main className="main-content">
+                <div className="superadmin-assign-ri-page">
 
-                        {/* Assigned Students */}
-                        <div className="section-card">
-                            <h3 className="section-title">
-                                Already Assigned Students ({assignedStudents.length})
-                            </h3>
-                            {assignedStudents.length === 0 ? (
-                                <div className="no-data">No students assigned yet</div>
-                            ) : (
-                                <div className="table-container">
-                                    <table className="students-table">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Student ID</th>
-                                                <th>Name</th>
-                                                <th>District</th>
-                                                <th>Assigned RI Volunteer</th>
-                                                <th>Assigned Date</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {assignedStudents.map((student, index) => (
-                                                <tr key={student.studentId}>
-                                                    <td>{index + 1}</td>
-                                                    <td className="student-id">{student.studentId}</td>
-                                                    <td>{student.name}</td>
-                                                    <td>{student.district}</td>
-                                                    <td>
-                                                        <div className="volunteer-info">
-                                                            <div className="volunteer-name">{student.assigned_ri_volunteer_name}</div>
-                                                            <div className="volunteer-email">{student.assigned_ri_volunteer_email}</div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        {student.ri_assigned_date
-                                                            ? new Date(student.ri_assigned_date).toLocaleDateString()
-                                                            : 'N/A'}
-                                                    </td>
-                                                    <td>
-                                                        <span className={`status-badge ${student.ri_status?.toLowerCase()}`}>
-                                                            {student.ri_status || 'PENDING'}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <button
-                                                            className="reassign-btn"
-                                                            onClick={() => openAssignModal(student)}
-                                                        >
-                                                            Reassign
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            )}
-                        </div>
-                    </>
-                )}
-            </div>
-
-            {/* Assignment Modal */}
-            {selectedStudent && (
-                <div className="modal-overlay" onClick={closeAssignModal}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <div className="modal-header">
-                            <h3>Assign RI Volunteer to {selectedStudent.name}</h3>
-                            <button className="close-btn" onClick={closeAssignModal}>×</button>
-                        </div>
-                        <div className="modal-body">
-                            <div className="student-info">
-                                <p><strong>Student ID:</strong> {selectedStudent.studentId}</p>
-                                <p><strong>District:</strong> {selectedStudent.district}</p>
-                                <p><strong>VI Recommendation:</strong> {selectedStudent.vi_recommendation || 'YES'}</p>
-                            </div>
-
-                            <div className="form-section">
-                                <label>Select Real Interview Volunteer</label>
-                                <select
-                                    value={selectedVolunteer}
-                                    onChange={(e) => setSelectedVolunteer(e.target.value)}
-                                    className="volunteer-select"
-                                >
-                                    <option value="">-- Select RI Volunteer --</option>
-                                    {volunteers.map(volunteer => (
-                                        <option key={volunteer.volunteerId} value={volunteer.volunteerId}>
-                                            {volunteer.name} ({volunteer.email})
-                                        </option>
-                                    ))}
-                                </select>
+                    <div className="container">
+                        <div className="page-header">
+                            <h2>Real Interview Assignment</h2>
+                            <div className="header-actions">
                                 <button
-                                    className="assign-submit-btn"
-                                    onClick={handleAssign}
-                                    disabled={assigning || !selectedVolunteer}
+                                    onClick={() => navigate('/superadmin/real-interview-students')}
+                                    className="view-completed-btn"
                                 >
-                                    {assigning ? 'Assigning...' : 'Assign Volunteer'}
+                                    <ClipboardList size={18} style={{ marginRight: 8 }} /> View Completed RIs
+                                </button>
+                                <button
+                                    onClick={() => navigate('/superadmin/dashboard')}
+                                    className="back-btn"
+                                >
+                                    <ArrowLeft size={18} style={{ marginRight: 8 }} /> Back to Dashboard
                                 </button>
                             </div>
                         </div>
+
+                        {loading ? (
+                            <div className="loading-container">
+                                <div className="loading-spinner">Loading...</div>
+                            </div>
+                        ) : (
+                            <>
+                                {/* Unassigned Students */}
+                                <div className="section-card">
+                                    <h3 className="section-title">
+                                        Students Awaiting RI Assignment ({unassignedStudents.length})
+                                    </h3>
+                                    {unassignedStudents.length === 0 ? (
+                                        <div className="no-data">All VI-selected students have been assigned!</div>
+                                    ) : (
+                                        <div className="table-container">
+                                            <table className="students-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Student ID</th>
+                                                        <th>Name</th>
+                                                        <th>District</th>
+                                                        <th>VI Volunteer</th>
+                                                        <th>VI Date</th>
+                                                        <th>VI Recommendation</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {unassignedStudents.map((student, index) => (
+                                                        <tr key={student.studentId}>
+                                                            <td>{index + 1}</td>
+                                                            <td
+                                                                className="student-id clickable"
+                                                                onClick={() => navigate(`/superadmin/student-profile/${student.studentId}`)}
+                                                                style={{ cursor: 'pointer', color: '#0066cc' }}
+                                                                title="View Student Profile"
+                                                            >
+                                                                {student.studentId}
+                                                            </td>
+                                                            <td>{student.name}</td>
+                                                            <td>{student.district}</td>
+                                                            <td>
+                                                                <div className="volunteer-info">
+                                                                    <div className="volunteer-name">{student.vi_volunteer_name}</div>
+                                                                    <div className="volunteer-email">{student.vi_volunteer_email}</div>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                {student.vi_date
+                                                                    ? new Date(student.vi_date).toLocaleDateString()
+                                                                    : 'N/A'}
+                                                            </td>
+                                                            <td>
+                                                                <span className="recommendation-badge">
+                                                                    {student.vi_recommendation || 'YES'}
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                <button
+                                                                    className="assign-btn"
+                                                                    onClick={() => openAssignModal(student)}
+                                                                >
+                                                                    Assign RI Volunteer
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Assigned Students */}
+                                <div className="section-card">
+                                    <h3 className="section-title">
+                                        Already Assigned Students ({assignedStudents.length})
+                                    </h3>
+                                    {assignedStudents.length === 0 ? (
+                                        <div className="no-data">No students assigned yet</div>
+                                    ) : (
+                                        <div className="table-container">
+                                            <table className="students-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Student ID</th>
+                                                        <th>Name</th>
+                                                        <th>District</th>
+                                                        <th>Assigned RI Volunteer</th>
+                                                        <th>Assigned Date</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {assignedStudents.map((student, index) => (
+                                                        <tr key={student.studentId}>
+                                                            <td>{index + 1}</td>
+                                                            <td
+                                                                className="student-id clickable"
+                                                                onClick={() => navigate(`/superadmin/student-profile/${student.studentId}`)}
+                                                                style={{ cursor: 'pointer', color: '#0066cc' }}
+                                                                title="View Student Profile"
+                                                            >
+                                                                {student.studentId}
+                                                            </td>
+                                                            <td>{student.name}</td>
+                                                            <td>{student.district}</td>
+                                                            <td>
+                                                                <div className="volunteer-info">
+                                                                    <div className="volunteer-name">{student.assigned_ri_volunteer_name}</div>
+                                                                    <div className="volunteer-email">{student.assigned_ri_volunteer_email}</div>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                {student.ri_assigned_date
+                                                                    ? new Date(student.ri_assigned_date).toLocaleDateString()
+                                                                    : 'N/A'}
+                                                            </td>
+                                                            <td>
+                                                                <span className={`status-badge ${student.ri_status?.toLowerCase()}`}>
+                                                                    {student.ri_status || 'PENDING'}
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                <button
+                                                                    className="reassign-btn"
+                                                                    onClick={() => openAssignModal(student)}
+                                                                >
+                                                                    Reassign
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    )}
+                                </div>
+                            </>
+                        )}
                     </div>
+
+                    {/* Assignment Modal */}
+                    {selectedStudent && (
+                        <div className="modal-overlay" onClick={closeAssignModal}>
+                            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                                <div className="modal-header">
+                                    <h3>Assign RI Volunteer to {selectedStudent.name}</h3>
+                                    <button className="close-btn" onClick={closeAssignModal}>×</button>
+                                </div>
+                                <div className="modal-body">
+                                    <div className="student-info">
+                                        <p><strong>Student ID:</strong> {selectedStudent.studentId}</p>
+                                        <p><strong>District:</strong> {selectedStudent.district}</p>
+                                        <p><strong>VI Recommendation:</strong> {selectedStudent.vi_recommendation || 'YES'}</p>
+                                    </div>
+
+                                    <div className="form-section">
+                                        <label>Select Real Interview Volunteer</label>
+                                        <select
+                                            value={selectedVolunteer}
+                                            onChange={(e) => setSelectedVolunteer(e.target.value)}
+                                            className="volunteer-select"
+                                        >
+                                            <option value="">-- Select RI Volunteer --</option>
+                                            {volunteers.map(volunteer => (
+                                                <option key={volunteer.volunteerId} value={volunteer.volunteerId}>
+                                                    {volunteer.name} ({volunteer.email})
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <button
+                                            className="assign-submit-btn"
+                                            onClick={handleAssign}
+                                            disabled={assigning || !selectedVolunteer}
+                                        >
+                                            {assigning ? 'Assigning...' : 'Assign Volunteer'}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
-            )}
+            </main>
         </div>
     );
 };

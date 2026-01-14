@@ -20,12 +20,10 @@ const AdminPendingReviewsPage = () => {
 
     const loadStudents = async () => {
         try {
-            const [pendingData] = await Promise.all([
-                adminService.getPendingStudents()
-            ]);
+            const data = await adminService.getPVPendingReviews();
 
-            if (pendingData.students) {
-                setStudents(pendingData.students);
+            if (data.students) {
+                setStudents(data.students);
             }
         } catch (error) {
             console.error("Failed to load students:", error);
@@ -98,11 +96,11 @@ const AdminPendingReviewsPage = () => {
                         <div className="header-text">
                             <h1 className="page-title">Pending Reviews</h1>
                             <p className="page-subtitle">
-                                Students awaiting admin review and decision
+                                Review PV completed students and approve for Virtual Interview
                             </p>
                         </div>
                         <div className="header-badge">
-                            <span className="badge badge-warning">
+                            <span className="badge badge-primary">
                                 <Clock size={14} /> {students.length} Pending
                             </span>
                         </div>
@@ -118,20 +116,23 @@ const AdminPendingReviewsPage = () => {
                                         <th>Student ID</th>
                                         <th>Name</th>
                                         <th>District</th>
+                                        <th>Volunteer Rec.</th>
+                                        <th>AI Decision</th>
+                                        <th>AI Score</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {loading ? (
                                         <tr>
-                                            <td colSpan="4" className="empty-state">
+                                            <td colSpan="7" className="empty-state">
                                                 <div className="spinner"></div>
                                                 <p>Loading pending students...</p>
                                             </td>
                                         </tr>
                                     ) : students.length === 0 ? (
                                         <tr>
-                                            <td colSpan="4" className="empty-state">
-                                                <div className="empty-state-icon">✅</div>
+                                            <td colSpan="7" className="empty-state">
+                                                <div className="empty-state-icon" style={{ display: 'flex', justifyContent: 'center' }}><CheckCircle size={48} color="#10B981" /></div>
                                                 <div className="empty-state-title">All Caught Up!</div>
                                                 <div className="empty-state-description">
                                                     No students pending review at the moment
@@ -158,10 +159,21 @@ const AdminPendingReviewsPage = () => {
                                                     </td>
                                                     <td className="font-semibold">{s.name}</td>
                                                     <td>{s.district}</td>
+                                                    <td>
+                                                        <span className={`badge ${s.pv_recommendation === 'SELECT' ? 'badge-success' : s.pv_recommendation === 'REJECT' ? 'badge-danger' : 'badge-warning'}`}>
+                                                            {s.pv_recommendation || 'N/A'}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span className={`badge ${s.ai_decision === 'SELECT' ? 'badge-success' : s.ai_decision === 'REJECT' ? 'badge-danger' : 'badge-warning'}`}>
+                                                            {s.ai_decision || 'N/A'}
+                                                        </span>
+                                                    </td>
+                                                    <td>{s.ai_score ? `${s.ai_score}%` : 'N/A'}</td>
                                                 </tr>
                                                 {expandedRow === s.studentId && (
                                                     <tr className="accordion-row">
-                                                        <td colSpan="4">
+                                                        <td colSpan="7">
                                                             <div className="accordion-content animate-slideDown">
                                                                 <div className="detail-grid">
                                                                     <div className="detail-item">
@@ -179,7 +191,7 @@ const AdminPendingReviewsPage = () => {
                                                                     <div className="detail-item">
                                                                         <Link
                                                                             to={`/admin/view/${s.studentId}`}
-                                                                            className="btn btn-primary btn-sm"
+                                                                            className="btn btn-primary btn-sm" style={{ backgroundColor: '#FF6F00', color: 'white' }}
                                                                         >
                                                                             View Full Details & Decide →
                                                                         </Link>

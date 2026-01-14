@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Home, Video, Target, GraduationCap, BarChart2, ArrowLeft } from 'lucide-react';
 import superadminService from '../../services/superadminService';
 import authService from '../../services/authService';
 import logo from '../../assets/logo_icon.jpg';
@@ -10,7 +11,8 @@ const SuperadminAssignVIPage = () => {
     const [volunteers, setVolunteers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [assigningStudentId, setAssigningStudentId] = useState(null);
-    const [filterStatus, setFilterStatus] = useState('all'); // all, assigned, unassigned
+    const [completedStudents, setCompletedStudents] = useState([]);
+    const [filterStatus, setFilterStatus] = useState('unassigned'); // Default to unassigned for better workflow
     const [message, setMessage] = useState({ type: '', text: '' });
     const navigate = useNavigate();
 
@@ -23,9 +25,10 @@ const SuperadminAssignVIPage = () => {
             // Don't set global loading on refresh to avoid flicker if desired, but here we keep it for clarity
             if (!assigningStudentId) setLoading(true);
 
-            const [studentsData, volunteersData] = await Promise.all([
+            const [studentsData, volunteersData, completedData] = await Promise.all([
                 superadminService.getApprovedStudents(),
-                superadminService.getVIVolunteers()
+                superadminService.getVIVolunteers(),
+                superadminService.getCompletedVI()
             ]);
 
             setVolunteers(volunteersData.volunteers || []);
@@ -41,6 +44,15 @@ const SuperadminAssignVIPage = () => {
             });
 
             setStudents(activeStudents);
+
+            // Completed students normalization
+            const completed = (completedData.interviews || []).map(s => ({
+                ...s,
+                name: s.student_name, // Map student_name to name
+                assigned_volunteer_id: 'COMPLETED', // Marker
+                vi_status: 'COMPLETED'
+            }));
+            setCompletedStudents(completed);
         } catch (error) {
             console.error('Error loading data:', error);
             setMessage({ type: 'error', text: 'Failed to load data. Please try again.' });
@@ -91,159 +103,201 @@ const SuperadminAssignVIPage = () => {
                 return students.filter(s => s.assigned_volunteer_id);
             case 'unassigned':
                 return students.filter(s => !s.assigned_volunteer_id);
+            case 'completed':
+                return completedStudents;
             default:
-                return students;
+                return [...students, ...completedStudents];
         }
     };
 
     const filteredStudents = getFilteredStudents();
 
     return (
-        <div className="superadmin-assign-vi-page">
-            <header className="header-vertical">
-                <button onClick={handleLogout} className="logout-btn-right">
-                    LOGOUT
-                </button>
-                <img src={logo} alt="Logo" className="header-logo-center" />
-                <div className="header-title">Assign VI Volunteers</div>
-            </header>
-
-            <div className="container">
-                <div className="page-header">
-                    <h2>Assign Virtual Interview Volunteers</h2>
-                    <button
-                        onClick={() => navigate('/superadmin/dashboard')}
-                        className="back-btn"
-                    >
-                        ← Back to Dashboard
+        <div className="admin-layout">
+            <nav className="side-nav">
+                <div className="nav-logo">
+                    <img src={logo} alt="Matram Logo" className="header-logo-center" />
+                    <span>Matram Admin Panel</span>
+                </div>
+                <div className="nav-links">
+                    <button className="nav-item" onClick={() => navigate('/superadmin/dashboard')}>
+                        <span className="icon"><Home size={18} /></span> Overview
+                    </button>
+                    <button className="nav-item active" onClick={() => { }}>
+                        <span className="icon"><Video size={18} /></span> Virtual Interview
+                    </button>
+                    <button className="nav-item" onClick={() => navigate('/superadmin/dashboard')}>
+                        <span className="icon"><Target size={18} /></span> Real Interview
+                    </button>
+                    <button className="nav-item" onClick={() => navigate('/superadmin/dashboard')}>
+                        <span className="icon"><GraduationCap size={18} /></span> Final Selection
+                    </button>
+                    <button className="nav-item" onClick={() => navigate('/superadmin/analytics')}>
+                        <span className="icon"><BarChart2 size={18} /></span> Analytics
                     </button>
                 </div>
-
-                {message.text && (
-                    <div className={`message-toast ${message.type}`}>
-                        {message.text}
-                    </div>
-                )}
-
-                {/* Filter Buttons */}
-                <div className="filter-container">
-                    <button
-                        className={`filter-btn ${filterStatus === 'all' ? 'active' : ''}`}
-                        onClick={() => setFilterStatus('all')}
-                    >
-                        All Students ({students.length})
-                    </button>
-                    <button
-                        className={`filter-btn ${filterStatus === 'unassigned' ? 'active' : ''}`}
-                        onClick={() => setFilterStatus('unassigned')}
-                    >
-                        Unassigned ({students.filter(s => !s.assigned_volunteer_id).length})
-                    </button>
-                    <button
-                        className={`filter-btn ${filterStatus === 'assigned' ? 'active' : ''}`}
-                        onClick={() => setFilterStatus('assigned')}
-                    >
-                        Assigned ({students.filter(s => s.assigned_volunteer_id).length})
+                <div className="nav-footer">
+                    <button onClick={handleLogout} className="logout-btn">
+                        Sign Out
                     </button>
                 </div>
+            </nav>
 
-                {/* Students Table */}
-                {loading ? (
-                    <div className="loading-container">
-                        <div className="loading-spinner">Loading...</div>
+            <main className="main-content">
+                <div className="superadmin-assign-vi-page">
+                    <div className="page-header">
+                        <h2>Assign Virtual Interview Volunteers</h2>
+                        <button
+                            onClick={() => navigate('/superadmin/dashboard')}
+                            className="back-btn"
+                        >
+                            <ArrowLeft size={18} style={{ marginRight: 8 }} /> Back to Dashboard
+                        </button>
                     </div>
-                ) : (
-                    <div className="table-container">
-                        <table className="students-table">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Student ID</th>
-                                    <th>Name</th>
-                                    <th>District</th>
-                                    <th>Phone</th>
-                                    <th>Current Assignment</th>
-                                    <th>Assign VI Volunteer</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredStudents.length === 0 ? (
+
+                    {message.text && (
+                        <div className={`message-toast ${message.type}`}>
+                            {message.text}
+                        </div>
+                    )}
+
+                    {/* Filter Buttons */}
+                    <div className="filter-container">
+                        <button
+                            className={`filter-btn ${filterStatus === 'all' ? 'active' : ''}`}
+                            onClick={() => setFilterStatus('all')}
+                        >
+                            All Students ({students.length + completedStudents.length})
+                        </button>
+                        <button
+                            className={`filter-btn ${filterStatus === 'unassigned' ? 'active' : ''}`}
+                            onClick={() => setFilterStatus('unassigned')}
+                        >
+                            Unassigned ({students.filter(s => !s.assigned_volunteer_id).length})
+                        </button>
+                        <button
+                            className={`filter-btn ${filterStatus === 'assigned' ? 'active' : ''}`}
+                            onClick={() => setFilterStatus('assigned')}
+                        >
+                            Assigned ({students.filter(s => s.assigned_volunteer_id).length})
+                        </button>
+                        <button
+                            className={`filter-btn ${filterStatus === 'completed' ? 'active' : ''}`}
+                            onClick={() => setFilterStatus('completed')}
+                        >
+                            Completed ({completedStudents.length})
+                        </button>
+
+                    </div>
+
+                    {/* Students Table */}
+                    {loading ? (
+                        <div className="loading-container">
+                            <div className="loading-spinner">Loading...</div>
+                        </div>
+                    ) : (
+                        <div className="table-container">
+                            <table className="students-table">
+                                {/* ... existing table ... */}
+                                <thead>
                                     <tr>
-                                        <td colSpan="8" className="no-data">
-                                            No students found
-                                        </td>
+                                        <th>#</th>
+                                        <th>Student ID</th>
+                                        <th>Name</th>
+                                        <th>District</th>
+                                        <th>Current Assignment</th>
+                                        <th>Action</th>
                                     </tr>
-                                ) : (
-                                    filteredStudents.map((student, index) => (
-                                        <tr key={student.studentId}>
-                                            <td>{index + 1}</td>
-                                            <td className="student-id">{student.studentId}</td>
-                                            <td>{student.name}</td>
-                                            <td>{student.district}</td>
-                                            <td>{student.phone}</td>
-                                            <td>
-                                                {student.assigned_volunteer_id ? (
-                                                    <div className="assignment-info">
-                                                        <div className="volunteer-name">
-                                                            {student.volunteer_name || student.assigned_volunteer_id}
-                                                        </div>
-                                                        <div className="volunteer-email">
-                                                            {student.volunteer_email}
-                                                        </div>
-                                                        <div className="assignment-date">
-                                                            Assigned: {new Date(student.assignedDate).toLocaleDateString()}
-                                                        </div>
-                                                    </div>
-                                                ) : (
-                                                    <span className="unassigned-badge">Not Assigned</span>
-                                                )}
-                                            </td>
-                                            <td>
-                                                <select
-                                                    className="volunteer-select"
-                                                    defaultValue={student.assigned_volunteer_id || ''}
-                                                    disabled={assigningStudentId === student.studentId}
-                                                    id={`volunteer-select-${student.studentId}`}
-                                                >
-                                                    <option value="">Select Volunteer</option>
-                                                    {volunteers.map(volunteer => (
-                                                        <option
-                                                            key={volunteer.volunteerId}
-                                                            value={volunteer.volunteerId}
-                                                        >
-                                                            {volunteer.name} ({volunteer.volunteerId})
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <button
-                                                    className="assign-btn"
-                                                    onClick={() => {
-                                                        const selectElement = document.getElementById(`volunteer-select-${student.studentId}`);
-                                                        handleAssignVolunteer(student.studentId, selectElement.value);
-                                                    }}
-                                                    disabled={assigningStudentId === student.studentId}
-                                                >
-                                                    {assigningStudentId === student.studentId ? (
-                                                        'Assigning...'
-                                                    ) : student.assigned_volunteer_id ? (
-                                                        'Reassign'
-                                                    ) : (
-                                                        'Assign'
-                                                    )}
-                                                </button>
+                                </thead>
+                                <tbody>
+                                    {filteredStudents.length === 0 ? (
+                                        <tr>
+                                            <td colSpan="8" className="no-data">
+                                                No students found
                                             </td>
                                         </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
-            </div>
-        </div>
+                                    ) : (
+                                        filteredStudents.map((student, index) => (
+                                            <tr key={student.studentId}>
+                                                <td>{index + 1}</td>
+                                                <td
+                                                    className="student-id clickable"
+                                                    onClick={() => navigate(`/superadmin/student-profile/${student.studentId}`)}
+                                                    style={{ cursor: 'pointer', color: '#0066cc' }}
+                                                    title="View Student Profile"
+                                                >
+                                                    {student.studentId}
+                                                </td>
+                                                <td>{student.name}</td>
+                                                <td>{student.district}</td>
+                                                <td>
+                                                    {student.assigned_volunteer_id ? (
+                                                        <div className="assignment-info">
+                                                            <div className="volunteer-name">
+                                                                {student.volunteer_name || student.assigned_volunteer_id}
+                                                            </div>
+                                                            <div className="volunteer-email">
+                                                                {student.volunteer_email}
+                                                            </div>
+                                                            <div className="assignment-date">
+                                                                Assigned: {new Date(student.assignedDate).toLocaleDateString()}
+                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        <span className="unassigned-badge">Not Assigned</span>
+                                                    )}
+                                                </td>
+                                                <td>
+                                                    {student.vi_status === 'COMPLETED' ? (
+                                                        <span style={{ color: '#666', fontSize: '13px' }}>Done</span>
+                                                    ) : (
+                                                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                                            <select
+                                                                className="volunteer-select"
+                                                                defaultValue={student.assigned_volunteer_id || ''}
+                                                                disabled={assigningStudentId === student.studentId}
+                                                                id={`volunteer-select-${student.studentId}`}
+                                                                style={{ maxWidth: '200px' }}
+                                                            >
+                                                                <option value="">Select Volunteer</option>
+                                                                {volunteers.map(volunteer => (
+                                                                    <option
+                                                                        key={volunteer.volunteerId}
+                                                                        value={volunteer.volunteerId}
+                                                                    >
+                                                                        {volunteer.name} ({volunteer.volunteerId})
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                            <button
+                                                                className="assign-btn"
+                                                                onClick={() => {
+                                                                    const selectElement = document.getElementById(`volunteer-select-${student.studentId}`);
+                                                                    handleAssignVolunteer(student.studentId, selectElement.value);
+                                                                }}
+                                                                disabled={assigningStudentId === student.studentId}
+                                                            >
+                                                                {assigningStudentId === student.studentId ? (
+                                                                    'Assigning...'
+                                                                ) : student.assigned_volunteer_id ? (
+                                                                    'Reassign'
+                                                                ) : (
+                                                                    'Assign'
+                                                                )}
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+                </div>
+            </main >
+        </div >
     );
 };
 

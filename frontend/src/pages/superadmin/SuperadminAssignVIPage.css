@@ -84,18 +84,23 @@
 }
 
 .back-btn {
-    background: #666;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    background-color: white;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
-    font-weight: bold;
-    transition: background 0.3s;
+    transition: all 0.2s;
 }
 
 .back-btn:hover {
-    background: #555;
+    background-color: #f1f5f9;
+    color: #0f172a;
+    border-color: #cbd5e1;
 }
 
 /* Filter Container */

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Home, Video, Target, GraduationCap, BarChart2, Edit, User, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
 import superadminService from '../../services/superadminService';
 import authService from '../../services/authService';
 import logo from '../../assets/logo_icon.jpg';
@@ -46,48 +47,31 @@ const SuperadminSelectedStudentsPage = () => {
     const selectedCount = students.filter(s => s.finalDecision === 'SELECTED').length;
     const rejectedCount = students.filter(s => s.finalDecision === 'REJECTED').length;
 
+
     return (
-        <div className="superadmin-layout">
-            {/* Sidebar Navigation */}
+        <div className="admin-layout">
             <nav className="side-nav">
                 <div className="nav-logo">
                     <img src={logo} alt="Matram Logo" className="header-logo-center" />
                     <span>Matram Admin Panel</span>
                 </div>
-
                 <div className="nav-links">
-                    <button
-                        className="nav-item"
-                        onClick={() => navigate('/superadmin/dashboard')}
-                    >
-                        <span className="icon">🏠</span> Overview
+                    <button className="nav-item" onClick={() => navigate('/superadmin/dashboard')}>
+                        <span className="icon"><Home size={18} /></span> Overview
                     </button>
-                    <button
-                        className="nav-item"
-                        onClick={() => navigate('/superadmin/vi-students')}
-                    >
-                        <span className="icon">📹</span> Virtual Interview
+                    <button className="nav-item" onClick={() => navigate('/superadmin/vi-students')}>
+                        <span className="icon"><Video size={18} /></span> Virtual Interview
                     </button>
-                    <button
-                        className="nav-item"
-                        onClick={() => navigate('/superadmin/real-interview-students')}
-                    >
-                        <span className="icon">🎯</span> Real Interview
+                    <button className="nav-item" onClick={() => navigate('/superadmin/real-interview-students')}>
+                        <span className="icon"><Target size={18} /></span> Real Interview
                     </button>
-                    <button
-                        className="nav-item active"
-                        onClick={() => navigate('/superadmin/selected-students')}
-                    >
-                        <span className="icon">🎓</span> Final Selection
+                    <button className="nav-item active" onClick={() => { }}>
+                        <span className="icon"><GraduationCap size={18} /></span> Final Selection
                     </button>
-                    <button
-                        className="nav-item"
-                        onClick={() => navigate('/superadmin/analytics')}
-                    >
-                        <span className="icon">📊</span> Analytics
+                    <button className="nav-item" onClick={() => navigate('/superadmin/analytics')}>
+                        <span className="icon"><BarChart2 size={18} /></span> Analytics
                     </button>
                 </div>
-
                 <div className="nav-footer">
                     <button onClick={handleLogout} className="logout-btn">
                         Sign Out
@@ -103,7 +87,7 @@ const SuperadminSelectedStudentsPage = () => {
                             onClick={() => navigate('/superadmin/dashboard')}
                             className="back-btn"
                         >
-                            ← Back to Dashboard
+                            <ArrowLeft size={18} style={{ marginRight: 8 }} /> Back to Dashboard
                         </button>
                     </div>
 
@@ -118,13 +102,13 @@ const SuperadminSelectedStudentsPage = () => {
                             className={`filter-btn selected ${filter === 'SELECTED' ? 'active' : ''}`}
                             onClick={() => setFilter('SELECTED')}
                         >
-                            ✅ Selected ({selectedCount})
+                            <CheckCircle size={16} style={{ marginRight: 6, verticalAlign: 'text-bottom' }} /> Selected ({selectedCount})
                         </button>
                         <button
                             className={`filter-btn rejected ${filter === 'REJECTED' ? 'active' : ''}`}
                             onClick={() => setFilter('REJECTED')}
                         >
-                            ❌ Rejected ({rejectedCount})
+                            <XCircle size={16} style={{ marginRight: 6, verticalAlign: 'text-bottom' }} /> Rejected ({rejectedCount})
                         </button>
                     </div>
 
@@ -167,8 +151,9 @@ const SuperadminSelectedStudentsPage = () => {
                                                     <td>{student.name}</td>
                                                     <td>{student.district}</td>
                                                     <td>
-                                                        <span className={`decision-badge ${student.finalDecision?.toLowerCase()}`}>
-                                                            {student.finalDecision === 'SELECTED' ? '✅ SELECTED' : '❌ REJECTED'}
+                                                        <span className={`decision-badge ${student.finalDecision?.toLowerCase()}`} style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                                            {student.finalDecision === 'SELECTED' ? <CheckCircle size={14} /> : <XCircle size={14} />}
+                                                            {student.finalDecision === 'SELECTED' ? 'SELECTED' : 'REJECTED'}
                                                         </span>
                                                     </td>
                                                     <td>
@@ -241,7 +226,7 @@ const SuperadminSelectedStudentsPage = () => {
                                                                             fontWeight: '500'
                                                                         }}
                                                                     >
-                                                                        📝 Edit Educational Details
+                                                                        <Edit size={16} style={{ marginRight: 8 }} /> Edit Educational Details
                                                                     </button>
                                                                     <button
                                                                         className="view-profile-btn"
@@ -254,10 +239,12 @@ const SuperadminSelectedStudentsPage = () => {
                                                                             borderRadius: '5px',
                                                                             cursor: 'pointer',
                                                                             fontSize: '14px',
-                                                                            fontWeight: '500'
+                                                                            fontWeight: '500',
+                                                                            display: 'flex',
+                                                                            alignItems: 'center'
                                                                         }}
                                                                     >
-                                                                        👤 View Full Profile
+                                                                        <User size={16} style={{ marginRight: 8 }} /> View Full Profile
                                                                     </button>
                                                                 </div>
 

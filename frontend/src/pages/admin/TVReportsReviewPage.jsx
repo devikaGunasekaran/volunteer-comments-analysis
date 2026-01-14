@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Home, Users, Video, FileText } from 'lucide-react';
+import { Home, Users, Video, FileText, CheckCircle } from 'lucide-react';
 import adminService from '../../services/adminService';
+import authService from '../../services/authService';
 import logo from '../../assets/logo_icon.jpg';
 import './TVReportsReviewPage.css';
 
@@ -33,31 +34,15 @@ const TVReportsReviewPage = () => {
         }
     };
 
-    const handleDecision = async (studentId, decision) => {
-        const remarks = prompt(`Enter remarks for ${decision === 'SELECT' ? 'Selection' : 'Rejection'}:`);
-        if (remarks === null) return; // Cancelled
-
-        setActionLoading(studentId);
-        try {
-            const result = await adminService.reviewTVSubmission(studentId, decision, remarks);
-            if (result.success) {
-                alert(`Student ID ${studentId} ${decision === 'SELECT' ? 'moved to PV' : 'rejected'}`);
-                fetchReports(); // Refresh
-            } else {
-                alert('Review failed: ' + result.error);
-            }
-        } catch (error) {
-            console.error('Decision error:', error);
-            alert('Error processing decision');
-        } finally {
-            setActionLoading(null);
-        }
+    const handleLogout = () => {
+        authService.logout();
+        navigate('/login');
     };
 
     if (loading) return <div className="loading">Loading...</div>;
 
     return (
-        <div className="admin-layout">
+        <div className="admin-layout animate-fadeIn">
             {/* Sidebar Navigation */}
             <nav className="side-nav">
                 <div className="nav-logo">
@@ -82,18 +67,18 @@ const TVReportsReviewPage = () => {
                         className="nav-item active"
                         onClick={() => { }}
                     >
-                        <span className="icon"><FileText size={18} /></span> Reports Review
+                        <span className="icon"><FileText size={18} /></span> Pending Approvals
                     </button>
                     <button
                         className="nav-item"
                         onClick={() => navigate('/admin/tv-students')}
                     >
-                        <span className="icon"><Video size={18} /></span> Completed TV
+                        <span className="icon"><CheckCircle size={18} /></span> Completed TV
                     </button>
                 </div>
 
                 <div className="nav-footer">
-                    <button onClick={() => navigate('/login')} className="logout-btn">
+                    <button onClick={handleLogout} className="logout-btn">
                         Sign Out
                     </button>
                 </div>
@@ -101,45 +86,59 @@ const TVReportsReviewPage = () => {
 
             {/* Main Content Area */}
             <main className="main-content">
-                <div className="admin-assign-page">
-                    <div className="section-header-row">
-                        <h3>TV Reports Review</h3>
-                        <p className="section-subtitle">Review submitted Televerification reports</p>
+                <div className="page-container">
+                    <div className="page-header animate-slideUp">
+                        <div className="header-text">
+                            <h1 className="page-title">Pending TV Approvals</h1>
+                            <p className="page-subtitle">Approve TV verifications to move students to PV</p>
+                        </div>
+                        <div className="header-badge">
+                            <span className="badge badge-primary">
+                                <FileText size={14} /> {reports.length} Pending
+                            </span>
+                        </div>
                     </div>
 
-                    <div className="assigned-container" style={{ margin: 0, maxWidth: '100%', padding: 0 }}>
-                        <div className="table-wrapper">
-                            <h2 className="page-title">Submitted TV Reports ({reports.length})</h2>
-                            {reports.length === 0 ? (
-                                <p className="no-data">No submitted TV reports pending review.</p>
-                            ) : (
-                                <table className="custom-table">
-                                    <thead>
+                    <div className="card animate-slideUp stagger-1">
+                        <div className="table-container">
+                            <table className="table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Student Name</th>
+                                        <th>District</th>
+                                        <th>Volunteer</th>
+                                        <th>Submitted Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {reports.length === 0 ? (
                                         <tr>
-                                            <th>ID</th>
-                                            <th>Student Name</th>
-                                            <th>District</th>
-                                            <th>Volunteer</th>
-                                            <th>Submitted Date</th>
+                                            <td colSpan="5" className="empty-state">
+                                                <div className="empty-state-icon" style={{ display: 'flex', justifyContent: 'center' }}><CheckCircle size={48} color="#10B981" /></div>
+                                                <div className="empty-state-title">All Caught Up!</div>
+                                                <div className="empty-state-description">
+                                                    No submitted TV reports pending review at the moment
+                                                </div>
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        {reports.map(report => (
-                                            <tr key={report.studentId}>
+                                    ) : (
+                                        reports.map(report => (
+                                            <tr key={report.studentId} className="hover-lift-sm">
                                                 <td>
-                                                    <Link to={`/admin/tv-report/${report.studentId}`} className="id-link">
+                                                    <Link to={`/admin/tv-report/${report.studentId}`} className="student-id-link">
                                                         {report.studentId}
                                                     </Link>
                                                 </td>
-                                                <td>{report.name}</td>
+                                                <td className="font-semibold">{report.name}</td>
                                                 <td>{report.district}</td>
-                                                <td>{report.volunteerName}</td>
+                                                <td className="text-tertiary">{report.volunteerName}</td>
                                                 <td>{new Date(report.verificationDate).toLocaleDateString()}</td>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            )}
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>

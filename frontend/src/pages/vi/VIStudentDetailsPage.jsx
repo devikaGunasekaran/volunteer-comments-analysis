@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { CheckCircle } from 'lucide-react';
 import viVolunteerService from '../../services/viVolunteerService';
 import authService from '../../services/authService';
 import logo from '../../assets/logo_icon.jpg';
@@ -189,7 +190,7 @@ const VIStudentDetailsPage = () => {
 
                 {/* 5. COMPLETED VI DECISION (Read Only) */}
                 <div className="decision-box" style={{ borderLeft: '4px solid #FF6F00' }}>
-                    <div className="decision-title" style={{ color: '#E65100' }}>✅ Completed Interview Review</div>
+                    <div className="decision-title" style={{ color: '#E65100' }}><CheckCircle size={20} style={{ verticalAlign: 'middle', marginRight: 6 }} /> Completed Interview Review</div>
 
                     <div className="info-grid">
                         <div className="info-item">

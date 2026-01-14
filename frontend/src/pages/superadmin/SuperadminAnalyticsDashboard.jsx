@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { RefreshCw, Users, CheckCircle, XCircle, TrendingUp, Brain, Award, UserCheck, BarChart3, Home } from 'lucide-react';
+import { RefreshCw, Users, CheckCircle, XCircle, TrendingUp, Brain, Award, UserCheck, BarChart2, Home, Video, Target, GraduationCap } from 'lucide-react';
 import authService from '../../services/authService';
 import logo from '../../assets/logo_icon.jpg';
 import './SuperadminAnalyticsDashboard.css';
@@ -69,17 +69,20 @@ const SuperadminAnalyticsDashboard = () => {
                 </div>
 
                 <div className="nav-links">
-                    <button
-                        className="nav-item"
-                        onClick={() => navigate('/superadmin/dashboard')}
-                    >
-                        <span className="icon"><Home size={18} /></span> Dashboard
+                    <button className="nav-item" onClick={() => navigate('/superadmin/dashboard')}>
+                        <span className="icon"><Home size={18} /></span> Overview
                     </button>
-                    <button
-                        className="nav-item active"
-                        onClick={() => { }}
-                    >
-                        <span className="icon"><BarChart3 size={18} /></span> Analytics
+                    <button className="nav-item" onClick={() => navigate('/superadmin/vi-students')}>
+                        <span className="icon"><Video size={18} /></span> Virtual Interview
+                    </button>
+                    <button className="nav-item" onClick={() => navigate('/superadmin/real-interview-students')}>
+                        <span className="icon"><Target size={18} /></span> Real Interview
+                    </button>
+                    <button className="nav-item" onClick={() => navigate('/superadmin/selected-students')}>
+                        <span className="icon"><GraduationCap size={18} /></span> Final Selection
+                    </button>
+                    <button className="nav-item active" onClick={() => { }}>
+                        <span className="icon"><BarChart2 size={18} /></span> Analytics
                     </button>
                 </div>
 

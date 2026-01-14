@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Home, ClipboardList, CheckCircle } from 'lucide-react';
 import viVolunteerService from '../../services/viVolunteerService';
 import authService from '../../services/authService';
 import logo from '../../assets/logo_icon.jpg';
@@ -70,12 +71,12 @@ const VIVolunteerDashboardPage = () => {
                         <h4 className="section-title">Quick Actions</h4>
                         <div className="action-grid-3">
                             <div className="action-card-modern" onClick={() => navigate('/vi/assigned')}>
-                                <div className="action-icon">📋</div>
+                                <div className="action-icon"><ClipboardList size={32} /></div>
                                 <h3>My Assignments</h3>
                                 <p>View and interview assigned students</p>
                             </div>
                             <div className="action-card-modern" onClick={() => navigate('/vi/completed')}>
-                                <div className="action-icon">✅</div>
+                                <div className="action-icon"><CheckCircle size={32} /></div>
                                 <h3>Completed Interviews</h3>
                                 <p>View history of completed interviews</p>
                             </div>
@@ -101,19 +102,19 @@ const VIVolunteerDashboardPage = () => {
                         className={`nav-item ${activeTab === 'overview' ? 'active' : ''}`}
                         onClick={() => setActiveTab('overview')}
                     >
-                        <span className="icon">🏠</span> Overview
+                        <span className="icon"><Home size={18} /></span> Overview
                     </button>
                     <button
                         className="nav-item"
                         onClick={() => navigate('/vi/assigned')}
                     >
-                        <span className="icon">📋</span> My Assignments
+                        <span className="icon"><ClipboardList size={18} /></span> My Assignments
                     </button>
                     <button
                         className="nav-item"
                         onClick={() => navigate('/vi/completed')}
                     >
-                        <span className="icon">✅</span> Completed Interviews
+                        <span className="icon"><CheckCircle size={18} /></span> Completed Interviews
                     </button>
                 </div>
 

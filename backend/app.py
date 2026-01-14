@@ -12,6 +12,7 @@ from backend.routes.admin import admin_bp
 from backend.routes.analytics import analytics_bp, register_analytics_page
 from backend.routes.scholarship import scholarship_bp
 from backend.routes.tv_volunteer import tv_volunteer_bp
+from backend.routes.vi_schedule import vi_schedule_bp  # Google Meet scheduling
 
 # Create Flask app
 app = Flask(__name__, 
@@ -46,6 +47,9 @@ app.register_blueprint(scholarship_bp)
 
 # TV Volunteer routes
 app.register_blueprint(tv_volunteer_bp)
+
+# VI Scheduling routes (Google Meet)
+app.register_blueprint(vi_schedule_bp)
 
 # Register analytics page route (special case)
 register_analytics_page(app)

@@ -220,23 +220,23 @@
 }
 
 .badge-primary {
-    background: rgba(255, 111, 0, 0.1);
-    color: var(--primary-orange);
+    background: #FF6F00;
+    color: white;
 }
 
 .badge-success {
-    background: rgba(16, 185, 129, 0.1);
-    color: var(--success-green);
+    background: #10B981;
+    color: white;
 }
 
 .badge-warning {
-    background: rgba(245, 158, 11, 0.1);
-    color: var(--warning-amber);
+    background: #FFEDCC;
+    color: #E65100;
 }
 
 .badge-danger {
-    background: rgba(239, 68, 68, 0.1);
-    color: var(--danger-red);
+    background: #EF4444;
+    color: white;
 }
 
 .badge-info {

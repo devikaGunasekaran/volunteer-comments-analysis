@@ -30,6 +30,8 @@ This system streamlines scholarship screening workflows by combining structured 
 - Database: MySQL
 - Storage: AWS S3
 
+<img src="ARCHITECTURE DIAGRAM.jpeg" width="800" height=auto>
+
 ## Project Structure
 
 - `app.py` - app entrypoint
